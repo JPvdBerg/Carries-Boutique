@@ -37,7 +37,7 @@ This project serves as a comprehensive frontend demo and is not connected to a l
 
 -----
 
-## ⚠️ Important: How to Run This Project Locally
+##  Important: How to Run This Project Locally
 
 You cannot simply open the `index.html` file in your browser.
 
