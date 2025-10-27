@@ -10,13 +10,13 @@ document.addEventListener('DOMContentLoaded', () => {
   // --- Mobile Menu Toggle ---
   const mobileMenuButton = document.querySelector('[aria-controls="mobile-menu"]');
   const mobileMenu = document.getElementById('mobile-menu');
-  
+
   if (mobileMenuButton) {
     mobileMenuButton.addEventListener('click', function() {
       const expanded = this.getAttribute('aria-expanded') === 'true';
       this.setAttribute('aria-expanded', !expanded);
       mobileMenu.classList.toggle('hidden');
-      
+
       const icon = this.querySelector('i');
       if (expanded) {
         icon.setAttribute('data-feather', 'menu');
@@ -30,14 +30,11 @@ document.addEventListener('DOMContentLoaded', () => {
   // --- Smooth Scrolling (for on-page anchors) ---
   document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
-      // Check if the link is just a placeholder
       if (this.getAttribute('href') === '#') {
         e.preventDefault();
         window.scrollTo({ top: 0, behavior: 'smooth' });
         return;
       }
-      
-      // Check if the element is on the current page
       const targetElement = document.querySelector(this.getAttribute('href'));
       if (targetElement) {
         e.preventDefault();
@@ -52,74 +49,63 @@ document.addEventListener('DOMContentLoaded', () => {
   const scrollDownButton = document.querySelector('.scroll-down');
   if (scrollDownButton) {
     scrollDownButton.addEventListener('click', function() {
-      document.querySelector('#collections').scrollIntoView({
-        behavior: 'smooth'
-      });
+      const target = document.querySelector('#collections');
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth' });
+      }
     });
   }
 
   // --- SHOPPING CART LOGIC ---
 
-  // Utility function to get cart from localStorage
-  const getCart = () => {
-    return JSON.parse(localStorage.getItem('carriesBoutiqueCart')) || [];
-  };
-
-  // Utility function to save cart to localStorage
+  const getCart = () => JSON.parse(localStorage.getItem('carriesBoutiqueCart')) || [];
   const saveCart = (cart) => {
     localStorage.setItem('carriesBoutiqueCart', JSON.stringify(cart));
     updateCartIcon();
   };
 
-  // 1. Add to Cart
   window.addToCart = (productId, productName, price, image) => {
     const cart = getCart();
     const existingItem = cart.find(item => item.id === productId);
-    
     if (existingItem) {
       existingItem.quantity += 1;
     } else {
       cart.push({ id: productId, name: productName, price: price, image: image, quantity: 1 });
     }
-    
     saveCart(cart);
-    
-    // Show confirmation
     alert(`${productName} has been added to your cart!`);
   };
 
-  // 2. Update Cart Icon Badge
   const updateCartIcon = () => {
     const cart = getCart();
     const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
-    const cartBadge = document.getElementById('cart-badge');
-    
-    if (cartBadge) {
+    const cartBadges = document.querySelectorAll('.cart-badge'); // Select all badges
+    cartBadges.forEach(cartBadge => {
       if (totalItems > 0) {
         cartBadge.textContent = totalItems;
         cartBadge.classList.remove('hidden');
       } else {
+        cartBadge.textContent = '0'; // Ensure it resets if empty
         cartBadge.classList.add('hidden');
       }
-    }
+    });
   };
 
-  // 3. Render Cart Page
   const renderCartPage = () => {
     const cartItemsContainer = document.getElementById('cart-items-container');
     const cartSummaryContainer = document.getElementById('cart-summary-container');
-    if (!cartItemsContainer) return; // Only run on cart page
+    if (!cartItemsContainer) return;
 
     const cart = getCart();
-    cartItemsContainer.innerHTML = ''; // Clear existing items
-    
+    cartItemsContainer.innerHTML = '';
+
     if (cart.length === 0) {
       cartItemsContainer.innerHTML = '<p class="text-gray-500">Your cart is empty. <a href="shop.html" class="text-pink-600 hover:underline">Start shopping!</a></p>';
-      cartSummaryContainer.classList.add('hidden');
+      if (cartSummaryContainer) cartSummaryContainer.classList.add('hidden');
       return;
     }
 
-    cartSummaryContainer.classList.remove('hidden');
+    if (cartSummaryContainer) cartSummaryContainer.classList.remove('hidden');
     let subtotal = 0;
 
     cart.forEach(item => {
@@ -127,72 +113,74 @@ document.addEventListener('DOMContentLoaded', () => {
       const itemHtml = `
         <div class="flex items-center justify-between py-4 border-b">
           <div class="flex items-center space-x-4">
-            <img src="${item.image}" alt="${item.name}" class="w-20 h-20 object-cover rounded-lg">
+            <img src="${item.image}" alt="${item.name}" class="w-16 h-16 md:w-20 md:h-20 object-cover rounded-lg">
             <div>
-              <h3 class="text-lg font-medium text-gray-900">${item.name}</h3>
-              <p class="text-gray-500">R${item.price.toFixed(2)}</p>
+              <h3 class="text-base md:text-lg font-medium text-gray-900">${item.name}</h3>
+              <p class="text-sm text-gray-500">R${item.price.toFixed(2)}</p>
             </div>
           </div>
-          <div class="flex items-center space-x-3">
+          <div class="flex items-center space-x-1 md:space-x-3">
             <button class="p-1 rounded-full text-gray-500 hover:bg-gray-200" onclick="updateCartQuantity('${item.id}', ${item.quantity - 1})">
               <i data-feather="minus" class="w-4 h-4"></i>
             </button>
-            <span class="w-8 text-center">${item.quantity}</span>
+            <span class="w-8 text-center text-sm md:text-base">${item.quantity}</span>
             <button class="p-1 rounded-full text-gray-500 hover:bg-gray-200" onclick="updateCartQuantity('${item.id}', ${item.quantity + 1})">
               <i data-feather="plus" class="w-4 h-4"></i>
             </button>
           </div>
-          <p class="text-lg font-semibold text-gray-900">R${(item.price * item.quantity).toFixed(2)}</p>
+          <p class="text-base md:text-lg font-semibold text-gray-900">R${(item.price * item.quantity).toFixed(2)}</p>
           <button class="text-red-500 hover:text-red-700" onclick="removeFromCart('${item.id}')">
-            <i data-feather="trash-2" class="w-5 h-5"></i>
+            <i data-feather="trash-2" class="w-4 h-4 md:w-5 md:h-5"></i>
           </button>
         </div>
       `;
       cartItemsContainer.innerHTML += itemHtml;
     });
 
-    // Update Summary
-    const shipping = 50.00; // Fixed shipping
+    const shipping = 50.00;
     const total = subtotal + shipping;
-    document.getElementById('cart-subtotal').textContent = `R${subtotal.toFixed(2)}`;
-    document.getElementById('cart-shipping').textContent = `R${shipping.toFixed(2)}`;
-    document.getElementById('cart-total').textContent = `R${total.toFixed(2)}`;
-    
-    feather.replace(); // Re-run feather icons
+    const subtotalEl = document.getElementById('cart-subtotal');
+    const shippingEl = document.getElementById('cart-shipping');
+    const totalEl = document.getElementById('cart-total');
+    if (subtotalEl) subtotalEl.textContent = `R${subtotal.toFixed(2)}`;
+    if (shippingEl) shippingEl.textContent = `R${shipping.toFixed(2)}`;
+    if (totalEl) totalEl.textContent = `R${total.toFixed(2)}`;
+
+    feather.replace();
   };
 
-  // 4. Update Quantity (from cart page)
   window.updateCartQuantity = (productId, quantity) => {
     let cart = getCart();
     if (quantity <= 0) {
-      cart = cart.filter(item => item.id !== productId); // Remove if 0
+      cart = cart.filter(item => item.id !== productId);
     } else {
       const item = cart.find(item => item.id === productId);
       if (item) item.quantity = quantity;
     }
     saveCart(cart);
-    renderCartPage(); // Re-render the cart
+    renderCartPage();
   };
 
-  // 5. Remove from Cart (from cart page)
   window.removeFromCart = (productId) => {
     let cart = getCart();
     cart = cart.filter(item => item.id !== productId);
     saveCart(cart);
-    renderCartPage(); // Re-render the cart
+    renderCartPage();
   };
 
-  // 6. Render Checkout Summary
   const renderCheckoutSummary = () => {
     const summaryContainer = document.getElementById('checkout-summary');
-    if (!summaryContainer) return; // Only run on checkout page
+    if (!summaryContainer) return;
 
     const cart = getCart();
-    summaryContainer.innerHTML = ''; // Clear
+    summaryContainer.innerHTML = '';
     let subtotal = 0;
 
     if (cart.length === 0) {
       summaryContainer.innerHTML = '<p class="text-gray-500">Your cart is empty.</p>';
+      // Optionally disable checkout button if cart is empty
+      const placeOrderBtn = document.querySelector('#checkout-form button[type="submit"]');
+      if (placeOrderBtn) placeOrderBtn.disabled = true;
       return;
     }
 
@@ -201,13 +189,13 @@ document.addEventListener('DOMContentLoaded', () => {
       const itemHtml = `
         <div class="flex justify-between items-center py-3 border-b">
           <div class="flex items-center space-x-3">
-            <img src="${item.image}" alt="${item.name}" class="w-16 h-16 object-cover rounded-lg">
+            <img src="${item.image}" alt="${item.name}" class="w-12 h-12 md:w-16 md:h-16 object-cover rounded-lg">
             <div>
-              <h4 class="font-medium">${item.name}</h4>
-              <p class="text-sm text-gray-500">Qty: ${item.quantity}</p>
+              <h4 class="font-medium text-sm md:text-base">${item.name}</h4>
+              <p class="text-xs md:text-sm text-gray-500">Qty: ${item.quantity}</p>
             </div>
           </div>
-          <p class="font-medium">R${(item.price * item.quantity).toFixed(2)}</p>
+          <p class="font-medium text-sm md:text-base">R${(item.price * item.quantity).toFixed(2)}</p>
         </div>
       `;
       summaryContainer.innerHTML += itemHtml;
@@ -215,19 +203,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const shipping = 50.00;
     const total = subtotal + shipping;
-    
+
     const summaryTotalHtml = `
       <div class="py-3 space-y-2 border-b">
-        <div class="flex justify-between">
+        <div class="flex justify-between text-sm md:text-base">
           <p class="text-gray-600">Subtotal</p>
           <p class="font-medium">R${subtotal.toFixed(2)}</p>
         </div>
-        <div class="flex justify-between">
+        <div class="flex justify-between text-sm md:text-base">
           <p class="text-gray-600">Shipping</p>
           <p class="font-medium">R${shipping.toFixed(2)}</p>
         </div>
       </div>
-      <div class="py-4 flex justify-between text-lg font-bold">
+      <div class="py-4 flex justify-between text-base md:text-lg font-bold">
         <p>Total</p>
         <p>R${total.toFixed(2)}</p>
       </div>
@@ -235,38 +223,34 @@ document.addEventListener('DOMContentLoaded', () => {
     summaryContainer.innerHTML += summaryTotalHtml;
   };
 
-
-// 7. Handle Checkout Form Submission
+  // 7. Handle Checkout Form Submission
   const checkoutForm = document.getElementById('checkout-form');
   if (checkoutForm) {
     checkoutForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-      
-      // Gather all form data
-      const formData = {
-        name: document.getElementById('name').value,
-        email: document.getElementById('email').value,
-        address: document.getElementById('address').value,
-        city: document.getElementById('city').value,
-        postalCode: document.getElementById('postal-code').value,
-      };
 
-      // Get cart data
+      const formData = {
+        name: document.getElementById('name')?.value,
+        email: document.getElementById('email')?.value,
+        address: document.getElementById('address')?.value,
+        city: document.getElementById('city')?.value,
+        postalCode: document.getElementById('postal-code')?.value,
+      };
       const cart = getCart();
 
-      if (!formData.email || !formData.name || cart.length === 0) {
-        alert('Please fill out all required fields and have items in your cart.');
+      if (!formData.email || !formData.name || !formData.address || !formData.city || !formData.postalCode || cart.length === 0) {
+        alert('Please fill out all shipping fields and ensure your cart is not empty.');
         return;
       }
 
-      // Show a loading state (optional)
       const submitButton = checkoutForm.querySelector('button[type="submit"]');
-      submitButton.disabled = true;
-      submitButton.textContent = 'Placing Order...';
+      if (submitButton) {
+        submitButton.disabled = true;
+        submitButton.textContent = 'Placing Order...';
+      }
 
       try {
-        // Send ALL data to your backend
-        const response = await fetch('https://carries-boutique-server.onrender.com/api/send-order', {
+        const response = await fetch('https://carries-boutique-server.onrender.com/api/send-order', { // Your LIVE Render server URL
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -278,26 +262,105 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         if (!response.ok) {
-          throw new Error('Server responded with an error');
+          // Try to get error message from server response if possible
+          let errorMsg = 'Server responded with an error';
+          try {
+            const errorData = await response.json();
+            errorMsg = errorData.message || errorMsg;
+          } catch(jsonError) {
+             // Ignore if response wasn't JSON
+          }
+          throw new Error(errorMsg);
         }
 
-        // On successful "payment"
-        localStorage.removeItem('carriesBoutiqueCart'); // Clear the cart
-        
-        // Redirect to confirmation page
+        // Only clear cart and redirect on successful submission
+        localStorage.removeItem('carriesBoutiqueCart');
+        updateCartIcon(); // Update icon immediately after clearing
         window.location.href = 'confirmation.html';
 
       } catch (error) {
         console.error('Failed to send order:', error);
-        alert('There was an error placing your order. Please try again.');
-        submitButton.disabled = false;
-        submitButton.textContent = 'Place Order';
+        alert(`There was an error placing your order: ${error.message}. Please try again.`);
+        if (submitButton) {
+          submitButton.disabled = false;
+          submitButton.textContent = 'Place Order';
+        }
       }
     });
   }
 
+  // --- FIREBASE AUTHENTICATION LOGIC ---
+
+  // Check if Firebase is initialized (should be by the script in HTML)
+  if (typeof firebase !== 'undefined') {
+    const auth = firebase.auth(); // Get the auth instance
+
+    const authContainer = document.getElementById('auth-container');
+    const googleLoginBtn = document.getElementById('google-login-btn');
+    const userInfoDiv = document.getElementById('user-info');
+    const userDisplayNameSpan = document.getElementById('user-display-name');
+    const logoutBtn = document.getElementById('logout-btn');
+
+    const handleGoogleLogin = () => {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      auth.signInWithPopup(provider)
+        .then((result) => {
+          console.log("Logged in user:", result.user?.displayName || result.user?.email);
+        }).catch((error) => {
+          console.error("Google Sign-In Error:", error);
+          alert(`Login failed: ${error.message}`);
+        });
+    };
+
+    const handleLogout = () => {
+      auth.signOut()
+        .then(() => {
+          console.log("User signed out.");
+        }).catch((error) => {
+          console.error("Sign Out Error:", error);
+          alert(`Logout failed: ${error.message}`);
+        });
+    };
+
+    if (googleLoginBtn) {
+      googleLoginBtn.addEventListener('click', handleGoogleLogin);
+    }
+
+    if (logoutBtn) {
+      logoutBtn.addEventListener('click', handleLogout);
+    }
+
+    // Observer for Authentication State Changes
+    auth.onAuthStateChanged((user) => {
+      console.log("Auth state changed, user:", user); // Debug log
+      if (user) {
+        // User is signed in.
+        if (googleLoginBtn) googleLoginBtn.style.display = 'none'; // Use style.display
+        if (userInfoDiv) userInfoDiv.style.display = 'flex'; // Use style.display and ensure it's flex
+        if (userDisplayNameSpan) {
+           userDisplayNameSpan.textContent = user.displayName || user.email;
+        }
+      } else {
+        // User is signed out.
+        if (googleLoginBtn) googleLoginBtn.style.display = 'inline-flex'; // Use style.display
+        if (userInfoDiv) userInfoDiv.style.display = 'none'; // Use style.display
+        if (userDisplayNameSpan) userDisplayNameSpan.textContent = '';
+      }
+       // Ensure feather icons are re-rendered after UI changes
+       setTimeout(feather.replace, 0);
+    });
+
+  } else {
+    console.error("Firebase is not loaded or initialized!");
+  }
+
+  // --- END FIREBASE AUTHENTICATION LOGIC ---
+
   // --- INITIAL PAGE LOAD ---
-  updateCartIcon();
-  renderCartPage();
-  renderCheckoutSummary();
+  updateCartIcon(); // Update cart icon on every page load
+  renderCartPage(); // Try to render cart items if on cart page
+  renderCheckoutSummary(); // Try to render summary if on checkout page
+
+  // Initial call to Feather Icons (in case auth state doesn't change immediately)
+  feather.replace();
 });

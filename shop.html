@@ -11,7 +11,7 @@
   <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
   <style>
-    /* ... (Copy/Paste the same <style> block from index.html) ... */
+    /* ... (Your existing styles) ... */
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Inter', sans-serif; color: #333; background-color: #faf9f7; overflow-x: hidden; }
     .hero-gradient { background: linear-gradient(135deg, #ff6f91, #ff9671, #ffc75f); background-size: 200% 200%; animation: gradientShift 10s ease infinite; }
@@ -49,18 +49,29 @@
         <div class="hidden md:ml-6 md:flex md:items-center md:space-x-8">
           <a href="index.html" class="nav-link text-gray-500 hover:text-gray-900 px-3 py-2 text-sm font-medium">Home</a>
           <a href="index.html#collections" class="nav-link text-gray-500 hover:text-gray-900 px-3 py-2 text-sm font-medium">Collections</a>
-          <a href="shop.html" class="nav-link text-gray-900 px-3 py-2 text-sm font-medium">Shop</a>
-          <a href="index.html#about" class="nav-link text-gray-500 hover:text-gray-900 px-3 py-2 text-sm font-medium">About</a>
+          <a href="shop.html" class="nav-link text-gray-900 px-3 py-2 text-sm font-medium">Shop</a> <a href="index.html#about" class="nav-link text-gray-500 hover:text-gray-900 px-3 py-2 text-sm font-medium">About</a>
           <a href="index.html#contact" class="nav-link text-gray-500 hover:text-gray-900 px-3 py-2 text-sm font-medium">Contact</a>
+
           <a href="cart.html" class="relative ml-4 text-gray-500 hover:text-gray-900 p-2 rounded-full hover:bg-gray-100">
             <i data-feather="shopping-cart"></i>
-            <span id="cart-badge" class="hidden absolute -top-1 -right-1 bg-pink-600 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">0</span>
+            <span class="cart-badge hidden absolute -top-1 -right-1 bg-pink-600 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">0</span>
           </a>
-          <a href="https://wa.me/27828735697" target="_blank" class="ml-2 whatsapp-btn inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full text-white">
+
+          <div id="auth-container" class="ml-4 flex items-center space-x-2">
+              <button id="google-login-btn" style="display: none;" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-full text-gray-700 bg-white hover:bg-gray-50">
+                  <svg class="w-4 h-4 mr-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512"><path fill="currentColor" d="M488 261.8C488 403.3 381.5 512 244 512 109.8 512 0 402.2 0 258S109.8 4 244 4a237.2 237.2 0 01166.3 64.3l-64.4 64.4a150 150 0 00-101.9-38.3c-83.3 0-151.7 67.5-151.7 150.9s68.4 150.9 151.7 150.9c90.8 0 134.4-60.5 139.5-93.7H244v-77.9h236.1c2.4 12.8 3.9 26.5 3.9 41.2z"/></svg>
+                  Login with Google
+              </button>
+              <div id="user-info" style="display: none;" class="flex items-center space-x-2">
+                  <span id="user-display-name" class="text-sm font-medium text-gray-700"></span>
+                  <button id="logout-btn" class="px-3 py-1 border border-transparent text-sm font-medium rounded-full text-white bg-pink-600 hover:bg-pink-700">Logout</button>
+              </div>
+          </div>
+           <a href="https://wa.me/27828735697" target="_blank" class="ml-2 whatsapp-btn inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full text-white">
             <i data-feather="message-circle" class="mr-2"></i> WhatsApp
           </a>
         </div>
-        <div class="-mr-2 flex items-center md:hidden">
+         <div class="-mr-2 flex items-center md:hidden">
           <a href="cart.html" class="relative mr-2 text-gray-500 hover:text-gray-900 p-2 rounded-full hover:bg-gray-100">
             <i data-feather="shopping-cart"></i>
             <span class="cart-badge hidden absolute -top-1 -right-1 bg-pink-600 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">0</span>
@@ -75,13 +86,12 @@
       <div class="pt-2 pb-3 space-y-1">
         <a href="index.html" class="border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">Home</a>
         <a href="index.html#collections" class="border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">Collections</a>
-        <a href="shop.html" class="bg-pink-50 border-pink-500 text-pink-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">Shop</a>
-        <a href="index.html#about" class="border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">About</a>
+        <a href="shop.html" class="bg-pink-50 border-pink-500 text-pink-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">Shop</a> <a href="index.html#about" class="border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">About</a>
         <a href="index.html#contact" class="border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">Contact</a>
         <a href="https://wa.me/27828735697" target="_blank" class="mt-2 whatsapp-btn inline-flex items-center justify-center px-4 py-2 border border-transparent text-base font-medium rounded-full text-white w-full">
           <i data-feather="message-circle" class="mr-2"></i> WhatsApp
         </a>
-      </div>
+         </div>
     </div>
   </nav>
 
@@ -186,7 +196,7 @@
           </div>
         </div>
       </div>
-      
+
     </div>
   </section>
 
@@ -201,29 +211,29 @@
       <div class="mt-12 pt-8 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center"><p class="text-gray-400 text-sm">&copy; 2023 Carries Boutique. All rights reserved.</p><div class="mt-4 md:mt-0 flex space-x-6"><a href="#" class="text-gray-400 hover:text-white"><i data-feather="credit-card"></i></a><a href="#" class="text-gray-400 hover:text-white"><i data-feather="lock"></i></a><a href="#" class="text-gray-400 hover:text-white"><i data-feather="shield"></i></a></div></div>
     </div>
   </footer>
-  
-<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script> 
-<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script> 
-<script>
-  // Your web app's Firebase configuration
-  const firebaseConfig = {
-    apiKey: "AIzaSyCkyMyRLCc98BifcSYbIgs3_v3u2qBvdpg",
-    authDomain: "carries-boutique.firebaseapp.com",
-    projectId: "carries-boutique",
-    storageBucket: "carries-boutique.firebasestorage.app",
-    messagingSenderId: "512525813635",
-    appId: "1:512525813635:web:afe3d28c5bd2db68ae58b6",
-    measurementId: "G-2Q2QY4HJ9Y" // Optional analytics ID
-  };
 
-  // Initialize Firebase
-  firebase.initializeApp(firebaseConfig);
-  
-  // Make auth globally available (easier for simple apps)
-  const auth = firebase.auth(); 
-  // If using Firestore: const db = firebase.firestore(); 
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+  <script>
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyCkyMyRLCc98BifcSYbIgs3_v3u2qBvdpg", // Use your actual key
+      authDomain: "carries-boutique.firebaseapp.com",
+      projectId: "carries-boutique",
+      storageBucket: "carries-boutique.firebasestorage.app",
+      messagingSenderId: "512525813635",
+      appId: "1:512525813635:web:afe3d28c5bd2db68ae58b6",
+      measurementId: "G-2Q2QY4HJ9Y" // Optional
+    };
 
-</script>
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+
+    // Make auth globally available (easier for simple apps)
+    // No need to declare 'auth' here if it's not used directly in inline script
+    // const auth = firebase.auth();
+
+  </script>
 
   <script src="app.js"></script>
 </body>
