@@ -156,6 +156,29 @@
       </div>
     </div>
   </footer>
+  
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script> 
+<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script> 
+<script>
+  // Your web app's Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyCkyMyRLCc98BifcSYbIgs3_v3u2qBvdpg",
+    authDomain: "carries-boutique.firebaseapp.com",
+    projectId: "carries-boutique",
+    storageBucket: "carries-boutique.firebasestorage.app",
+    messagingSenderId: "512525813635",
+    appId: "1:512525813635:web:afe3d28c5bd2db68ae58b6",
+    measurementId: "G-2Q2QY4HJ9Y" // Optional analytics ID
+  };
+
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  
+  // Make auth globally available (easier for simple apps)
+  const auth = firebase.auth(); 
+  // If using Firestore: const db = firebase.firestore(); 
+
+</script>
 
   <script src="app.js"></script>
 </body>

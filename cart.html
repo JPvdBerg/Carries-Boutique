@@ -137,6 +137,29 @@
       <div class="mt-12 pt-8 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center"><p class="text-gray-400 text-sm">&copy; 2023 Carries Boutique. All rights reserved.</p><div class="mt-4 md:mt-0 flex space-x-6"><a href="#" class="text-gray-400 hover:text-white"><i data-feather="credit-card"></i></a><a href="#" class="text-gray-400 hover:text-white"><i data-feather="lock"></i></a><a href="#" class="text-gray-400 hover:text-white"><i data-feather="shield"></i></a></div></div>
     </div>
   </footer>
+  
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script> 
+<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script> 
+<script>
+  // Your web app's Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyCkyMyRLCc98BifcSYbIgs3_v3u2qBvdpg",
+    authDomain: "carries-boutique.firebaseapp.com",
+    projectId: "carries-boutique",
+    storageBucket: "carries-boutique.firebasestorage.app",
+    messagingSenderId: "512525813635",
+    appId: "1:512525813635:web:afe3d28c5bd2db68ae58b6",
+    measurementId: "G-2Q2QY4HJ9Y" // Optional analytics ID
+  };
+
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  
+  // Make auth globally available (easier for simple apps)
+  const auth = firebase.auth(); 
+  // If using Firestore: const db = firebase.firestore(); 
+
+</script>
 
   <script src="app.js"></script>
 </body>
