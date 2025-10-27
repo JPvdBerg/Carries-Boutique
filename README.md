@@ -1,80 +1,43 @@
-# Carries Boutique - E-commerce Website
+# Carries Boutique - Full-Stack E-commerce Demo
 
 **Live Demo:** [**https://jpvdberg.github.io/Carries-Boutique/**](https://jpvdberg.github.io/Carries-Boutique/)
 
-This is a modern, responsive frontend for "Carries Boutique," a premium fashion e-commerce website. It is a 6-page static site built with HTML, Tailwind CSS, and vanilla JavaScript. It features a **fully functional demo shopping cart** that persists across pages and browser sessions using the browser's `localStorage`.
-
-This project serves as a comprehensive frontend demo and is not connected to a live backend or payment processor.
+This project is a dynamic, multi-page e-commerce storefront built with a **Full-Stack JavaScript architecture**. It serves as a comprehensive demonstration of client-side logic, external API integration, and user authentication management, moving beyond a simple static demo.
 
 -----
 
-## Features
+## Key Features
 
-  * **Fully Responsive Design:** Looks great on desktop, tablet, and mobile.
-  * **Multi-Page Navigation:** A 6-page experience:
-      * Home Page
-      * Shop (All Products) Page
-      * Product Detail Page
-      * Shopping Cart Page
-      * Checkout Page
-      * Order Confirmation Page
-  * **Dynamic Shopping Cart:**
-      * Add items to the cart from the Home, Shop, and Product pages.
-      * Update item quantities and remove items directly from the Cart page.
-      * The cart icon in the navigation updates in real-time.
-  * **Persistent State:** The cart's contents are saved in `localStorage`, so items remain even after closing the browser.
-  * **Demo Checkout:** A checkout form that "processes" the order and clears the cart on submission.
-  * **Modern UI/UX:** Built with Tailwind CSS and includes smooth scrolling and subtle "Animate on Scroll" (AOS) animations.
+### 🔐 Full-Stack Authentication & Onboarding
+
+The application enforces a complete, persistent user journey:
+
+1.  **Mandatory Login:** All protected pages redirect non-logged-in users to a dedicated `login.html`.
+2.  **Google Sign-In:** Utilizes **Firebase Authentication** for secure user identity and session management.
+3.  **First-Time Profile Setup:** Upon first successful Google login, the user is immediately redirected to a `profile-setup.html` form to collect measurements (Bust, Waist, etc.).
+4.  **Persistent Profile:** User data and the "profile complete" flag are stored in `localStorage`, allowing the user to bypass the setup on subsequent logins.
+5.  **Secure Logout:** Logging out clears the session and the local profile flags, returning the user to the login page.
+
+### 📧 Live Order Processing
+
+  * **Custom Backend API:** A dedicated Node.js/Express server (hosted on Render) manages business logic outside of the static frontend.
+  * **Auto-Email Confirmation:** After checkout, the frontend sends the order data to the live Render API, which then triggers a **real confirmation email** via **SendGrid**.
+
+### 🛍️ E-commerce Functionality
+
+  * **Dynamic Cart:** Cart items and totals are managed and persisted across sessions using `localStorage`.
+  * **Checkout Autofill:** Logged-in users have their name and verified Google email automatically filled in and locked on the checkout form.
 
 -----
 
 ## Tech Stack
 
-  * **Frontend:** HTML5, CSS3, Vanilla JavaScript (ES6+)
-  * **CSS Framework:** [Tailwind CSS](https://tailwindcss.com/)
-  * **Animations:** [AOS (Animate on Scroll)](https://github.com/michalsnik/aos)
-  * **Icons:** [Feather Icons](https://feathericons.com/)
-
------
-
-##  Important: How to Run This Project Locally
-
-You cannot simply open the `index.html` file in your browser.
-
-This project uses `localStorage` for its cart. Most browsers (like Chrome) block `localStorage` from working on `file:///` paths for security reasons. For the cart to function, you **must run this project on a local server.**
-
-### Recommended Method (VS Code Live Server)
-
-1.  Clone or download this repository.
-2.  Open the project folder in **Visual Studio Code**.
-3.  Install the [**Live Server**](https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer) extension from the Extensions tab.
-4.  Once installed, right-click on `index.html` in the VS Code file explorer.
-5.  Select **"Open with Live Server"**.
-
-This will automatically open the site on a local server (like `http://127.0.0.1:5500`) and all features will work perfectly.
-
-### Alternative Method (Python)
-
-If you have Python installed, you can run a simple server from your terminal:
-
-1.  Navigate to the project's root directory:
-
-    ```bash
-    cd /path/to/Carries-Boutique
-    ```
-
-2.  Run one of the following commands:
-
-      * **Python 3:**
-        ```bash
-        python -m http.server
-        ```
-      * **Python 2:**
-        ```bash
-        python -m SimpleHTTPServer
-        ```
-
-3.  Open `http://localhost:8000` in your browser.
+| Layer | Technology | Purpose |
+| :--- | :--- | :--- |
+| **Frontend** | HTML, Tailwind CSS, Vanilla JS | UI/UX, DOM Manipulation, and Cart Logic. |
+| **Authentication** | **Google Firebase Auth** | Identity management and persistent user sessions. |
+| **Backend (API)** | **Node.js, Express.js, Render** | Hosting the server, API routing (`/api/send-order`), and health checks. |
+| **Email Service** | **SendGrid** | Processing and delivering transactional emails. |
 
 -----
 
@@ -82,24 +45,43 @@ If you have Python installed, you can run a simple server from your terminal:
 
 ```
 /Carries-Boutique
-├── index.html          (Home Page)
-├── shop.html           (All Products Page)
-├── product.html        (Single Product Detail Page)
-├── cart.html           (Shopping Cart Page)
-├── checkout.html       (Checkout Form Page)
-├── confirmation.html   (Order Confirmation Page)
-├── app.js              (Main JavaScript file for cart logic and all interactivity)
-└── README.md           (This file)
+├── backend/                  <-- The Node.js Express Server (Requires 'npm install')
+│   ├── server.js             <-- Handles API routes, SendGrid, and Render health check
+│   └── package.json          <-- Node.js dependencies
+├── login.html                <-- Mandatory sign-in page
+├── profile-setup.html        <-- First-time user profile setup page
+├── app.js                    <-- Primary JavaScript (Cart, Fetch, Firebase Auth Logic)
+├── index.html                (Home Page)
+└── ... (other pages, README.md, .gitignore)
 ```
 
 -----
 
-## How the Cart Works
+## Important: How to Run Locally
 
-The shopping cart is powered entirely by client-side JavaScript and `localStorage`.
+You must run this project on a local server to avoid browser security restrictions (CORS and `localStorage`).
 
-  * **`app.js`** contains helper functions like `getCart()` and `saveCart()`, which read/write a JSON array to `localStorage.getItem('carriesBoutiqueCart')`.
-  * When a page loads, `updateCartIcon()` is called to find all `.cart-badge` elements and display the correct total item count.
-  * On the **Cart Page**, `renderCartPage()` dynamically builds the list of items from `localStorage`.
-  * On the **Checkout Page**, `renderCheckoutSummary()` builds the order summary.
-  * This provides a fast, persistent demo experience without needing any backend or database.
+### Running the Frontend (UI)
+
+1.  Clone or download this repository.
+2.  Open the project folder in **Visual Studio Code**.
+3.  Right-click on `index.html` and select **"Open with Live Server"** (using the VS Code extension).
+
+### Running the Backend (Server/Email)
+
+To test the email functionality, you must run the server locally:
+
+1.  Open your terminal inside the **`backend`** subdirectory.
+2.  Install dependencies:
+    ```bash
+    npm install
+    ```
+3.  Ensure you have a **`.env`** file containing your actual SendGrid API Key (this file must be created locally and is excluded by `.gitignore`):
+    ```
+    SENDGRID_API_KEY=SG.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+    ```
+4.  Start the server:
+    ```bash
+    node server.js
+    ```
+5.  Your local frontend (on `localhost:5500`) can now talk to your local backend (on `localhost:3000`).
