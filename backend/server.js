@@ -47,7 +47,7 @@ app.post('/api/send-order', async (req, res) => {
   // 2. Create the email message object
   const msg = {
     to: customer.email, // Customer's email
-    from: 'hello@carriesboutique.com', // A verified email you set up in SendGrid
+    from: 'janpaulvdberg@gmail.com',
     subject: 'Your Order Confirmation from Carries Boutique',
     text: `Thank you for your order, ${customer.name}! Your total was R${total.toFixed(2)}.`, // Fallback for email clients that don't render HTML
     html: receiptHtml, // The full HTML receipt
