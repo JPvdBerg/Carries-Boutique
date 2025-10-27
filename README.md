@@ -8,7 +8,7 @@ This project is a dynamic, multi-page e-commerce storefront built with a **Full-
 
 ## Key Features
 
-### 🔐 Full-Stack Authentication & Onboarding
+###  Full-Stack Authentication & Onboarding
 
 The application enforces a complete, persistent user journey:
 
@@ -18,12 +18,12 @@ The application enforces a complete, persistent user journey:
 4.  **Persistent Profile:** User data and the "profile complete" flag are stored in `localStorage`, allowing the user to bypass the setup on subsequent logins.
 5.  **Secure Logout:** Logging out clears the session and the local profile flags, returning the user to the login page.
 
-### 📧 Live Order Processing
+###  Live Order Processing
 
   * **Custom Backend API:** A dedicated Node.js/Express server (hosted on Render) manages business logic outside of the static frontend.
   * **Auto-Email Confirmation:** After checkout, the frontend sends the order data to the live Render API, which then triggers a **real confirmation email** via **SendGrid**.
 
-### 🛍️ E-commerce Functionality
+###  E-commerce Functionality
 
   * **Dynamic Cart:** Cart items and totals are managed and persisted across sessions using `localStorage`.
   * **Checkout Autofill:** Logged-in users have their name and verified Google email automatically filled in and locked on the checkout form.
