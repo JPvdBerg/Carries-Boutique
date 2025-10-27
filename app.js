@@ -5,7 +5,7 @@
     const checkAuthStatus = () => {
         // Retry mechanism in case Firebase scripts haven't loaded yet
         if (typeof firebase === 'undefined' || typeof firebase.auth !== 'function') {
-            console.warn("Firebase not ready for initial auth check, retrying...");
+            // console.warn("Firebase not ready for initial auth check, retrying...");
             setTimeout(checkAuthStatus, 150); // Wait a bit longer
             return;
         }
@@ -19,7 +19,7 @@
                 const currentPage = window.location.pathname.split('/').pop() || 'index.html';
                 const allowedLoggedOutPages = ['login.html']; // Pages accessible when logged out
 
-                console.log(`Initial Auth Check: User ${user ? 'found' : 'not found'}. Current page: ${currentPage}`);
+                // console.log(`Initial Auth Check: User ${user ? 'found' : 'not found'}. Current page: ${currentPage}`);
 
                 if (!user && !allowedLoggedOutPages.includes(currentPage)) {
                     // If NOT logged in AND NOT on an allowed logged-out page, redirect to login
@@ -27,11 +27,11 @@
                     window.location.replace('login.html'); // Use replace to avoid back button issues
                 } else if (user && currentPage === 'login.html') {
                     // If logged in BUT somehow on the login page, redirect to index
-                    // The profile check will happen after DOMContentLoaded
+                    // Profile check will happen in DOMContentLoaded listener
                     console.log("Already logged in, redirecting from login page to index.");
                     window.location.replace('index.html');
                 }
-                // Otherwise, proceed normally (user logged in and not on login page, or user not logged in but on login page)
+                // Otherwise, proceed normally
             }
         });
     };
@@ -50,15 +50,11 @@ document.addEventListener('DOMContentLoaded', () => {
             easing: 'ease-in-out',
             once: true
         });
-    } else {
-        console.warn("AOS library not found.");
     }
 
     // Initialize Feather Icons
     if (typeof feather !== 'undefined') {
         feather.replace();
-    } else {
-        console.warn("Feather Icons library not found.");
     }
 
 
@@ -79,7 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else {
                     icon.setAttribute('data-feather', 'x');
                 }
-                feather.replace(); // Replace only the changed icon
+                feather.replace();
             }
         });
     }
@@ -93,7 +89,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 window.scrollTo({ top: 0, behavior: 'smooth' });
                 return;
             }
-            // Check if it's an on-page link for the current page
             if (window.location.pathname.split('/').pop() === (this.pathname.split('/').pop() || 'index.html')) {
                 try {
                      const targetElement = document.querySelector(href);
@@ -105,7 +100,6 @@ document.addEventListener('DOMContentLoaded', () => {
                      console.warn(`Smooth scroll target not found or invalid selector: ${href}`, error);
                 }
             }
-            // Allow normal navigation for links to other pages (e.g., index.html#about from shop.html)
         });
     });
 
@@ -157,10 +151,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const renderCartPage = () => {
         const cartItemsContainer = document.getElementById('cart-items-container');
         const cartSummaryContainer = document.getElementById('cart-summary-container');
-        if (!cartItemsContainer) return; // Only run on cart page
+        if (!cartItemsContainer) return;
 
         const cart = getCart();
-        cartItemsContainer.innerHTML = ''; // Clear existing items
+        cartItemsContainer.innerHTML = '';
 
         if (cart.length === 0) {
             cartItemsContainer.innerHTML = '<p class="text-gray-500">Your cart is empty. <a href="shop.html" class="text-pink-600 hover:underline">Start shopping!</a></p>';
@@ -200,7 +194,7 @@ document.addEventListener('DOMContentLoaded', () => {
             cartItemsContainer.innerHTML += itemHtml;
         });
 
-        const shipping = 50.00; // Fixed shipping
+        const shipping = 50.00;
         const total = subtotal + shipping;
         const subtotalEl = document.getElementById('cart-subtotal');
         const shippingEl = document.getElementById('cart-shipping');
@@ -209,34 +203,34 @@ document.addEventListener('DOMContentLoaded', () => {
         if (shippingEl) shippingEl.textContent = `R${shipping.toFixed(2)}`;
         if (totalEl) totalEl.textContent = `R${total.toFixed(2)}`;
 
-        if (typeof feather !== 'undefined') feather.replace(); // Re-run feather icons
+        if (typeof feather !== 'undefined') feather.replace();
     };
 
     window.updateCartQuantity = (productId, quantity) => {
         let cart = getCart();
         if (quantity <= 0) {
-            cart = cart.filter(item => item.id !== productId); // Remove if 0
+            cart = cart.filter(item => item.id !== productId);
         } else {
             const item = cart.find(item => item.id === productId);
             if (item) item.quantity = quantity;
         }
         saveCart(cart);
-        renderCartPage(); // Re-render the cart
+        renderCartPage();
     };
 
     window.removeFromCart = (productId) => {
         let cart = getCart();
         cart = cart.filter(item => item.id !== productId);
         saveCart(cart);
-        renderCartPage(); // Re-render the cart
+        renderCartPage();
     };
 
     const renderCheckoutSummary = () => {
         const summaryContainer = document.getElementById('checkout-summary');
-        if (!summaryContainer) return; // Only run on checkout page
+        if (!summaryContainer) return;
 
         const cart = getCart();
-        summaryContainer.innerHTML = ''; // Clear
+        summaryContainer.innerHTML = '';
         let subtotal = 0;
 
         if (cart.length === 0) {
@@ -284,7 +278,7 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
         summaryContainer.innerHTML += summaryTotalHtml;
          const placeOrderBtn = document.querySelector('#checkout-form button[type="submit"]');
-         if (placeOrderBtn) placeOrderBtn.disabled = false; // Re-enable button if cart has items
+         if (placeOrderBtn) placeOrderBtn.disabled = false;
     };
 
     // --- CHECKOUT FORM SUBMISSION ---
@@ -314,29 +308,29 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             try {
-                console.log("Sending order data to server:", { customer: formData, cart: cart }); // Debug log
+                console.log("Sending order data to server:", { customer: formData, cart: cart });
                 const response = await fetch('https://carries-boutique-server.onrender.com/api/send-order', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ customer: formData, cart: cart }),
                 });
 
-                 console.log("Server response status:", response.status); // Debug log
+                 console.log("Server response status:", response.status);
 
                 if (!response.ok) {
                     let errorMsg = 'Server responded with an error';
                     try {
                         const errorData = await response.json();
                         errorMsg = errorData.message || `Status: ${response.status}`;
-                         console.error("Server error data:", errorData); // Debug log
+                         console.error("Server error data:", errorData);
                     } catch(jsonError) {
-                         console.error("Could not parse error response as JSON:", await response.text()); // Log raw text
+                         console.error("Could not parse error response as JSON:", await response.text());
                     }
                     throw new Error(errorMsg);
                 }
 
-                 const result = await response.json(); // Get success message
-                 console.log("Server success response:", result); // Debug log
+                 const result = await response.json();
+                 console.log("Server success response:", result);
 
                 localStorage.removeItem('carriesBoutiqueCart');
                 updateCartIcon();
@@ -358,9 +352,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (typeof firebase !== 'undefined' && typeof firebase.auth === 'function') {
         const auth = firebase.auth();
 
-        // Get references to NAV elements (might not exist on login.html)
-        const authContainer = document.getElementById('auth-container');
-        const navGoogleLoginBtn = document.getElementById('google-login-btn'); // Renamed to avoid clash
+        // Get references to NAV elements (might not exist on login.html or profile-setup.html)
+        const navGoogleLoginBtn = document.getElementById('google-login-btn');
         const userInfoDiv = document.getElementById('user-info');
         const userDisplayNameSpan = document.getElementById('user-display-name');
         const logoutBtn = document.getElementById('logout-btn');
@@ -368,13 +361,19 @@ document.addEventListener('DOMContentLoaded', () => {
         // Get reference to LOGIN PAGE button (only exists on login.html)
         const pageGoogleLoginBtn = document.getElementById('google-login-btn-page');
 
+        // Get reference to Checkout inputs
+        const checkoutNameInput = document.getElementById('name');
+        const checkoutEmailInput = document.getElementById('email');
+
+
         const handleGoogleLogin = () => {
             const provider = new firebase.auth.GoogleAuthProvider();
             console.log("Attempting Google Sign-In...");
+            // Use signInWithRedirect for mobile compatibility, but Popup is easier for this demo setup
             auth.signInWithPopup(provider)
               .then((result) => {
                   console.log("Google Sign-In Successful. User:", result.user?.displayName || result.user?.email);
-                  // Redirect or profile check happens in onAuthStateChanged
+                  // The onAuthStateChanged observer handles the redirects and UI updates next
               }).catch((error) => {
                   console.error("Google Sign-In Error:", error);
                   alert(`Login failed: ${error.code} - ${error.message}`);
@@ -390,7 +389,7 @@ document.addEventListener('DOMContentLoaded', () => {
                   localStorage.removeItem('profileComplete');
                   localStorage.removeItem('userProfileData');
                   // Redirect to login page after logout
-                  window.location.href = 'login.html';
+                  window.location.replace('login.html');
               }).catch((error) => {
                   console.error("Sign Out Error:", error);
                   alert(`Logout failed: ${error.message}`);
@@ -417,62 +416,81 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (user) {
                 // --- User is SIGNED IN ---
+
+                // 1. Update NAV BAR UI (if elements exist on this page)
                 if (navGoogleLoginBtn) navGoogleLoginBtn.style.display = 'none';
                 if (userInfoDiv) userInfoDiv.style.display = 'flex';
                 if (userDisplayNameSpan) {
                    userDisplayNameSpan.textContent = user.displayName || user.email;
                 }
 
-                // Check if profile is complete
+                // 2. AUTOFIL CHECKOUT (If on Checkout Page)
+                if (currentPage === 'checkout.html' && checkoutEmailInput && checkoutNameInput) {
+                    checkoutEmailInput.value = user.email || '';
+                    checkoutNameInput.value = user.displayName || '';
+                    // Prevent users from manually changing the email tied to their Google account
+                    checkoutEmailInput.readOnly = true; 
+                    checkoutEmailInput.classList.add('bg-gray-100');
+                }
+
+
+                // 3. PROFILE REDIRECT LOGIC
                 const profileComplete = localStorage.getItem('profileComplete') === 'true';
                 console.log("Profile complete flag:", profileComplete);
 
                 if (!profileComplete && currentPage !== 'profile-setup.html') {
-                    // If profile NOT complete AND we are NOT on the setup page, redirect there.
+                    // Redirect logged-in user to profile setup if flag is missing
                     console.log("Redirecting logged-in user to profile setup.");
-                    window.location.replace('profile-setup.html'); // Use replace
+                    window.location.replace('profile-setup.html');
                 } else if (profileComplete && currentPage === 'profile-setup.html') {
                     // If profile IS complete but user landed on setup, redirect away.
                     console.log("Profile complete, redirecting from setup page to index.");
-                    window.location.replace('index.html'); // Use replace
+                    window.location.replace('index.html');
                 }
-                // If profile complete and not on setup page, or if not complete and on setup page, stay put.
+
 
             } else {
                 // --- User is SIGNED OUT ---
+
+                // Update NAV BAR UI (if elements exist on this page)
                 if (navGoogleLoginBtn) navGoogleLoginBtn.style.display = 'inline-flex';
                 if (userInfoDiv) userInfoDiv.style.display = 'none';
                 if (userDisplayNameSpan) userDisplayNameSpan.textContent = '';
+                
+                // On checkout, clear autofill/readOnly if user somehow logs out
+                if (currentPage === 'checkout.html' && checkoutEmailInput && checkoutNameInput) {
+                    checkoutEmailInput.value = '';
+                    checkoutEmailInput.readOnly = false;
+                    checkoutEmailInput.classList.remove('bg-gray-100');
+                    checkoutNameInput.value = '';
+                }
 
-                // The immediate redirect logic at the top handles redirecting non-logged-in users
-                // We don't need additional redirects here unless specifically logging out from a protected page.
+                // The immediate redirect logic at the top handles redirecting non-logged-in users away from protected pages.
             }
-            // Re-render icons if needed (might be redundant if done elsewhere on state change)
+            // Re-render icons
             if (typeof feather !== 'undefined') setTimeout(feather.replace, 0);
         });
 
     } else {
         console.error("Firebase library not loaded or initialized correctly!");
-        // Hide auth elements if Firebase fails
-        const authContainer = document.getElementById('auth-container');
-        if(authContainer) authContainer.style.display = 'none';
+        const navGoogleLoginBtn = document.getElementById('google-login-btn');
         const pageGoogleLoginBtn = document.getElementById('google-login-btn-page');
+        if(navGoogleLoginBtn) navGoogleLoginBtn.style.display = 'none';
         if(pageGoogleLoginBtn) pageGoogleLoginBtn.disabled = true;
     }
     // --- END FIREBASE AUTH LOGIC ---
 
 
-    // --- PROFILE SETUP FORM HANDLER ---
+    // --- PROFILE SETUP FORM HANDLER (only runs on profile-setup.html) ---
     const profileSetupForm = document.getElementById('profile-setup-form');
     if (profileSetupForm) {
-        console.log("Profile setup form found. Adding listener."); // Debug log
+        console.log("Profile setup form found. Adding listener.");
         profileSetupForm.addEventListener('submit', (e) => {
             e.preventDefault();
 
-            // Double check user state just in case
              if (typeof firebase === 'undefined' || typeof firebase.auth !== 'function' || !firebase.auth().currentUser) {
                 alert("Error: You seem to be logged out. Please log in again.");
-                window.location.href = 'login.html'; // Redirect to login if user isn't available
+                window.location.replace('login.html');
                 return;
             }
 
@@ -482,11 +500,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 hips: document.getElementById('hips')?.value,
                 height: document.getElementById('height')?.value,
                 fit: document.getElementById('fit')?.value,
-                userId: firebase.auth().currentUser.uid, // Store the Firebase User ID
-                email: firebase.auth().currentUser.email // Store email for reference
+                userId: firebase.auth().currentUser.uid,
+                email: firebase.auth().currentUser.email
             };
 
-            // Basic validation
             if (!profileData.bust || !profileData.waist || !profileData.hips) {
                 alert("Please fill in at least Bust, Waist, and Hips measurements.");
                 return;
@@ -494,28 +511,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
             try {
                 localStorage.setItem('userProfileData', JSON.stringify(profileData));
-                localStorage.setItem('profileComplete', 'true'); // Set the flag
+                localStorage.setItem('profileComplete', 'true');
 
                 console.log("Profile data saved to localStorage:", profileData);
-                alert("Profile saved successfully!");
+                alert("Profile saved successfully! You can now browse the store.");
 
-                window.location.href = 'index.html'; // Redirect home
+                window.location.replace('index.html');
 
             } catch (error) {
                 console.error("Error saving profile data to localStorage:", error);
                 alert("Could not save profile. Please try again.");
             }
         });
-    } else {
-         console.log("Profile setup form NOT found on this page."); // Debug log
     }
-    // --- END PROFILE SETUP FORM HANDLER ---
 
 
     // --- INITIAL PAGE LOAD CALLS ---
     updateCartIcon();
     renderCartPage();
     renderCheckoutSummary();
-    if (typeof feather !== 'undefined') feather.replace(); // Initial feather icons render
+
+    if (typeof feather !== 'undefined') feather.replace();
 
 }); // --- END DOMContentLoaded ---

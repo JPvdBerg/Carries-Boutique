@@ -48,17 +48,21 @@
         </div>
         <div class="hidden md:ml-6 md:flex md:items-center md:space-x-8">
           <a href="index.html" class="nav-link text-gray-500 hover:text-gray-900 px-3 py-2 text-sm font-medium">Home</a>
-          <a href="index.html#collections" class="nav-link text-gray-500 hover:text-gray-900 px-3 py-2 text-sm font-medium">Collections</a>
           <a href="shop.html" class="nav-link text-gray-500 hover:text-gray-900 px-3 py-2 text-sm font-medium">Shop</a>
+          <a href="index.html#collections" class="nav-link text-gray-500 hover:text-gray-900 px-3 py-2 text-sm font-medium">Collections</a>
           <a href="index.html#about" class="nav-link text-gray-500 hover:text-gray-900 px-3 py-2 text-sm font-medium">About</a>
           <a href="index.html#contact" class="nav-link text-gray-500 hover:text-gray-900 px-3 py-2 text-sm font-medium">Contact</a>
 
-          <a href="cart.html" class="relative ml-4 text-gray-500 hover:text-gray-900 p-2 rounded-full hover:bg-gray-100">
+          <a href="cart.html" class="relative ml-4 text-gray-900 p-2 rounded-full bg-gray-100">
             <i data-feather="shopping-cart"></i>
             <span class="cart-badge hidden absolute -top-1 -right-1 bg-pink-600 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">0</span>
           </a>
 
           <div id="auth-container" class="ml-4 flex items-center space-x-2">
+              <button id="google-login-btn" style="display: none;" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-full text-gray-700 bg-white hover:bg-gray-50">
+                  <svg class="w-4 h-4 mr-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512"><path fill="currentColor" d="M488 261.8C488 403.3 381.5 512 244 512 109.8 512 0 402.2 0 258S109.8 4 244 4a237.2 237.2 0 01166.3 64.3l-64.4 64.4a150 150 0 00-101.9-38.3c-83.3 0-151.7 67.5-151.7 150.9s68.4 150.9 151.7 150.9c90.8 0 134.4-60.5 139.5-93.7H244v-77.9h236.1c2.4 12.8 3.9 26.5 3.9 41.2z"/></svg>
+                  Login with Google
+              </button>
               <div id="user-info" style="display: none;" class="flex items-center space-x-2">
                   <span id="user-display-name" class="text-sm font-medium text-gray-700"></span>
                   <button id="logout-btn" class="px-3 py-1 border border-transparent text-sm font-medium rounded-full text-white bg-pink-600 hover:bg-pink-700">Logout</button>
@@ -66,7 +70,8 @@
           </div>
         </div>
         <div class="-mr-2 flex items-center md:hidden">
-          <a href="cart.html" class="relative mr-2 text-gray-500 hover:text-gray-900 p-2 rounded-full hover:bg-gray-100"> <i data-feather="shopping-cart"></i>
+          <a href="cart.html" class="relative mr-2 text-gray-900 p-2 rounded-full bg-gray-100">
+            <i data-feather="shopping-cart"></i>
             <span class="cart-badge hidden absolute -top-1 -right-1 bg-pink-600 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">0</span>
           </a>
           <button type="button" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-pink-500" aria-controls="mobile-menu" aria-expanded="false">
@@ -80,7 +85,7 @@
         <a href="index.html" class="border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">Home</a>
         <a href="shop.html" class="border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">Shop</a>
         <a href="index.html#contact" class="border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">Contact</a>
-         </div>
+      </div>
     </div>
   </nav>
 
@@ -97,11 +102,11 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
-                <input type="text" id="name" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-pink-500 focus:border-pink-500" required>
+                <input type="text" id="name" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-pink-500 focus:border-pink-500 bg-gray-100" required>
               </div>
               <div>
                 <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
-                <input type="email" id="email" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-pink-500 focus:border-pink-500" required>
+                <input type="email" id="email" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-pink-500 focus:border-pink-500 bg-gray-100" required readonly>
               </div>
               <div class="sm:col-span-2">
                 <label for="address" class="block text-sm font-medium text-gray-700 mb-1">Street Address</label>
@@ -185,8 +190,8 @@
     firebase.initializeApp(firebaseConfig);
 
     // Make auth globally available (easier for simple apps)
-    // No need to declare 'auth' here if it's not used directly in inline script
-    // const auth = firebase.auth();
+    const auth = firebase.auth(); 
+    // If using Firestore: const db = firebase.firestore(); 
 
   </script>
 
