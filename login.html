@@ -1,143 +1,59 @@
-// --- REDIRECT TO LOGIN IF NOT AUTHENTICATED ---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | Carries Boutique</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="https://i.imgur.com/KNRtw3t.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #faf9f7; }
+        .hero-gradient { background: linear-gradient(135deg, #ff6f91, #ff9671, #ffc75f); }
+        /* Add feather icons CSS if needed, or rely on JS replace */
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+</head>
+<body class="flex flex-col items-center justify-center min-h-screen hero-gradient">
+    <div class="bg-white p-10 rounded-lg shadow-xl max-w-sm w-full text-center">
+        <a href="#" onclick="return false;" class="inline-block mb-6"> <img class="h-10 w-auto mx-auto" src="https://i.imgur.com/KNRtw3t.png" alt="Carries Boutique">
+            <span class="mt-2 text-2xl font-semibold text-gray-900 block font-serif">Carries Boutique</span>
+        </a>
+        <p class="text-gray-600 mb-8">Please log in to continue</p>
 
-// Check immediately if Firebase Auth object is available
-// Use a self-invoking function to run the check early
-(function() {
-    // We need to wait for Firebase Auth to initialize before checking the user state.
-    // However, the full DOM might not be ready yet.
-    // We create a temporary listener just for the initial auth check.
+        <button id="google-login-btn-page" class="w-full inline-flex justify-center items-center px-4 py-3 border border-gray-300 text-sm font-medium rounded-full text-gray-700 bg-white hover:bg-gray-50 shadow-sm">
+            <svg class="w-5 h-5 mr-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512"><path fill="currentColor" d="M488 261.8C488 403.3 381.5 512 244 512 109.8 512 0 402.2 0 258S109.8 4 244 4a237.2 237.2 0 01166.3 64.3l-64.4 64.4a150 150 0 00-101.9-38.3c-83.3 0-151.7 67.5-151.7 150.9s68.4 150.9 151.7 150.9c90.8 0 134.4-60.5 139.5-93.7H244v-77.9h236.1c2.4 12.8 3.9 26.5 3.9 41.2z"/></svg>
+            Sign in with Google
+        </button>
 
-    const checkAuthStatus = () => {
-        // Ensure firebase and firebase.auth() are ready
-        if (typeof firebase !== 'undefined' && typeof firebase.auth === 'function') {
-            const auth = firebase.auth();
+         </div>
 
-            // Use onAuthStateChanged for the initial check too
-            const unsubscribe = auth.onAuthStateChanged(user => {
-                unsubscribe(); // Important: Stop listening after the first check
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+    <script>
+      const firebaseConfig = {
+        apiKey: "AIzaSyCkyMyRLCc98BifcSYbIgs3_v3u2qBvdpg", // YOUR KEY
+        authDomain: "carries-boutique.firebaseapp.com",
+        projectId: "carries-boutique",
+        storageBucket: "carries-boutique.firebasestorage.app",
+        messagingSenderId: "512525813635",
+        appId: "1:512525813635:web:afe3d28c5bd2db68ae58b6",
+        measurementId: "G-2Q2QY4HJ9Y"
+      };
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig);
+      // No need to create global 'auth' here, app.js will handle it.
+    </script>
 
-                const currentPage = window.location.pathname.split('/').pop(); // Get current HTML filename
+    <script src="app.js"></script>
 
-                if (!user && currentPage !== 'login.html') {
-                    // If NOT logged in AND NOT on login.html, redirect to login
-                    console.log("User not logged in. Redirecting to login page.");
-                    window.location.href = 'login.html';
-                } else {
-                    // User is logged in, or already on the login page.
-                    // Let the rest of the app load normally.
-                    console.log("User logged in or on login page. Proceeding.");
-                }
-            });
-        } else {
-            // If Firebase isn't ready yet, wait a moment and try again.
-            // This is a basic fallback, might need adjustment if Firebase loads very slowly.
-            console.warn("Firebase not ready yet for auth check, retrying...");
-            setTimeout(checkAuthStatus, 100); // Try again in 100ms
-        }
-    };
-
-    // Start the check
-    checkAuthStatus();
-
-})(); // Immediately invoke the function
-
-// --- END REDIRECT LOGIC ---
-
-// --- The rest of your app.js starts below (DOMContentLoaded listener) ---
-document.addEventListener('DOMContentLoaded', () => {
-    // ... (All your existing AOS, Feather, Cart, Checkout, and Auth UI update code goes here) ...
-
-    // --- FIREBASE AUTHENTICATION LOGIC (UI Updates) ---
-    // Make sure this section is INSIDE the DOMContentLoaded listener
-
-    if (typeof firebase !== 'undefined') {
-        const auth = firebase.auth(); // Get the auth instance again for UI updates
-
-        const authContainer = document.getElementById('auth-container');
-        const googleLoginBtn = document.getElementById('google-login-btn'); // Login button in NAVBAR
-        const userInfoDiv = document.getElementById('user-info');
-        const userDisplayNameSpan = document.getElementById('user-display-name');
-        const logoutBtn = document.getElementById('logout-btn');
-
-        // Note: Login button click handler might not be needed here anymore if login only happens on login.html
-        // BUT keep it for now in case you add login options elsewhere.
-        const handleGoogleLogin = () => {
-            const provider = new firebase.auth.GoogleAuthProvider();
-            auth.signInWithPopup(provider)
-              .then((result) => {
-                console.log("Logged in user:", result.user?.displayName || result.user?.email);
-                // No redirect needed here if logged in from header, onAuthStateChanged handles UI
-              }).catch((error) => {
-                console.error("Google Sign-In Error:", error);
-                alert(`Login failed: ${error.message}`);
-              });
-        };
-
-
-        const handleLogout = () => {
-            auth.signOut()
-              .then(() => {
-                console.log("User signed out.");
-                // Redirect to login page after logout
-                window.location.href = 'login.html';
-              }).catch((error) => {
-                console.error("Sign Out Error:", error);
-                alert(`Logout failed: ${error.message}`);
-              });
-        };
-
-        // Still add listener to navbar login button if it exists
-         if (googleLoginBtn) {
-            googleLoginBtn.addEventListener('click', handleGoogleLogin);
-         }
-
-
-        if (logoutBtn) {
-            logoutBtn.addEventListener('click', handleLogout);
-        }
-
-        // Observer for Authentication State Changes (Handles UI updates in NAVBAR)
-        auth.onAuthStateChanged((user) => {
-            console.log("Auth state changed (UI update), user:", user); // Debug log
-
-            const currentPage = window.location.pathname.split('/').pop();
-            // Don't manipulate navbar auth buttons if we are on the login page itself
-            if (currentPage === 'login.html') {
-                return;
-            }
-
-
-            if (user) {
-                // User is signed in.
-                if (googleLoginBtn) googleLoginBtn.style.display = 'none';
-                if (userInfoDiv) userInfoDiv.style.display = 'flex';
-                if (userDisplayNameSpan) {
-                   userDisplayNameSpan.textContent = user.displayName || user.email;
-                }
-            } else {
-                 // User is signed out (This part might not run often if redirect happens first)
-                if (googleLoginBtn) googleLoginBtn.style.display = 'inline-flex';
-                if (userInfoDiv) userInfoDiv.style.display = 'none';
-                if (userDisplayNameSpan) userDisplayNameSpan.textContent = '';
-            }
-             // Ensure feather icons are re-rendered
-             setTimeout(feather.replace, 0);
+    <script>
+        // Ensure Feather Icons run on this page too, after DOM is ready
+        document.addEventListener('DOMContentLoaded', () => {
+             if (typeof feather !== 'undefined') {
+                feather.replace();
+             }
         });
-
-    } else {
-        // Only log error if NOT on login page, as login page handles its own Firebase load error
-        const currentPage = window.location.pathname.split('/').pop();
-        if (currentPage !== 'login.html') {
-            console.error("Firebase is not loaded or initialized on main page!");
-        }
-    }
-    // --- END FIREBASE AUTHENTICATION LOGIC ---
-
-
-    // ... (Rest of your code like INITIAL PAGE LOAD calls) ...
-    // --- INITIAL PAGE LOAD ---
-    updateCartIcon();
-    renderCartPage();
-    renderCheckoutSummary();
-    feather.replace(); // Initial feather call
-});
+    </script>
+</body>
+</html>
