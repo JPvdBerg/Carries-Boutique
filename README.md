@@ -1,19 +1,12 @@
 # Carries Boutique - E-commerce Website
 
-[](https://opensource.org/licenses/MIT)
+**Live Demo:** [**https://jpvdberg.github.io/Carries-Boutique/**](https://jpvdberg.github.io/Carries-Boutique/)
 
 This is a modern, responsive frontend for "Carries Boutique," a premium fashion e-commerce website. It is a 6-page static site built with HTML, Tailwind CSS, and vanilla JavaScript. It features a **fully functional demo shopping cart** that persists across pages and browser sessions using the browser's `localStorage`.
 
 This project serves as a comprehensive frontend demo and is not connected to a live backend or payment processor.
 
-### Live Demo
-
-A live demo can be found at: `[Link to your deployed site]`
-*(You can easily deploy this for free on [GitHub Pages](https://pages.github.com/), [Netlify](https://www.netlify.com/), or [Vercel](https://vercel.com/).)*
-
-### Screenshot
-
-*(To add a screenshot: Take a picture of the homepage, add it to your repository as `screenshot.png`, and this will automatically display.)*
+-----
 
 ## Features
 
@@ -33,6 +26,8 @@ A live demo can be found at: `[Link to your deployed site]`
   * **Demo Checkout:** A checkout form that "processes" the order and clears the cart on submission.
   * **Modern UI/UX:** Built with Tailwind CSS and includes smooth scrolling and subtle "Animate on Scroll" (AOS) animations.
 
+-----
+
 ## Tech Stack
 
   * **Frontend:** HTML5, CSS3, Vanilla JavaScript (ES6+)
@@ -40,7 +35,9 @@ A live demo can be found at: `[Link to your deployed site]`
   * **Animations:** [AOS (Animate on Scroll)](https://github.com/michalsnik/aos)
   * **Icons:** [Feather Icons](https://feathericons.com/)
 
-## ⚠️ Important: How to Run This Project
+-----
+
+## ⚠️ Important: How to Run This Project Locally
 
 You cannot simply open the `index.html` file in your browser.
 
@@ -63,7 +60,7 @@ If you have Python installed, you can run a simple server from your terminal:
 1.  Navigate to the project's root directory:
 
     ```bash
-    cd /path/to/carries-boutique
+    cd /path/to/Carries-Boutique
     ```
 
 2.  Run one of the following commands:
@@ -79,10 +76,12 @@ If you have Python installed, you can run a simple server from your terminal:
 
 3.  Open `http://localhost:8000` in your browser.
 
+-----
+
 ## Project Structure
 
 ```
-/carries-boutique
+/Carries-Boutique
 ├── index.html          (Home Page)
 ├── shop.html           (All Products Page)
 ├── product.html        (Single Product Detail Page)
@@ -93,6 +92,8 @@ If you have Python installed, you can run a simple server from your terminal:
 └── README.md           (This file)
 ```
 
+-----
+
 ## How the Cart Works
 
 The shopping cart is powered entirely by client-side JavaScript and `localStorage`.
@@ -102,8 +103,3 @@ The shopping cart is powered entirely by client-side JavaScript and `localStorag
   * On the **Cart Page**, `renderCartPage()` dynamically builds the list of items from `localStorage`.
   * On the **Checkout Page**, `renderCheckoutSummary()` builds the order summary.
   * This provides a fast, persistent demo experience without needing any backend or database.
-
-## License
-
-This project is licensed under the MIT License. See the [LICENSE](https://www.google.com/search?q=LICENSE) file for details.
-*(You can add an `LICENSE` file to your repo with the standard [MIT License text](https://opensource.org/licenses/MIT) to make the badge work.)*
