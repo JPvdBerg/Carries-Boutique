@@ -235,25 +235,64 @@ document.addEventListener('DOMContentLoaded', () => {
     summaryContainer.innerHTML += summaryTotalHtml;
   };
 
-  // 7. Handle Checkout Form Submission
+
+// 7. Handle Checkout Form Submission
   const checkoutForm = document.getElementById('checkout-form');
   if (checkoutForm) {
-    checkoutForm.addEventListener('submit', (e) => {
+    checkoutForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       
-      // Basic validation
-      const email = document.getElementById('email').value;
-      const name = document.getElementById('name').value;
-      if (!email || !name) {
-        alert('Please fill out all required fields.');
+      // Gather all form data
+      const formData = {
+        name: document.getElementById('name').value,
+        email: document.getElementById('email').value,
+        address: document.getElementById('address').value,
+        city: document.getElementById('city').value,
+        postalCode: document.getElementById('postal-code').value,
+      };
+
+      // Get cart data
+      const cart = getCart();
+
+      if (!formData.email || !formData.name || cart.length === 0) {
+        alert('Please fill out all required fields and have items in your cart.');
         return;
       }
-      
-      // On successful "payment"
-      localStorage.removeItem('carriesBoutiqueCart'); // Clear the cart
-      
-      // Redirect to confirmation page
-      window.location.href = 'confirmation.html';
+
+      // Show a loading state (optional)
+      const submitButton = checkoutForm.querySelector('button[type="submit"]');
+      submitButton.disabled = true;
+      submitButton.textContent = 'Placing Order...';
+
+      try {
+        // Send ALL data to your backend
+        const response = await fetch('https://carries-boutique-server.onrender.com/api/send-order', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            customer: formData,
+            cart: cart,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Server responded with an error');
+        }
+
+        // On successful "payment"
+        localStorage.removeItem('carriesBoutiqueCart'); // Clear the cart
+        
+        // Redirect to confirmation page
+        window.location.href = 'confirmation.html';
+
+      } catch (error) {
+        console.error('Failed to send order:', error);
+        alert('There was an error placing your order. Please try again.');
+        submitButton.disabled = false;
+        submitButton.textContent = 'Place Order';
+      }
     });
   }
 
