@@ -1,0 +1,6 @@
+# Hide the secret .env file
+backend/.env
+
+# Hide large dependency folders
+node_modules/
+backend/node_modules/
