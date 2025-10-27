@@ -1,3 +1,47 @@
+// Check immediately if Firebase Auth object is available
+// Use a self-invoking function to run the check early
+(function() {
+    // We need to wait for Firebase Auth to initialize before checking the user state.
+    // However, the full DOM might not be ready yet.
+    // We create a temporary listener just for the initial auth check.
+
+    const checkAuthStatus = () => {
+        // Ensure firebase and firebase.auth() are ready
+        if (typeof firebase !== 'undefined' && typeof firebase.auth === 'function') {
+            const auth = firebase.auth();
+
+            // Use onAuthStateChanged for the initial check too
+            const unsubscribe = auth.onAuthStateChanged(user => {
+                unsubscribe(); // Important: Stop listening after the first check
+
+                const currentPage = window.location.pathname.split('/').pop(); // Get current HTML filename
+
+                if (!user && currentPage !== 'login.html') {
+                    // If NOT logged in AND NOT on login.html, redirect to login
+                    console.log("User not logged in. Redirecting to login page.");
+                    window.location.href = 'login.html';
+                } else {
+                    // User is logged in, or already on the login page.
+                    // Let the rest of the app load normally.
+                    console.log("User logged in or on login page. Proceeding.");
+                }
+            });
+        } else {
+            // If Firebase isn't ready yet, wait a moment and try again.
+            // This is a basic fallback, might need adjustment if Firebase loads very slowly.
+            console.warn("Firebase not ready yet for auth check, retrying...");
+            setTimeout(checkAuthStatus, 100); // Try again in 100ms
+        }
+    };
+
+    // Start the check
+    checkAuthStatus();
+
+})(); // Immediately invoke the function
+
+// --- END REDIRECT LOGIC ---
+
+
 document.addEventListener('DOMContentLoaded', () => {
   AOS.init({
     duration: 800,
