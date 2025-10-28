@@ -16,7 +16,7 @@
 </head>
 <body class="flex flex-col items-center justify-center min-h-screen hero-gradient">
     <div class="bg-white p-10 rounded-lg shadow-xl max-w-sm w-full text-center">
-        <a href="#" onclick="return false;" class="inline-block mb-6"> <img class="h-10 w-auto mx-auto" src="https://i.imgur.com/KNRtw3t.png" alt="Carries Boutique">
+        <a href="index.html" class="inline-block mb-6"> <img class="h-10 w-auto mx-auto" src="https://i.imgur.com/KNRtw3t.png" alt="Carries Boutique">
             <span class="mt-2 text-2xl font-semibold text-gray-900 block font-serif">Carries Boutique</span>
         </a>
         <p class="text-gray-600 mb-8">Please log in to continue</p>
@@ -26,34 +26,42 @@
             Sign in with Google
         </button>
 
-         </div>
+    </div>
 
-    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
-    <script>
-      const firebaseConfig = {
-        apiKey: "AIzaSyCkyMyRLCc98BifcSYbIgs3_v3u2qBvdpg", // YOUR KEY
-        authDomain: "carries-boutique.firebaseapp.com",
-        projectId: "carries-boutique",
-        storageBucket: "carries-boutique.firebasestorage.app",
-        messagingSenderId: "512525813635",
-        appId: "1:512525813635:web:afe3d28c5bd2db68ae58b6",
-        measurementId: "G-2Q2QY4HJ9Y"
-      };
-      // Initialize Firebase
-      firebase.initializeApp(firebaseConfig);
-      // No need to create global 'auth' here, app.js will handle it.
-    </script>
+<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
 
-    <script src="app.js"></script>
+<script>
+  // Your web app's Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyCkyMyRLCc98BifcSYbIgs3_v3u2qBvdpg",
+    authDomain: "carries-boutique.firebaseapp.com",
+    projectId: "carries-boutique",
+    storageBucket: "carries-boutique.firebasestorage.app",
+    messagingSenderId: "512525813635",
+    appId: "1:512525813635:web:afe3d28c5bd2db68ae58b6",
+    measurementId: "G-2Q2QY4HJ9Y"
+  };
 
-    <script>
-        // Ensure Feather Icons run on this page too, after DOM is ready
-        document.addEventListener('DOMContentLoaded', () => {
-             if (typeof feather !== 'undefined') {
-                feather.replace();
-             }
-        });
-    </script>
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+
+  // Create global variables for your app.js to use
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+
+</script>
+
+<script src="app.js"></script>
+<script>
+    // Ensure Feather Icons run on this page too, after DOM is ready
+    document.addEventListener('DOMContentLoaded', () => {
+        if (typeof feather !== 'undefined') {
+            feather.replace();
+        }
+    });
+</script>
+
 </body>
 </html>

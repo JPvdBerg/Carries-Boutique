@@ -46,8 +46,9 @@
             <span class="ml-2 text-xl font-semibold text-gray-900">Carries Boutique</span>
           </a>
         </div>
-         <div class="hidden md:ml-6 md:flex md:items-center md:space-x-8">
-          <a href="index.html" class="nav-link text-gray-900 px-3 py-2 text-sm font-medium">Home</a> <a href="#collections" class="nav-link text-gray-500 hover:text-gray-900 px-3 py-2 text-sm font-medium">Collections</a>
+        <div class="hidden md:ml-6 md:flex md:items-center md:space-x-8">
+          <a href="index.html" class="nav-link text-gray-900 px-3 py-2 text-sm font-medium">Home</a>
+          <a href="#collections" class="nav-link text-gray-500 hover:text-gray-900 px-3 py-2 text-sm font-medium">Collections</a>
           <a href="shop.html" class="nav-link text-gray-500 hover:text-gray-900 px-3 py-2 text-sm font-medium">Shop</a>
           <a href="#about" class="nav-link text-gray-500 hover:text-gray-900 px-3 py-2 text-sm font-medium">About</a>
           <a href="#contact" class="nav-link text-gray-500 hover:text-gray-900 px-3 py-2 text-sm font-medium">Contact</a>
@@ -58,16 +59,20 @@
           </a>
 
           <div id="auth-container" class="ml-4 flex items-center space-x-2">
-              <div id="user-info" style="display: none;" class="flex items-center space-x-2">
-                  <span id="user-display-name" class="text-sm font-medium text-gray-700"></span>
-                  <button id="logout-btn" class="px-3 py-1 border border-transparent text-sm font-medium rounded-full text-white bg-pink-600 hover:bg-pink-700">Logout</button>
-              </div>
+            <div id="user-info" style="display: none;" class="flex items-center space-x-2">
+                <span id="user-display-name" class="text-sm font-medium text-gray-700"></span>
+                <button id="logout-btn" class="px-3 py-1 border border-transparent text-sm font-medium rounded-full text-white bg-pink-600 hover:bg-pink-700">Logout</button>
+            </div>
+             <button id="google-login-btn" style="display: none;" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-full text-gray-700 bg-white hover:bg-gray-50">
+                <svg class="w-4 h-4 mr-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512"><path fill="currentColor" d="M488 261.8C488 403.3 381.5 512 244 512 109.8 512 0 402.2 0 258S109.8 4 244 4a237.2 237.2 0 01166.3 64.3l-64.4 64.4a150 150 0 00-101.9-38.3c-83.3 0-151.7 67.5-151.7 150.9s68.4 150.9 151.7 150.9c90.8 0 134.4-60.5 139.5-93.7H244v-77.9h236.1c2.4 12.8 3.9 26.5 3.9 41.2z"/></svg>
+                Login with Google
+             </button>
           </div>
-           <a href="https://wa.me/27828735697" target="_blank" class="ml-2 whatsapp-btn inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full text-white">
+          <a href="https://wa.me/27828735697" target="_blank" class="ml-2 whatsapp-btn inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full text-white">
             <i data-feather="message-circle" class="mr-2"></i> WhatsApp
           </a>
         </div>
-         <div class="-mr-2 flex items-center md:hidden">
+        <div class="-mr-2 flex items-center md:hidden">
           <a href="cart.html" class="relative mr-2 text-gray-500 hover:text-gray-900 p-2 rounded-full hover:bg-gray-100">
             <i data-feather="shopping-cart"></i>
             <span class="cart-badge hidden absolute -top-1 -right-1 bg-pink-600 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">0</span>
@@ -81,14 +86,15 @@
 
     <div class="hidden md:hidden" id="mobile-menu">
       <div class="pt-2 pb-3 space-y-1">
-        <a href="index.html" class="bg-pink-50 border-pink-500 text-pink-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">Home</a> <a href="#collections" class="border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">Collections</a>
+        <a href="index.html" class="bg-pink-50 border-pink-500 text-pink-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">Home</a>
+        <a href="#collections" class="border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">Collections</a>
         <a href="shop.html" class="border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">Shop</a>
         <a href="#about" class="border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">About</a>
         <a href="#contact" class="border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">Contact</a>
         <a href="https://wa.me/27828735697" target="_blank" class="mt-2 whatsapp-btn inline-flex items-center justify-center px-4 py-2 border border-transparent text-base font-medium rounded-full text-white w-full">
           <i data-feather="message-circle" class="mr-2"></i> WhatsApp
         </a>
-         </div>
+       </div>
     </div>
   </nav>
 
@@ -145,11 +151,10 @@
 
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         <div class="product-card bg-white rounded-lg overflow-hidden shadow-md transition-all duration-300" data-aos="fade-up" data-aos-delay="100">
-          <a href="product.html" class="relative block">
-            <img class="w-full h-80 object-cover" src="http://static.photos/fashion/640x360/5" alt="Floral Dress">
+          <a href="product.html?id=prod_001" class="relative block"> <img class="w-full h-80 object-cover" src="http://static.photos/fashion/640x360/5" alt="Floral Dress">
           </a>
           <div class="p-4">
-            <h3 class="text-lg font-medium text-gray-900"><a href="product.html" class="hover:underline">Floral Maxi Dress</a></h3>
+            <h3 class="text-lg font-medium text-gray-900"><a href="product.html?id=prod_001" class="hover:underline">Floral Maxi Dress</a></h3>
             <p class="mt-1 text-sm text-gray-500">Summer Collection</p>
             <div class="mt-4 flex justify-between items-center">
               <span class="text-lg font-bold text-gray-900">R599</span>
@@ -161,11 +166,10 @@
         </div>
 
         <div class="product-card bg-white rounded-lg overflow-hidden shadow-md transition-all duration-300" data-aos="fade-up" data-aos-delay="200">
-          <a href="product.html" class="relative block">
-            <img class="w-full h-80 object-cover" src="http://static.photos/fashion/640x360/6" alt="Denim Jacket">
+          <a href="product.html?id=prod_002" class="relative block"> <img class="w-full h-80 object-cover" src="http://static.photos/fashion/640x360/6" alt="Denim Jacket">
           </a>
           <div class="p-4">
-            <h3 class="text-lg font-medium text-gray-900"><a href="product.html" class="hover:underline">Classic Denim Jacket</a></h3>
+            <h3 class="text-lg font-medium text-gray-900"><a href="product.html?id=prod_002" class="hover:underline">Classic Denim Jacket</a></h3>
             <p class="mt-1 text-sm text-gray-500">Casual Collection</p>
             <div class="mt-4 flex justify-between items-center">
               <span class="text-lg font-bold text-gray-900">R799</span>
@@ -177,11 +181,10 @@
         </div>
 
         <div class="product-card bg-white rounded-lg overflow-hidden shadow-md transition-all duration-300" data-aos="fade-up" data-aos-delay="300">
-          <a href="product.html" class="relative block">
-            <img class="w-full h-80 object-cover" src="http://static.photos/fashion/640x360/7" alt="Silk Blouse">
+          <a href="product.html?id=prod_003" class="relative block"> <img class="w-full h-80 object-cover" src="http://static.photos/fashion/640x360/7" alt="Silk Blouse">
           </a>
           <div class="p-4">
-            <h3 class="text-lg font-medium text-gray-900"><a href="product.html" class="hover:underline">Silk Evening Blouse</a></h3>
+            <h3 class="text-lg font-medium text-gray-900"><a href="product.html?id=prod_003" class="hover:underline">Silk Evening Blouse</a></h3>
             <p class="mt-1 text-sm text-gray-500">Elegance Collection</p>
             <div class="mt-4 flex justify-between items-center">
               <span class="text-lg font-bold text-gray-900">R899</span>
@@ -193,11 +196,10 @@
         </div>
 
         <div class="product-card bg-white rounded-lg overflow-hidden shadow-md transition-all duration-300" data-aos="fade-up" data-aos-delay="400">
-          <a href="product.html" class="relative block">
-            <img class="w-full h-80 object-cover" src="http://static.photos/fashion/640x360/8" alt="Linen Pants">
+          <a href="product.html?id=prod_004" class="relative block"> <img class="w-full h-80 object-cover" src="http://static.photos/fashion/640x360/8" alt="Linen Pants">
           </a>
           <div class="p-4">
-            <h3 class="text-lg font-medium text-gray-900"><a href="product.html" class="hover:underline">Linen Wide Leg Pants</a></h3>
+            <h3 class="text-lg font-medium text-gray-900"><a href="product.html?id=prod_004" class="hover:underline">Linen Wide Leg Pants</a></h3>
             <p class="mt-1 text-sm text-gray-500">Comfort Collection</p>
             <div class="mt-4 flex justify-between items-center">
               <span class="text-lg font-bold text-gray-900">R699</span>
@@ -222,7 +224,25 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="lg:grid lg:grid-cols-2 lg:gap-12 items-center">
         <div class="mb-12 lg:mb-0" data-aos="fade-right"><img src="http://static.photos/workspace/640x360/1" alt="Boutique Workshop" class="rounded-lg shadow-xl"></div>
-        <div data-aos="fade-left"><h2 class="text-3xl font-serif font-bold text-gray-900 sm:text-4xl">Our Story</h2><p class="mt-6 text-lg text-gray-500">Founded in 2015, Carries Boutique began as a small sewing studio with a passion for creating unique, high-quality garments. What started as a hobby quickly grew into a beloved local brand known for its attention to detail and commitment to sustainable fashion.</p><p class="mt-4 text-lg text-gray-500">Each piece in our collection is carefully designed and crafted to ensure perfect fit, comfort, and style. We believe fashion should be both beautiful and ethical, which is why we prioritize sustainable materials and fair labor practices.</p><div class="mt-8"><div class="flex items-center mb-4"><div class="flex-shrink-0 bg-pink-100 rounded-full p-2"><i data-feather="check" class="h-6 w-6 text-pink-600"></i></div><div class="ml-3 text-lg font-medium text-gray-900">Handcrafted with love</div></div><div class="flex items-center mb-4"><div class="flex-shrink-0 bg-pink-100 rounded-full p-2"><i data-feather="check" class="h-6 w-6 text-pink-600"></i></div><div class="ml-3 text-lg font-medium text-gray-900">Premium quality fabrics</div></div><div class="flex items-center"><div class="flex-shrink-0 bg-pink-100 rounded-full p-2"><i data-feather="check" class="h-6 w-6 text-pink-600"></i></div><div class="ml-3 text-lg font-medium text-gray-900">Ethical & sustainable</div></div></div></div>
+        <div data-aos="fade-left">
+            <h2 class="text-3xl font-serif font-bold text-gray-900 sm:text-4xl">Our Story</h2>
+            <p class="mt-6 text-lg text-gray-500">Founded in 2015, Carries Boutique began as a small sewing studio with a passion for creating unique, high-quality garments. What started as a hobby quickly grew into a beloved local brand known for its attention to detail and commitment to sustainable fashion.</p>
+            <p class="mt-4 text-lg text-gray-500">Each piece in our collection is carefully designed and crafted to ensure perfect fit, comfort, and style. We believe fashion should be both beautiful and ethical, which is why we prioritize sustainable materials and fair labor practices.</p>
+            <div class="mt-8">
+                <div class="flex items-center mb-4">
+                    <div class="flex-shrink-0 bg-pink-100 rounded-full p-2"><i data-feather="check" class="h-6 w-6 text-pink-600"></i></div>
+                    <div class="ml-3 text-lg font-medium text-gray-900">Handcrafted with love</div>
+                </div>
+                <div class="flex items-center mb-4">
+                    <div class="flex-shrink-0 bg-pink-100 rounded-full p-2"><i data-feather="check" class="h-6 w-6 text-pink-600"></i></div>
+                    <div class="ml-3 text-lg font-medium text-gray-900">Premium quality fabrics</div>
+                </div>
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 bg-pink-100 rounded-full p-2"><i data-feather="check" class="h-6 w-6 text-pink-600"></i></div>
+                    <div class="ml-3 text-lg font-medium text-gray-900">Ethical & sustainable</div>
+                </div>
+            </div>
+        </div>
       </div>
     </div>
   </section>
@@ -231,9 +251,42 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="text-center mb-16" data-aos="fade-up"><h2 class="text-3xl font-serif font-bold text-gray-900 sm:text-4xl">What Our Customers Say</h2></div>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <div class="testimonial-card p-8 rounded-xl shadow-md" data-aos="fade-up" data-aos-delay="100"><div class="flex items-center mb-4"><img class="h-12 w-12 rounded-full" src="http://static.photos/people/200x200/1" alt="Sarah M."><div class="ml-4"><h4 class="text-lg font-medium text-gray-900">Sarah M.</h4><div class="flex items-center mt-1"><i data-feather="star" class="w-4 h-4 text-yellow-400 fill-current"></i><i data-feather="star" class="w-4 h-4 text-yellow-400 fill-current"></i><i data-feather="star" class="w-4 h-4 text-yellow-400 fill-current"></i><i data-feather="star" class="w-4 h-4 text-yellow-400 fill-current"></i><i data-feather="star" class="w-4 h-4 text-yellow-400 fill-current"></i></div></div></div><p class="text-gray-600">"The floral dress I bought is absolutely stunning! The fabric is so soft and the fit is perfect. I've received so many compliments already."</p></div>
-        <div class="testimonial-card p-8 rounded-xl shadow-md" data-aos="fade-up" data-aos-delay="200"><div class="flex items-center mb-4"><img class="h-12 w-12 rounded-full" src="http://static.photos/people/200x200/2" alt="James T."><div class="ml-4"><h4 class="text-lg font-medium text-gray-900">James T.</h4><div class="flex items-center mt-1"><i data-feather="star" class="w-4 h-4 text-yellow-400 fill-current"></i><i data-feather="star" class="w-4 h-4 text-yellow-400 fill-current"></i><i data-feather="star" class="w-4 h-4 text-yellow-400 fill-current"></i><i data-feather="star" class="w-4 h-4 text-yellow-400 fill-current"></i><i data-feather="star" class="w-4 h-4 text-yellow-400 fill-current"></i></div></div></div><p class="text-gray-600">"I bought the denim jacket for my wife and she loves it! The quality is exceptional and the service was fantastic. Will definitely shop here again."</p></div>
-        <div class="testimonial-card p-8 rounded-xl shadow-md" data-aos="fade-up" data-aos-delay="300"><div class="flex items-center mb-4"><img class="h-12 w-12 rounded-full" src="http://static.photos/people/200x200/3" alt="Lisa K."><div class="ml-4"><h4 class="text-lg font-medium text-gray-900">Lisa K.</h4><div class="flex items-center mt-1"><i data-feather="star" class="w-4 h-4 text-yellow-400 fill-current"></i><i data-feather="star" class="w-4 h-4 text-yellow-400 fill-current"></i><i data-feather="star" class="w-4 h-4 text-yellow-400 fill-current"></i><i data-feather="star" class="w-4 h-4 text-yellow-400 fill-current"></i><i data-feather="star" class="w-4 h-4 text-yellow-400 fill-current"></i></div></div></div><p class="text-gray-600">"The silk blouse is my new favorite piece! It's so elegant and comfortable. I appreciate that Carries Boutique focuses on sustainable fashion."</p></div>
+        <div class="testimonial-card p-8 rounded-xl shadow-md" data-aos="fade-up" data-aos-delay="100">
+            <div class="flex items-center mb-4">
+                <img class="h-12 w-12 rounded-full" src="http://static.photos/people/200x200/1" alt="Sarah M.">
+                <div class="ml-4">
+                    <h4 class="text-lg font-medium text-gray-900">Sarah M.</h4>
+                    <div class="flex items-center mt-1">
+                        <i data-feather="star" class="w-4 h-4 text-yellow-400 fill-current"></i><i data-feather="star" class="w-4 h-4 text-yellow-400 fill-current"></i><i data-feather="star" class="w-4 h-4 text-yellow-400 fill-current"></i><i data-feather="star" class="w-4 h-4 text-yellow-400 fill-current"></i><i data-feather="star" class="w-4 h-4 text-yellow-400 fill-current"></i>
+                    </div>
+                </div>
+            </div>
+            <p class="text-gray-600">"The floral dress I bought is absolutely stunning! The fabric is so soft and the fit is perfect. I've received so many compliments already."</p>
+        </div>
+        <div class="testimonial-card p-8 rounded-xl shadow-md" data-aos="fade-up" data-aos-delay="200">
+            <div class="flex items-center mb-4">
+                <img class="h-12 w-12 rounded-full" src="http://static.photos/people/200x200/2" alt="James T.">
+                <div class="ml-4">
+                    <h4 class="text-lg font-medium text-gray-900">James T.</h4>
+                    <div class="flex items-center mt-1">
+                        <i data-feather="star" class="w-4 h-4 text-yellow-400 fill-current"></i><i data-feather="star" class="w-4 h-4 text-yellow-400 fill-current"></i><i data-feather="star" class="w-4 h-4 text-yellow-400 fill-current"></i><i data-feather="star" class="w-4 h-4 text-yellow-400 fill-current"></i><i data-feather="star" class="w-4 h-4 text-yellow-400 fill-current"></i>
+                    </div>
+                </div>
+            </div>
+            <p class="text-gray-600">"I bought the denim jacket for my wife and she loves it! The quality is exceptional and the service was fantastic. Will definitely shop here again."</p>
+        </div>
+        <div class="testimonial-card p-8 rounded-xl shadow-md" data-aos="fade-up" data-aos-delay="300">
+            <div class="flex items-center mb-4">
+                <img class="h-12 w-12 rounded-full" src="http://static.photos/people/200x200/3" alt="Lisa K.">
+                <div class="ml-4">
+                    <h4 class="text-lg font-medium text-gray-900">Lisa K.</h4>
+                    <div class="flex items-center mt-1">
+                        <i data-feather="star" class="w-4 h-4 text-yellow-400 fill-current"></i><i data-feather="star" class="w-4 h-4 text-yellow-400 fill-current"></i><i data-feather="star" class="w-4 h-4 text-yellow-400 fill-current"></i><i data-feather="star" class="w-4 h-4 text-yellow-400 fill-current"></i><i data-feather="star" class="w-4 h-4 text-yellow-400 fill-current"></i>
+                    </div>
+                </div>
+            </div>
+            <p class="text-gray-600">"The silk blouse is my new favorite piece! It's so elegant and comfortable. I appreciate that Carries Boutique focuses on sustainable fashion."</p>
+        </div>
       </div>
     </div>
   </section>
@@ -253,8 +306,60 @@
   <section id="contact" class="py-16 bg-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="lg:grid lg:grid-cols-2 lg:gap-12">
-        <div class="mb-12 lg:mb-0" data-aos="fade-right"><h2 class="text-3xl font-serif font-bold text-gray-900 sm:text-4xl">Get In Touch</h2><p class="mt-6 text-lg text-gray-500">Have questions about our products or need assistance with an order? We're here to help!</p><div class="mt-8"><div class="flex items-start mb-6"><div class="flex-shrink-0 bg-pink-100 rounded-full p-3"><i data-feather="map-pin" class="h-6 w-6 text-pink-600"></i></div><div class="ml-4"><h3 class="text-lg font-medium text-gray-900">Our Location</h3><p class="mt-1 text-gray-600">123 Fashion Street, Cape Town, South Africa</p></div></div><div class="flex items-start mb-6"><div class="flex-shrink-0 bg-pink-100 rounded-full p-3"><i data-feather="mail" class="h-6 w-6 text-pink-600"></i></div><div class="ml-4"><h3 class="text-lg font-medium text-gray-900">Email Us</h3><p class="mt-1 text-gray-600">hello@carriesboutique.com</p></div></div><div class="flex items-start"><div class="flex-shrink-0 bg-pink-100 rounded-full p-3"><i data-feather="phone" class="h-6 w-6 text-pink-600"></i></div><div class="ml-4"><h3 class="text-lg font-medium text-gray-900">Call Us</h3><p class="mt-1 text-gray-600">+27 82 873 5697</p></div></div></div><div class="mt-8"><h3 class="text-lg font-medium text-gray-900 mb-4">Follow Us</h3><div class="flex space-x-4"><a href="https://www.facebook.com/p/Carries-100063057530393" target="_blank" class="p-3 bg-gray-100 rounded-full hover:bg-gray-200"><i data-feather="facebook" class="h-5 w-5 text-gray-700"></i></a><a href="https://www.instagram.com/its_sew_carries" target="_blank" class="p-3 bg-gray-100 rounded-full hover:bg-gray-200"><i data-feather="instagram" class="h-5 w-5 text-gray-700"></i></a><a href="https://www.tiktok.com/@carries039" target="_blank" class="p-3 bg-gray-100 rounded-full hover:bg-gray-200"><i data-feather="music" class="h-5 w-5 text-gray-700"></i></a></div></div></div>
-        <div data-aos="fade-left"><div class="bg-gray-50 p-8 rounded-lg shadow-md"><h3 class="text-xl font-medium text-gray-900 mb-6">Send Us a Message</h3><form id="contact-form"><div class="mb-4"><label for="name" class="block text-sm font-medium text-gray-700 mb-1">Your Name</label><input type="text" id="name" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-pink-500 focus:border-pink-500"></div><div class="mb-4"><label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email Address</label><input type="email" id="email" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-pink-500 focus:border-pink-500"></div><div class="mb-4"><label for="message" class="block text-sm font-medium text-gray-700 mb-1">Your Message</label><textarea id="message" rows="4" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-pink-500 focus:border-pink-500"></textarea></div><button type="submit" class="w-full px-6 py-3 border border-transparent text-base font-medium rounded-full text-white bg-pink-600 hover:bg-pink-700">Send Message</button></form></div></div>
+        <div class="mb-12 lg:mb-0" data-aos="fade-right">
+            <h2 class="text-3xl font-serif font-bold text-gray-900 sm:text-4xl">Get In Touch</h2>
+            <p class="mt-6 text-lg text-gray-500">Have questions about our products or need assistance with an order? We're here to help!</p>
+            <div class="mt-8">
+                <div class="flex items-start mb-6">
+                    <div class="flex-shrink-0 bg-pink-100 rounded-full p-3"><i data-feather="map-pin" class="h-6 w-6 text-pink-600"></i></div>
+                    <div class="ml-4">
+                        <h3 class="text-lg font-medium text-gray-900">Our Location</h3>
+                        <p class="mt-1 text-gray-600">123 Fashion Street, Cape Town, South Africa</p>
+                    </div>
+                </div>
+                <div class="flex items-start mb-6">
+                    <div class="flex-shrink-0 bg-pink-100 rounded-full p-3"><i data-feather="mail" class="h-6 w-6 text-pink-600"></i></div>
+                    <div class="ml-4">
+                        <h3 class="text-lg font-medium text-gray-900">Email Us</h3>
+                        <p class="mt-1 text-gray-600">hello@carriesboutique.com</p>
+                    </div>
+                </div>
+                <div class="flex items-start">
+                    <div class="flex-shrink-0 bg-pink-100 rounded-full p-3"><i data-feather="phone" class="h-6 w-6 text-pink-600"></i></div>
+                    <div class="ml-4">
+                        <h3 class="text-lg font-medium text-gray-900">Call Us</h3>
+                        <p class="mt-1 text-gray-600">+27 82 873 5697</p>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-8">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Follow Us</h3>
+                <div class="flex space-x-4">
+                    <a href="https://www.facebook.com/p/Carries-100063057530393" target="_blank" class="p-3 bg-gray-100 rounded-full hover:bg-gray-200"><i data-feather="facebook" class="h-5 w-5 text-gray-700"></i></a>
+                    <a href="https://www.instagram.com/its_sew_carries" target="_blank" class="p-3 bg-gray-100 rounded-full hover:bg-gray-200"><i data-feather="instagram" class="h-5 w-5 text-gray-700"></i></a>
+                    <a href="https://www.tiktok.com/@carries039" target="_blank" class="p-3 bg-gray-100 rounded-full hover:bg-gray-200"><i data-feather="music" class="h-5 w-5 text-gray-700"></i></a> </div>
+            </div>
+        </div>
+        <div data-aos="fade-left">
+            <div class="bg-gray-50 p-8 rounded-lg shadow-md">
+                <h3 class="text-xl font-medium text-gray-900 mb-6">Send Us a Message</h3>
+                <form id="contact-form">
+                    <div class="mb-4">
+                        <label for="contact-name" class="block text-sm font-medium text-gray-700 mb-1">Your Name</label>
+                        <input type="text" id="contact-name" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-pink-500 focus:border-pink-500">
+                    </div>
+                    <div class="mb-4">
+                        <label for="contact-email" class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                        <input type="email" id="contact-email" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-pink-500 focus:border-pink-500">
+                    </div>
+                    <div class="mb-4">
+                        <label for="contact-message" class="block text-sm font-medium text-gray-700 mb-1">Your Message</label>
+                        <textarea id="contact-message" rows="4" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-pink-500 focus:border-pink-500"></textarea>
+                    </div>
+                    <button type="submit" class="w-full px-6 py-3 border border-transparent text-base font-medium rounded-full text-white bg-pink-600 hover:bg-pink-700">Send Message</button>
+                </form>
+            </div>
+        </div>
       </div>
     </div>
   </section>
@@ -262,17 +367,55 @@
   <footer class="bg-gray-900 text-white py-12">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-        <div><a href="index.html" class="flex items-center"><img class="h-8 w-auto" src="https://i.imgur.com/KNRtw3t.png" alt="Carries Boutique"><span class="ml-2 text-xl font-semibold">Carries Boutique</span></a><p class="mt-4 text-gray-400">Premium fashion boutique offering handcrafted, sustainable clothing with timeless elegance.</p></div>
-        <div><h3 class="text-lg font-medium mb-4">Shop</h3><ul class="space-y-2"><li><a href="shop.html" class="footer-link text-gray-400 hover:text-white">New Arrivals</a></li><li><a href="shop.html" class="footer-link text-gray-400 hover:text-white">Best Sellers</a></li><li><a href="shop.html" class="footer-link text-gray-400 hover:text-white">Sale Items</a></li><li><a href="#contact" class="footer-link text-gray-400 hover:text-white">Gift Cards</a></li></ul></div>
-        <div><h3 class="text-lg font-medium mb-4">Information</h3><ul class="space-y-2"><li><a href="#about" class="footer-link text-gray-400 hover:text-white">About Us</a></li><li><a href="#about" class="footer-link text-gray-400 hover:text-white">Sustainability</a></li><li><a href="#contact" class="footer-link text-gray-400 hover:text-white">Shipping Policy</a></li><li><a href="#contact" class="footer-link text-gray-400 hover:text-white">Returns & Exchanges</a></li></ul></div>
-        <div><h3 class="text-lg font-medium mb-4">Newsletter</h3><p class="text-gray-400 mb-4">Subscribe to get updates on new arrivals and special offers.</p><form id="newsletter-form" class="flex"><input type="email" placeholder="Your email" class="px-4 py-2 rounded-l-lg w-full text-gray-900 focus:outline-none"><button type="submit" class="bg-pink-600 hover:bg-pink-700 px-4 py-2 rounded-r-lg"><i data-feather="send"></i></button></form></div>
+        <div>
+            <a href="index.html" class="flex items-center">
+                <img class="h-8 w-auto" src="https://i.imgur.com/KNRtw3t.png" alt="Carries Boutique">
+                <span class="ml-2 text-xl font-semibold">Carries Boutique</span>
+            </a>
+            <p class="mt-4 text-gray-400">Premium fashion boutique offering handcrafted, sustainable clothing with timeless elegance.</p>
+        </div>
+        <div>
+            <h3 class="text-lg font-medium mb-4">Shop</h3>
+            <ul class="space-y-2">
+                <li><a href="shop.html" class="footer-link text-gray-400 hover:text-white">New Arrivals</a></li>
+                <li><a href="shop.html" class="footer-link text-gray-400 hover:text-white">Best Sellers</a></li>
+                <li><a href="shop.html" class="footer-link text-gray-400 hover:text-white">Sale Items</a></li>
+                <li><a href="#contact" class="footer-link text-gray-400 hover:text-white">Gift Cards</a></li>
+            </ul>
+        </div>
+        <div>
+            <h3 class="text-lg font-medium mb-4">Information</h3>
+            <ul class="space-y-2">
+                <li><a href="#about" class="footer-link text-gray-400 hover:text-white">About Us</a></li>
+                <li><a href="#about" class="footer-link text-gray-400 hover:text-white">Sustainability</a></li>
+                <li><a href="#contact" class="footer-link text-gray-400 hover:text-white">Shipping Policy</a></li>
+                <li><a href="#contact" class="footer-link text-gray-400 hover:text-white">Returns & Exchanges</a></li>
+            </ul>
+        </div>
+        <div>
+            <h3 class="text-lg font-medium mb-4">Newsletter</h3>
+            <p class="text-gray-400 mb-4">Subscribe to get updates on new arrivals and special offers.</p>
+            <form id="newsletter-form" class="flex">
+                <input type="email" placeholder="Your email" class="px-4 py-2 rounded-l-lg w-full text-gray-900 focus:outline-none">
+                <button type="submit" class="bg-pink-600 hover:bg-pink-700 px-4 py-2 rounded-r-lg"><i data-feather="send"></i></button>
+            </form>
+        </div>
       </div>
-      <div class="mt-12 pt-8 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center"><p class="text-gray-400 text-sm">&copy; 2023 Carries Boutique. All rights reserved.</p><div class="mt-4 md:mt-0 flex space-x-6"><a href="#" class="text-gray-400 hover:text-white"><i data-feather="credit-card"></i></a><a href="#" class="text-gray-400 hover:text-white"><i data-feather="lock"></i></a><a href="#" class="text-gray-400 hover:text-white"><i data-feather="shield"></i></a></div></div>
+      <div class="mt-12 pt-8 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center">
+          <p class="text-gray-400 text-sm">&copy; 2023 Carries Boutique. All rights reserved.</p>
+          <div class="mt-4 md:mt-0 flex space-x-6">
+              <a href="#" class="text-gray-400 hover:text-white"><i data-feather="credit-card"></i></a>
+              <a href="#" class="text-gray-400 hover:text-white"><i data-feather="lock"></i></a>
+              <a href="#" class="text-gray-400 hover:text-white"><i data-feather="shield"></i></a>
+          </div>
+      </div>
     </div>
   </footer>
   
-  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script> 
-<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script> 
+<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
+
 <script>
   // Your web app's Firebase configuration
   const firebaseConfig = {
@@ -282,19 +425,18 @@
     storageBucket: "carries-boutique.firebasestorage.app",
     messagingSenderId: "512525813635",
     appId: "1:512525813635:web:afe3d28c5bd2db68ae58b6",
-    measurementId: "G-2Q2QY4HJ9Y" // Optional analytics ID
+    measurementId: "G-2Q2QY4HJ9Y"
   };
 
   // Initialize Firebase
   firebase.initializeApp(firebaseConfig);
-  
-  // Make auth globally available (easier for simple apps)
-  const auth = firebase.auth(); 
-  // If using Firestore: const db = firebase.firestore(); 
 
+  // Create global variables for your app.js to use
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+  
 </script>
 
-  <script src="app.js"></script>
+<script src="app.js"></script>
 </body>
 </html>
-```
