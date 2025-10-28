@@ -809,5 +809,3 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 }); // --- END DOMContentLoaded ---
-
-```
