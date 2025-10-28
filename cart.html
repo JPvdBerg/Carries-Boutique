@@ -1,173 +1,171 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Shopping Cart | Carries Boutique</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-  <link rel="icon" type="image/png" href="https://i.imgur.com/KNRtw3t.png">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
-  <style>
-    /* ... (Your existing styles) ... */
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Inter', sans-serif; color: #333; background-color: #faf9f7; overflow-x: hidden; }
-    .hero-gradient { background: linear-gradient(135deg, #ff6f91, #ff9671, #ffc75f); background-size: 200% 200%; animation: gradientShift 10s ease infinite; }
-    @keyframes gradientShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
-    .nav-link { position: relative; }
-    .nav-link::after { content: ''; position: absolute; width: 0; height: 2px; bottom: -2px; left: 0; background-color: #b93e65; transition: width 0.3s ease; }
-    .nav-link:hover::after { width: 100%; }
-    .product-card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.1); }
-    .whatsapp-btn { background: linear-gradient(135deg, #25D366, #1ebe5a); transition: all 0.3s ease; }
-    .whatsapp-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(37, 211, 102, 0.3); }
-    .collection-card { transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-    .collection-card:hover { transform: scale(1.03); }
-    .testimonial-card { background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,255,255,0.7)); backdrop-filter: blur(10px); }
-    .footer-link:hover { color: #b93e65; }
-    .blob { position: absolute; border-radius: 50%; filter: blur(100px); opacity: 0.15; z-index: 0; }
-    .blob-1 { width: 400px; height: 400px; background: #ff6f91; top: -100px; left: -150px; }
-    .blob-2 { width: 500px; height: 500px; background: #ff9671; bottom: -150px; right: -200px; }
-    .blob-3 { width: 300px; height: 300px; background: #ffc75f; top: 150px; right: -100px; }
-    @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-15px); } 100% { transform: translateY(0px); } }
-    .floating { animation: float 6s ease-in-out infinite; }
-    .scroll-down { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); color: white; font-size: 1.5rem; animation: bounce 2s infinite; cursor: pointer; }
-    @keyframes bounce { 0%, 20%, 50%, 80%, 100% {transform: translateY(0);} 40% {transform: translateY(-20px);} 60% {transform: translateY(-10px);} }
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shopping Cart | Carries Boutique</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="https://i.imgur.com/KNRtw3t.png">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+  <style>
+    /* ... (Your existing styles) ... */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', sans-serif; color: #333; background-color: #faf9f7; overflow-x: hidden; }
+    .hero-gradient { background: linear-gradient(135deg, #ff6f91, #ff9671, #ffc75f); background-size: 200% 200%; animation: gradientShift 10s ease infinite; }
+    @keyframes gradientShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+    .nav-link { position: relative; }
+    .nav-link::after { content: ''; position: absolute; width: 0; height: 2px; bottom: -2px; left: 0; background-color: #b93e65; transition: width 0.3s ease; }
+    .nav-link:hover::after { width: 100%; }
+    .product-card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.1); }
+    .whatsapp-btn { background: linear-gradient(135deg, #25D366, #1ebe5a); transition: all 0.3s ease; }
+    .whatsapp-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(37, 211, 102, 0.3); }
+    .collection-card { transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+    .collection-card:hover { transform: scale(1.03); }
+    .testimonial-card { background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,255,255,0.7)); backdrop-filter: blur(10px); }
+    .footer-link:hover { color: #b93e65; }
+    .blob { position: absolute; border-radius: 50%; filter: blur(100px); opacity: 0.15; z-index: 0; }
+    .blob-1 { width: 400px; height: 400px; background: #ff6f91; top: -100px; left: -150px; }
+    .blob-2 { width: 500px; height: 500px; background: #ff9671; bottom: -150px; right: -200px; }
+    .blob-3 { width: 300px; height: 300px; background: #ffc75f; top: 150px; right: -100px; }
+    @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-15px); } 100% { transform: translateY(0px); } }
+    .floating { animation: float 6s ease-in-out infinite; }
+    .scroll-down { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); color: white; font-size: 1.5rem; animation: bounce 2s infinite; cursor: pointer; }
+    @keyframes bounce { 0%, 20%, 50%, 80%, 100% {transform: translateY(0);} 40% {transform: translateY(-20px);} 60% {transform: translateY(-10px);} }
+  </style>
 </head>
 <body>
-  <nav class="bg-white shadow-sm sticky top-0 z-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex justify-between h-16">
-        <div class="flex items-center">
-          <a href="index.html" class="flex-shrink-0 flex items-center">
-            <img class="h-8 w-auto" src="https://i.imgur.com/KNRtw3t.png" alt="Carries Boutique">
-            <span class="ml-2 text-xl font-semibold text-gray-900">Carries Boutique</span>
-          </a>
-        </div>
-        <div class="hidden md:ml-6 md:flex md:items-center md:space-x-8">
-          <a href="index.html" class="nav-link text-gray-500 hover:text-gray-900 px-3 py-2 text-sm font-medium">Home</a>
-          <a href="index.html#collections" class="nav-link text-gray-500 hover:text-gray-900 px-3 py-2 text-sm font-medium">Collections</a>
-          <a href="shop.html" class="nav-link text-gray-500 hover:text-gray-900 px-3 py-2 text-sm font-medium">Shop</a>
-          <a href="index.html#about" class="nav-link text-gray-500 hover:text-gray-900 px-3 py-2 text-sm font-medium">About</a>
-          <a href="index.html#contact" class="nav-link text-gray-500 hover:text-gray-900 px-3 py-2 text-sm font-medium">Contact</a>
+  <nav class="bg-white shadow-sm sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16">
+        <div class="flex items-center">
+          <a href="index.html" class="flex-shrink-0 flex items-center">
+            <img class="h-8 w-auto" src="https://i.imgur.com/KNRtw3t.png" alt="Carries Boutique">
+            <span class="ml-2 text-xl font-semibold text-gray-900">Carries Boutique</span>
+          </a>
+        </div>
+        <div class="hidden md:ml-6 md:flex md:items-center md:space-x-8">
+          <a href="index.html" class="nav-link text-gray-500 hover:text-gray-900 px-3 py-2 text-sm font-medium">Home</a>
+          <a href="index.html#collections" class="nav-link text-gray-500 hover:text-gray-900 px-3 py-2 text-sm font-medium">Collections</a>
+          <a href="shop.html" class="nav-link text-gray-500 hover:text-gray-900 px-3 py-2 text-sm font-medium">Shop</a>
+          <a href="index.html#about" class="nav-link text-gray-500 hover:text-gray-900 px-3 py-2 text-sm font-medium">About</a>
+          <a href="index.html#contact" class="nav-link text-gray-500 hover:text-gray-900 px-3 py-2 text-sm font-medium">Contact</a>
 
-          <a href="cart.html" class="relative ml-4 text-gray-900 p-2 rounded-full bg-gray-100">
-            <i data-feather="shopping-cart"></i>
-            <span class="cart-badge hidden absolute -top-1 -right-1 bg-pink-600 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">0</span>
-          </a>
+          <a href="cart.html" class="relative ml-4 text-gray-900 p-2 rounded-full bg-gray-100">
+            <i data-feather="shopping-cart"></i>
+            <span class="cart-badge hidden absolute -top-1 -right-1 bg-pink-600 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">0</span>
+          </a>
 
-          <div id="auth-container" class="ml-4 flex items-center space-x-2">
-              <button id="google-login-btn" style="display: none;" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-full text-gray-700 bg-white hover:bg-gray-50">
-                  <svg class="w-4 h-4 mr-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512"><path fill="currentColor" d="M488 261.8C488 403.3 381.5 512 244 512 109.8 512 0 402.2 0 258S109.8 4 244 4a237.2 237.2 0 01166.3 64.3l-64.4 64.4a150 150 0 00-101.9-38.3c-83.3 0-151.7 67.5-151.7 150.9s68.4 150.9 151.7 150.9c90.8 0 134.4-60.5 139.5-93.7H244v-77.9h236.1c2.4 12.8 3.9 26.5 3.9 41.2z"/></svg>
-                  Login with Google
-          _     </button>
-              <div id="user-info" style="display: none;" class="flex items-center space-x-2">
-                  <span id="user-display-name" class="text-sm font-medium text-gray-700"></span>
-                  <button id="logout-btn" class="px-3 py-1 border border-transparent text-sm font-medium rounded-full text-white bg-pink-600 hover:bg-pink-700">Logout</button>
-              </div>
-          </div>
-        </div>
-        <div class="-mr-2 flex items-center md:hidden">
-          <a href="cart.html" class="relative mr-2 text-gray-900 p-2 rounded-full bg-gray-100"> <i data-feather="shopping-cart"></i>
-            <span class="cart-badge hidden absolute -top-1 -right-1 bg-pink-600 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">0</span>
-          </a>
-          <button type="button" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-pink-500" aria-controls="mobile-menu" aria-expanded="false">
-            <i data-feather="menu"></i>
-          </button>
-        </div>
-      </div>
-    </div>
-    <div class="hidden md:hidden" id="mobile-menu">
-      <div class="pt-2 pb-3 space-y-1">
-        <a href="index.html" class="border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">Home</a>
-        <a href="index.html#collections" class="border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">Collections</a>
-        <a href="shop.html" class="border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">Shop</a>
-        <a href="index.html#about" class="border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">About</a>
-        <a href="index.html#contact" class="border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">Contact</a>
-        </div>
-    </div>
-  </nav>
+          <div id="auth-container" class="ml-4 flex items-center space-x-2">
+              <button id="google-login-btn" style="display: none;" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-full text-gray-700 bg-white hover:bg-gray-50">
+                  <svg class="w-4 h-4 mr-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512"><path fill="currentColor" d="M488 261.8C488 403.3 381.5 512 244 512 109.8 512 0 402.2 0 258S109.8 4 244 4a237.2 237.2 0 01166.3 64.3l-64.4 64.4a150 150 0 00-101.9-38.3c-83.3 0-151.7 67.5-151.7 150.9s68.4 150.9 151.7 150.9c90.8 0 134.4-60.5 139.5-93.7H244v-77.9h236.1c2.4 12.8 3.9 26.5 3.9 41.2z"/></svg>
+                  Login with Google
+              </button>
+              <div id="user-info" style="display: none;" class="flex items-center space-x-2">
+                  <span id="user-display-name" class="text-sm font-medium text-gray-700"></span>
+                  <button id="logout-btn" class="px-3 py-1 border border-transparent text-sm font-medium rounded-full text-white bg-pink-600 hover:bg-pink-700">Logout</button>
+              </div>
+          </div>
+        </div>
+        <div class="-mr-2 flex items-center md:hidden">
+          <a href="cart.html" class="relative mr-2 text-gray-900 p-2 rounded-full bg-gray-100"> <i data-feather="shopping-cart"></i>
+            <span class="cart-badge hidden absolute -top-1 -right-1 bg-pink-600 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">0</span>
+          </a>
+          <button type="button" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-pink-500" aria-controls="mobile-menu" aria-expanded="false">
+            <i data-feather="menu"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="hidden md:hidden" id="mobile-menu">
+      <div class="pt-2 pb-3 space-y-1">
+        <a href="index.html" class="border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">Home</a>
+        <a href="index.html#collections" class="border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">Collections</a>
+        <a href="shop.html" class="border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">Shop</a>
+        <a href="index.html#about" class="border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">About</a>
+        <a href="index.html#contact" class="border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">Contact</a>
+        </div>
+    </div>
+  </nav>
 
-  <section class="py-16 bg-gray-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center mb-16" data-aos="fade-up">
-        <h1 class="text-4xl font-serif font-bold text-gray-900">Your Shopping Cart</h1>
-    D </div>
+  <section class="py-16 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16" data-aos="fade-up">
+        <h1 class="text-4xl font-serif font-bold text-gray-900">Your Shopping Cart</h1>
+      </div>
 
-      <div class="lg:grid lg:grid-cols-3 lg:gap-12">
-        <div class="lg:col-span-2 bg-white p-6 md:p-8 rounded-lg shadow-md">
-          <h2 class="text-2xl font-semibold text-gray-900 mb-6">Items</h2>
-          <div id="cart-items-container">
-            </div>
-        </div>
+      <div class="lg:grid lg:grid-cols-3 lg:gap-12">
+        <div class="lg:col-span-2 bg-white p-6 md:p-8 rounded-lg shadow-md">
+          <h2 class="text-2xl font-semibold text-gray-900 mb-6">Items</h2>
+          <div id="cart-items-container">
+            </div>
+        </div>
 
-        <div id="cart-summary-container" class="lg:col-span-1 mt-12 lg:mt-0">
-          <div class="bg-white p-6 md:p-8 rounded-lg shadow-md sticky top-24">
-            <h2 class="text-2xl font-semibold text-gray-900 mb-6">Order Summary</h2>
-            <div class="space-y-4">
-              <div class="flex justify-between text-gray-600">
-                <span>Subtotal</span>
-                <span id="cart-subtotal" class="font-medium text-gray-900">R0.00</span>
-              </div>
-              <div class="flex justify-between text-gray-600">
-                <span>Shipping</span>
-              _ <span id="cart-shipping" class="font-medium text-gray-900">R50.00</span>
-              </div>
-              <div class="border-t pt-4 mt-4">
-                <div class="flex justify-between text-lg font-bold text-gray-900">
-                  <span>Total</span>
-                  <span id="cart-total">R50.00</span>
-CSS               </div>
-              </div>
-            </div>
-            <a href="checkout.html" class="mt-8 w-full inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-full text-white bg-pink-600 hover:bg-pink-700">
-        _       Proceed to Checkout
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+        <div id="cart-summary-container" class="lg:col-span-1 mt-12 lg:mt-0">
+          <div class="bg-white p-6 md:p-8 rounded-lg shadow-md sticky top-24">
+            <h2 class="text-2xl font-semibold text-gray-900 mb-6">Order Summary</h2>
+            <div class="space-y-4">
+              <div class="flex justify-between text-gray-600">
+                <span>Subtotal</span>
+                <span id="cart-subtotal" class="font-medium text-gray-900">R0.00</span>
+              </div>
+              <div class="flex justify-between text-gray-600">
+                <span>Shipping</span>
+                <span id="cart-shipping" class="font-medium text-gray-900">R50.00</span>
+              </div>
+              <div class="border-t pt-4 mt-4">
+                <div class="flex justify-between text-lg font-bold text-gray-900">
+                  <span>Total</span>
+                  <span id="cart-total">R50.00</span>
+                </div>
+              </div>
+            </div>
+            <a href="checkout.html" class="mt-8 w-full inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-full text-white bg-pink-600 hover:bg-pink-700">
+              Proceed to Checkout
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-  <footer class="bg-gray-900 text-white py-12">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-        <div><a href="index.html" class="flex items-center"><img class="h-8 w-auto" src="https://i.imgur.com/KNRtw3t.png" alt="Carries Boutique"><span class="ml-2 text-xl font-semibold">Carries Boutique</span></a><p class="mt-4 text-gray-400">Premium fashion boutique offering handcrafted, sustainable clothing with timeless elegance.</p></div>
-        <div><h3 class="text-lg font-medium mb-4">Shop</h3><ul class="space-y-2"><li><a href="shop.html" class="footer-link text-gray-400 hover:text-white">New Arrivals</a></li><li><a href="shop.html" class="footer-link text-gray-400 hover:text-white">Best Sellers</a></li><li><a href="shop.html" class="footer-link text-gray-400 hover:text-white">Sale Items</a></li><li><a href="index.html#contact" class="footer-link text-gray-400 hover:text-white">Gift Cards</a></li></ul></div>
-        <div><h3 class="text-lg font-medium mb-4">Information</h3><ul class="space-y-2"><li><a href="index.html#about" class="footer-link text-gray-400 hover:text-white">About Us</a></li><li><a href="index.html#about" class="footer-link text-gray-400 hover:text-white">Sustainability</a></li><li><a href="index.html#contact" class="footer-link text-gray-400 hover:text-white">Shipping Policy</a></li><li><a href="index.html#contact" class="footer-link text-gray-400 hover:text-white">Returns & Exchanges</a></li></ul></div>
-        <div><h3 class="text-lg font-medium mb-4">Newsletter</h3><p class="text-gray-400 mb-4">Subscribe to get updates on new arrivals and special offers.</p><form id="newsletter-form" class="flex"><input type="email" placeholder="Your email" class="px-4 py-2 rounded-l-lg w-full text-gray-900 focus:outline-none"><button type="submit" class="bg-pink-600 hover:bg-pink-700 px-4 py-2 rounded-r-lg"><i data-feather="send"></i></button></form></div>
-      </div>
-      <div class="mt-12 pt-8 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center"><p class="text-gray-400 text-sm">&copy; 2023 Carries Boutique. All rights reserved.</p><div class="mt-4 md:mt-0 flex space-x-6"><a href="#" class="text-gray-400 hover:text-white"><i data-feather="credit-card"></i></a><a href="#" class="text-gray-400 hover:text-white"><i data-feather="lock"></i></a><a href="#" class="text-gray-400 hover:text-white"><i data-feather="shield"></i></a></div></div>
-    </div>
-  </footer>
+  <footer class="bg-gray-900 text-white py-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div><a href="index.html" class="flex items-center"><img class="h-8 w-auto" src="https://i.imgur.com/KNRtw3t.png" alt="Carries Boutique"><span class="ml-2 text-xl font-semibold">Carries Boutique</span></a><p class="mt-4 text-gray-400">Premium fashion boutique offering handcrafted, sustainable clothing with timeless elegance.</p></div>
+        <div><h3 class="text-lg font-medium mb-4">Shop</h3><ul class="space-y-2"><li><a href="shop.html" class="footer-link text-gray-400 hover:text-white">New Arrivals</a></li><li><a href="shop.html" class="footer-link text-gray-400 hover:text-white">Best Sellers</a></li><li><a href="shop.html" class="footer-link text-gray-400 hover:text-white">Sale Items</a></li><li><a href="index.html#contact" class="footer-link text-gray-400 hover:text-white">Gift Cards</a></li></ul></div>
+        <div><h3 class="text-lg font-medium mb-4">Information</h3><ul class="space-y-2"><li><a href="index.html#about" class="footer-link text-gray-400 hover:text-white">About Us</a></li><li><a href="index.html#about" class="footer-link text-gray-400 hover:text-white">Sustainability</a></li><li><a href="index.html#contact" class="footer-link text-gray-400 hover:text-white">Shipping Policy</a></li><li><a href="index.html#contact" class="footer-link text-gray-400 hover:text-white">Returns & Exchanges</a></li></ul></div>
+        <div><h3 class="text-lg font-medium mb-4">Newsletter</h3><p class="text-gray-400 mb-4">Subscribe to get updates on new arrivals and special offers.</p><form id="newsletter-form" class="flex"><input type="email" placeholder="Your email" class="px-4 py-2 rounded-l-lg w-full text-gray-900 focus:outline-none"><button type="submit" class="bg-pink-600 hover:bg-pink-700 px-4 py-2 rounded-r-lg"><i data-feather="send"></i></button></form></div>
+      </div>
+      <div class="mt-12 pt-8 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center"><p class="text-gray-400 text-sm">&copy; 2023 Carries Boutique. All rights reserved.</p><div class="mt-4 md:mt-0 flex space-x-6"><a href="#" class="text-gray-400 hover:text-white"><i data-feather="credit-card"></i></a><a href="#" class="text-gray-400 hover:text-white"><i data-feather="lock"></i></a><a href="#" class="text-gray-400 hover:text-white"><i data-feather="shield"></i></a></div></div>
+    </div>
+  </footer>
 
-<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+  <script>
+    // Your web app's Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyCkyMyRLCc98BifcSYbIgs3_v3u2qBvdpg", // Use your actual key
+      authDomain: "carries-boutique.firebaseapp.com",
+      projectId: "carries-boutique",
+      storageBucket: "carries-boutique.firebasestorage.app",
+      messagingSenderId: "512525813635",
+      appId: "1:512525813635:web:afe3d28c5bd2db68ae58b6",
+      measurementId: "G-2Q2QY4HJ9Y" // Optional
+    };
 
-<script>
-  // Your web app's Firebase configuration
-  const firebaseConfig = {
-    apiKey: "AIzaSyCkyMyRLCc98BifcSYbIgs3_v3u2qBvdpg",
-    authDomain: "carries-boutique.firebaseapp.com",
-    projectId: "carries-boutique",
-    storageBucket: "carries-boutique.firebasestorage.app",
-    messagingSenderId: "512525813635",
-    appId: "1:512525813635:web:afe3d28c5bd2db68ae58b6",
-    measurementId: "G-2Q2QY4HJ9Y"
-  };
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
 
-  // Initialize Firebase
-  firebase.initializeApp(firebaseConfig);
+    // Make auth globally available (easier for simple apps)
+    // No need to declare 'auth' here if it's not used directly in inline script
+    // const auth = firebase.auth();
 
-  // Create global variables for your app.js to use
-  const auth = firebase.auth();
-  const db = firebase.firestore();
-  
-</script>
+  </script>
 
-<script src="app.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
