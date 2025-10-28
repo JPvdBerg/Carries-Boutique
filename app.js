@@ -1,8 +1,4 @@
-Okay, here is the full code for your `app.js` file, exactly as you provided it.
 
-Based on the fixes we made to your HTML files, this `app.js` code should now work correctly, as it relies on the `auth` and `db` variables that are properly initialized in the HTML before this script runs.
-
-```javascript
 // --- IMMEDIATE AUTH REDIRECT LOGIC ---
 // This runs before the DOM is fully loaded to redirect quickly.
 (function() {
