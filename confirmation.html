@@ -120,27 +120,260 @@
 
   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+  <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Floral Maxi Dress | Carries Boutique</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="https://i.imgur.com/KNRtw3t.png">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+  <style>
+    /* ... (Your existing styles) ... */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', sans-serif; color: #333; background-color: #faf9f7; overflow-x: hidden; }
+    .hero-gradient { background: linear-gradient(135deg, #ff6f91, #ff9671, #ffc75f); background-size: 200% 200%; animation: gradientShift 10s ease infinite; }
+    @keyframes gradientShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+    .nav-link { position: relative; }
+    .nav-link::after { content: ''; position: absolute; width: 0; height: 2px; bottom: -2px; left: 0; background-color: #b93e65; transition: width 0.3s ease; }
+    .nav-link:hover::after { width: 100%; }
+    .product-card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.1); }
+    .whatsapp-btn { background: linear-gradient(135deg, #25D366, #1ebe5a); transition: all 0.3s ease; }
+    .whatsapp-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(37, 211, 102, 0.3); }
+    .collection-card { transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+    .collection-card:hover { transform: scale(1.03); }
+    .testimonial-card { background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,255,255,0.7)); backdrop-filter: blur(10px); }
+    .footer-link:hover { color: #b93e65; }
+    .blob { position: absolute; border-radius: 50%; filter: blur(100px); opacity: 0.15; z-index: 0; }
+    .blob-1 { width: 400px; height: 400px; background: #ff6f91; top: -100px; left: -150px; }
+    .blob-2 { width: 500px; height: 500px; background: #ff9671; bottom: -150px; right: -200px; }
+    .blob-3 { width: 300px; height: 300px; background: #ffc75f; top: 150px; right: -100px; }
+    @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-15px); } 100% { transform: translateY(0px); } }
+    .floating { animation: float 6s ease-in-out infinite; }
+    .scroll-down { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); color: white; font-size: 1.5rem; animation: bounce 2s infinite; cursor: pointer; }
+    @keyframes bounce { 0%, 20%, 50%, 80%, 100% {transform: translateY(0);} 40% {transform: translateY(-20px);} 60% {transform: translateY(-10px);} }
+  </style>
+</head>
+<body>
+  <nav class="bg-white shadow-sm sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16">
+        <div class="flex items-center">
+          <a href="index.html" class="flex-shrink-0 flex items-center">
+            <img class="h-8 w-auto" src="https://i.imgur.com/KNRtw3t.png" alt="Carries Boutique">
+            <span class="ml-2 text-xl font-semibold text-gray-900">Carries Boutique</span>
+          </a>
+        </div>
+         <div class="hidden md:ml-6 md:flex md:items-center md:space-x-8">
+          <a href="index.html" class="nav-link text-gray-500 hover:text-gray-900 px-3 py-2 text-sm font-medium">Home</a>
+          <a href="index.html#collections" class="nav-link text-gray-500 hover:text-gray-900 px-3 py-2 text-sm font-medium">Collections</a>
+          <a href="shop.html" class="nav-link text-gray-900 px-3 py-2 text-sm font-medium">Shop</a> <a href="index.html#about" class="nav-link text-gray-500 hover:text-gray-900 px-3 py-2 text-sm font-medium">About</a>
+          <a href="index.html#contact" class="nav-link text-gray-500 hover:text-gray-900 px-3 py-2 text-sm font-medium">Contact</a>
+
+          <a href="cart.html" class="relative ml-4 text-gray-500 hover:text-gray-900 p-2 rounded-full hover:bg-gray-100">
+            <i data-feather="shopping-cart"></i>
+            <span class="cart-badge hidden absolute -top-1 -right-1 bg-pink-600 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">0</span>
+          </a>
+
+          <div id="auth-container" class="ml-4 flex items-center space-x-2">
+              <div id="user-info" style="display: none;" class="flex items-center space-x-2">
+                  <span id="user-display-name" class="text-sm font-medium text-gray-700"></span>
+                  <button id="logout-btn" class="px-3 py-1 border border-transparent text-sm font-medium rounded-full text-white bg-pink-600 hover:bg-pink-700">Logout</button>
+              </div>
+          </div>
+           <a href="https://wa.me/27828735697" target="_blank" class="ml-2 whatsapp-btn inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full text-white">
+            <i data-feather="message-circle" class="mr-2"></i> WhatsApp
+          </a>
+        </div>
+         <div class="-mr-2 flex items-center md:hidden">
+          <a href="cart.html" class="relative mr-2 text-gray-500 hover:text-gray-900 p-2 rounded-full hover:bg-gray-100">
+            <i data-feather="shopping-cart"></i>
+            <span class="cart-badge hidden absolute -top-1 -right-1 bg-pink-600 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">0</span>
+          </a>
+          <button type="button" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-pink-500" aria-controls="mobile-menu" aria-expanded="false">
+            <i data-feather="menu"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="hidden md:hidden" id="mobile-menu">
+      <div class="pt-2 pb-3 space-y-1">
+        <a href="index.html" class="border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">Home</a>
+        <a href="index.html#collections" class="border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">Collections</a>
+        <a href="shop.html" class="bg-pink-50 border-pink-500 text-pink-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">Shop</a> <a href="index.html#about" class="border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">About</a>
+        <a href="index.html#contact" class="border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">Contact</a>
+        <a href="https://wa.me/27828735697" target="_blank" class="mt-2 whatsapp-btn inline-flex items-center justify-center px-4 py-2 border border-transparent text-base font-medium rounded-full text-white w-full">
+          <i data-feather="message-circle" class="mr-2"></i> WhatsApp
+        </a>
+         </div>
+    </div>
+  </nav>
+
+  <section class="py-16 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
+        <div data-aos="fade-right">
+          <img src="http://static.photos/fashion/1024x768/5" alt="Floral Dress Main" class="w-full h-auto object-cover rounded-lg shadow-lg mb-4"> <div class="grid grid-cols-4 gap-2">
+            <img src="http://static.photos/fashion/200x200/5" alt="Thumbnail 1" class="cursor-pointer border-2 border-pink-500 rounded-lg">
+            <img src="http://static.photos/fashion/200x200/15" alt="Thumbnail 2" class="cursor-pointer border border-gray-200 hover:border-pink-500 rounded-lg">
+            <img src="http://static.photos/fashion/200x200/16" alt="Thumbnail 3" class="cursor-pointer border border-gray-200 hover:border-pink-500 rounded-lg">
+             <img src="http://static.photos/fashion/200x200/17" alt="Thumbnail 4" class="cursor-pointer border border-gray-200 hover:border-pink-500 rounded-lg">
+          </div>
+        </div>
+
+        <div data-aos="fade-left">
+          <nav aria-label="Breadcrumb" class="mb-2">
+            <ol class="flex items-center space-x-1 text-sm text-gray-500">
+              <li><a href="index.html" class="hover:text-gray-700">Home</a></li>
+              <li><span class="mx-1">/</span></li>
+              <li><a href="shop.html" class="hover:text-gray-700">Shop</a></li>
+               <li><span class="mx-1">/</span></li>
+              <li class="font-medium text-gray-700">Floral Maxi Dress</li>
+            </ol>
+          </nav>
+          <span class="text-sm text-pink-600 font-medium">Summer Collection</span>
+          <h1 class="text-3xl md:text-4xl font-serif font-bold text-gray-900 mt-1">Floral Maxi Dress</h1>
+          <p class="text-2xl md:text-3xl font-medium text-gray-900 mt-4">R599.00</p>
+
+          <div class="mt-6">
+            <h3 class="text-lg font-medium text-gray-900 mb-2">Select Size</h3>
+            <div class="flex space-x-2">
+              <button class="w-10 h-10 border rounded-md flex items-center justify-center text-sm font-medium hover:bg-gray-100">S</button>
+              <button class="w-10 h-10 border rounded-md flex items-center justify-center text-sm font-medium bg-pink-100 text-pink-700 border-pink-300 ring-1 ring-pink-500">M</button> <button class="w-10 h-10 border rounded-md flex items-center justify-center text-sm font-medium hover:bg-gray-100">L</button>
+              <button class="w-10 h-10 border rounded-md flex items-center justify-center text-sm font-medium hover:bg-gray-100">XL</button>
+            </div>
+          </div>
+
+          <div class="mt-8">
+            <button onclick="addToCart('prod_001', 'Floral Maxi Dress', 599.00, 'http://static.photos/fashion/640x360/5')" class="w-full px-8 py-3 border border-transparent text-base font-medium rounded-full text-white bg-pink-600 hover:bg-pink-700 flex items-center justify-center">
+              <i data-feather="shopping-cart" class="mr-2"></i> Add to Cart
+            </button>
+          </div>
+
+          <div class="mt-8 prose prose-sm max-w-none text-gray-600">
+            <h3 class="text-lg font-medium text-gray-900">Description</h3>
+            <p>
+              Embrace the summer breeze with our stunning Floral Maxi Dress. Made from 100% lightweight, sustainable cotton, this dress features a beautiful floral print, a flattering v-neck, and a flowy silhouette that drapes elegantly.
+            </p>
+            <ul>
+              <li>Perfect for a day at the beach or a casual brunch.</li>
+              <li>Adjustable spaghetti straps for a custom fit.</li>
+              <li>Smocked back panel for comfort.</li>
+            </ul>
+             <h3 class="text-lg font-medium text-gray-900 mt-4">Details & Care</h3>
+            <ul>
+              <li>100% Sustainable Cotton</li>
+              <li>Handcrafted with love</li>
+              <li>Machine washable (cold, gentle cycle)</li>
+              <li>Hang to dry</li>
+              <li>Available in S, M, L, XL</li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="related-products" class="py-16 bg-gray-50"> <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16" data-aos="fade-up">
+        <h2 class="text-3xl font-serif font-bold text-gray-900 sm:text-4xl">
+          You May Also Like
+        </h2>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="product-card bg-white rounded-lg overflow-hidden shadow-md transition-all duration-300" data-aos="fade-up" data-aos-delay="200">
+          <a href="product.html" class="relative block"><img class="w-full h-80 object-cover" src="http://static.photos/fashion/640x360/6" alt="Denim Jacket"></a>
+          <div class="p-4">
+            <h3 class="text-lg font-medium text-gray-900"><a href="product.html" class="hover:underline">Classic Denim Jacket</a></h3>
+            <p class="mt-1 text-sm text-gray-500">Casual Collection</p>
+            <div class="mt-4 flex justify-between items-center">
+              <span class="text-lg font-bold text-gray-900">R799</span>
+              <button onclick="addToCart('prod_002', 'Classic Denim Jacket', 799.00, 'http://static.photos/fashion/640x360/6')" class="px-3 py-1 bg-pink-100 text-pink-700 rounded-full text-sm font-medium hover:bg-pink-200">Add to Cart</button>
+            </div>
+          </div>
+        </div>
+        <div class="product-card bg-white rounded-lg overflow-hidden shadow-md transition-all duration-300" data-aos="fade-up" data-aos-delay="300">
+          <a href="product.html" class="relative block"><img class="w-full h-80 object-cover" src="http://static.photos/fashion/640x360/7" alt="Silk Blouse"></a>
+          <div class="p-4">
+            <h3 class="text-lg font-medium text-gray-900"><a href="product.html" class="hover:underline">Silk Evening Blouse</a></h3>
+            <p class="mt-1 text-sm text-gray-500">Elegance Collection</p>
+            <div class="mt-4 flex justify-between items-center">
+              <span class="text-lg font-bold text-gray-900">R899</span>
+              <button onclick="addToCart('prod_003', 'Silk Evening Blouse', 899.00, 'http://static.photos/fashion/640x360/7')" class="px-3 py-1 bg-pink-100 text-pink-700 rounded-full text-sm font-medium hover:bg-pink-200">Add to Cart</button>
+            </div>
+          </div>
+        </div>
+        <div class="product-card bg-white rounded-lg overflow-hidden shadow-md transition-all duration-300" data-aos="fade-up" data-aos-delay="400">
+          <a href="product.html" class="relative block"><img class="w-full h-80 object-cover" src="http://static.photos/fashion/640x360/8" alt="Linen Pants"></a>
+          <div class="p-4">
+            <h3 class="text-lg font-medium text-gray-900"><a href="product.html" class="hover:underline">Linen Wide Leg Pants</a></h3>
+            <p class="mt-1 text-sm text-gray-500">Comfort Collection</p>
+            <div class="mt-4 flex justify-between items-center">
+              <span class="text-lg font-bold text-gray-900">R699</span>
+              <button onclick="addToCart('prod_004', 'Linen Wide Leg Pants', 699.00, 'http://static.photos/fashion/640x360/8')" class="px-3 py-1 bg-pink-100 text-pink-700 rounded-full text-sm font-medium hover:bg-pink-200">Add to Cart</button>
+            </div>
+          </div>
+        </div>
+        <div class="product-card bg-white rounded-lg overflow-hidden shadow-md transition-all duration-300" data-aos="fade-up" data-aos-delay="100">
+          <a href="product.html" class="relative block"><img class="w-full h-80 object-cover" src="http://static.photos/fashion/640x360/9" alt="Summer Hat"></a>
+          <div class="p-4">
+            <h3 class="text-lg font-medium text-gray-900"><a href="product.html" class="hover:underline">Wide Brim Summer Hat</a></h3>
+            <p class="mt-1 text-sm text-gray-500">Accessories</p>
+            <div class="mt-4 flex justify-between items-center">
+              <span class="text-lg font-bold text-gray-900">R349</span>
+              <button onclick="addToCart('prod_005', 'Wide Brim Summer Hat', 349.00, 'http://static.photos/fashion/640x360/9')" class="px-3 py-1 bg-pink-100 text-pink-700 rounded-full text-sm font-medium hover:bg-pink-200">Add to Cart</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="bg-gray-900 text-white py-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div><a href="index.html" class="flex items-center"><img class="h-8 w-auto" src="https://i.imgur.com/KNRtw3t.png" alt="Carries Boutique"><span class="ml-2 text-xl font-semibold">Carries Boutique</span></a><p class="mt-4 text-gray-400">Premium fashion boutique offering handcrafted, sustainable clothing with timeless elegance.</p></div>
+        <div><h3 class="text-lg font-medium mb-4">Shop</h3><ul class="space-y-2"><li><a href="shop.html" class="footer-link text-gray-400 hover:text-white">New Arrivals</a></li><li><a href="shop.html" class="footer-link text-gray-400 hover:text-white">Best Sellers</a></li><li><a href="shop.html" class="footer-link text-gray-400 hover:text-white">Sale Items</a></li><li><a href="index.html#contact" class="footer-link text-gray-400 hover:text-white">Gift Cards</a></li></ul></div>
+        <div><h3 class="text-lg font-medium mb-4">Information</h3><ul class="space-y-2"><li><a href="index.html#about" class="footer-link text-gray-400 hover:text-white">About Us</a></li><li><a href="index.html#about" class="footer-link text-gray-400 hover:text-white">Sustainability</a></li><li><a href="index.html#contact" class="footer-link text-gray-400 hover:text-white">Shipping Policy</a></li><li><a href="index.html#contact" class="footer-link text-gray-400 hover:text-white">Returns & Exchanges</a></li></ul></div>
+        <div><h3 class="text-lg font-medium mb-4">Newsletter</h3><p class="text-gray-400 mb-4">Subscribe to get updates on new arrivals and special offers.</p><form id="newsletter-form" class="flex"><input type="email" placeholder="Your email" class="px-4 py-2 rounded-l-lg w-full text-gray-900 focus:outline-none"><button type="submit" class="bg-pink-600 hover:bg-pink-700 px-4 py-2 rounded-r-lg"><i data-feather="send"></i></button></form></div>
+      </div>
+      <div class="mt-12 pt-8 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center"><p class="text-gray-400 text-sm">&copy; 2023 Carries Boutique. All rights reserved.</p><div class="mt-4 md:mt-0 flex space-x-6"><a href="#" class="text-gray-400 hover:text-white"><i data-feather="credit-card"></i></a><a href="#" class="text-gray-400 hover:text-white"><i data-feather="lock"></i></a><a href="#" class="text-gray-400 hover:text-white"><i data-feather="shield"></i></a></div></div>
+    </div>
+  </footer>
+
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
   <script>
-    // Your web app's Firebase configuration
-    const firebaseConfig = {
-      apiKey: "AIzaSyCkyMyRLCc98BifcSYbIgs3_v3u2qBvdpg", // Use your actual key
-      authDomain: "carries-boutique.firebaseapp.com",
-      projectId: "carries-boutique",
-      storageBucket: "carries-boutique.firebasestorage.app",
-      messagingSenderId: "512525813635",
-      appId: "1:512525813635:web:afe3d28c5bd2db68ae58b6",
-      measurementId: "G-2Q2QY4HJ9Y" // Optional
-    };
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyCkyMyRLCc98BifcSYbIgs3_v3u2qBvdpg",
+    authDomain: "carries-boutique.firebaseapp.com",
+    projectId: "carries-boutique",
+    storageBucket: "carries-boutique.firebasestorage.app",
+    messagingSenderId: "512525813635",
+    appId: "1:512525813635:web:afe3d28c5bd2db68ae58b6",
+    measurementId: "G-2Q2QY4HJ9Y"
+  };
 
-    // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
+  // Initialize Firebase using the COMPAT syntax
+  firebase.initializeApp(firebaseConfig);
+  
+  // This makes the auth service available to your other scripts
+  const auth = firebase.auth();
 
-    // Make auth globally available (easier for simple apps)
-    // No need to declare 'auth' here if it's not used directly in inline script
-    // const auth = firebase.auth();
+</script>
 
-  </script>
+<script src="app.js"></script>
 
   <script src="app.js"></script>
+</body>
+</html>
+```
 </body>
 </html>
