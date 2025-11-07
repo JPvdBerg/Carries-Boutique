@@ -1,0 +1,24 @@
+{
+  "name": "carries-boutique",
+  "version": "1.0.0",
+  "description": "**Live Demo:** [**https://jpvdberg.github.io/Carries-Boutique/**](https://jpvdberg.github.io/Carries-Boutique/)",
+  "main": "app.js",
+  "scripts": {
+    "build": "tailwindcss -i ./src/input.css -o ./style.css --minify"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JPvdBerg/Carries-Boutique.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JPvdBerg/Carries-Boutique/issues"
+  },
+  "homepage": "https://github.com/JPvdBerg/Carries-Boutique#readme",
+  "devDependencies": {
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.1.17"
+  }
+}
