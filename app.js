@@ -353,7 +353,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 
-    // --- START STEP 4 MODIFICATION ---
+    // --- CHECKOUT FORM SUBMISSION ---
     const checkoutForm = document.getElementById('checkout-form');
     if (checkoutForm) {
         checkoutForm.addEventListener('submit', async (e) => {
@@ -494,7 +494,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
-    // --- END STEP 4 MODIFICATION ---
 
 
     // --- FIREBASE AUTHENTICATION LOGIC ---
@@ -565,6 +564,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (user) {
                 // --- User is SIGNED IN ---
+                
+                // --- START: NEW REDIRECT FIX ---
+                if (currentPage === 'login.html') {
+                    console.log("User just logged in, redirecting from login page to index.");
+                    window.location.replace('index.html');
+                    return; // Stop running the rest of the code, we are redirecting
+                }
+                // --- END: NEW REDIRECT FIX ---
 
                 // 1. Update NAV BAR UI (if elements exist on this page)
                 if (navGoogleLoginBtn) navGoogleLoginBtn.style.display = 'none';
