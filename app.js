@@ -556,6 +556,47 @@ document.addEventListener('DOMContentLoaded', () => {
         if (logoutBtn) logoutBtn.addEventListener('click', handleLogout);
         if (mobileLogoutBtn) mobileLogoutBtn.addEventListener('click', handleLogout);
 
+        
+        // --- START REFACTORED FUNCTION ---
+        // Function to LOAD measurements
+        const loadMeasurements = async (userId, currentPage) => {
+            const userRef = db.collection('users').doc(userId);
+            try {
+                const doc = await userRef.get();
+                if (doc.exists && doc.data().measurements) {
+                    const measurements = doc.data().measurements;
+                    
+                    let bustEl, waistEl, hipsEl, heightEl, fitEl;
+                    
+                    // Check which page we're on and get the correct elements
+                    if (currentPage === 'account.html') {
+                        bustEl = document.getElementById('account-bust');
+                        waistEl = document.getElementById('account-waist');
+                        hipsEl = document.getElementById('account-hips');
+                        heightEl = document.getElementById('account-height');
+                        fitEl = document.getElementById('account-fit');
+                    } else if (currentPage === 'checkout.html') {
+                        bustEl = document.getElementById('bust');
+                        waistEl = document.getElementById('waist');
+                        hipsEl = document.getElementById('hips');
+                        heightEl = document.getElementById('height');
+                        fitEl = document.getElementById('fit');
+                    }
+
+                    // Populate the form if the elements exist
+                    if (bustEl) bustEl.value = measurements.bust || '';
+                    if (waistEl) waistEl.value = measurements.waist || '';
+                    if (hipsEl) hipsEl.value = measurements.hips || '';
+                    if (heightEl) heightEl.value = measurements.height || '';
+                    if (fitEl) fitEl.value = measurements.fit || 'Comfortable';
+                }
+            } catch (error) {
+                console.error("Error loading measurements: ", error);
+            }
+        };
+        // --- END REFACTORED FUNCTION ---
+
+
         // --- Auth State Observer ---
         auth.onAuthStateChanged((user) => {
             console.log("Auth state changed, user:", user ? (user.displayName || user.email) : null);
@@ -578,17 +619,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (mobileGoogleLoginBtn) mobileGoogleLoginBtn.style.display = 'none';
                 if (mobileUserInfoDiv) mobileUserInfoDiv.style.display = 'block';
 
-                // --- AUTOFIL CHECKOUT ---
-                if (currentPage === 'checkout.html' && checkoutEmailInput && checkoutNameInput) {
-                    checkoutEmailInput.value = user.email || '';
-                    checkoutNameInput.value = user.displayName || '';
-                    checkoutEmailInput.readOnly = true; 
-                    checkoutEmailInput.classList.add('bg-gray-100');
+                // --- AUTOFIL CHECKOUT (Shipping & Measurements) ---
+                if (currentPage === 'checkout.html') {
+                    if (checkoutEmailInput) checkoutEmailInput.value = user.email || '';
+                    if (checkoutNameInput) checkoutNameInput.value = user.displayName || '';
+                    if (checkoutEmailInput) {
+                        checkoutEmailInput.readOnly = true; 
+                        checkoutEmailInput.classList.add('bg-gray-100');
+                    }
+                    // --- NEW ---
+                    // Load measurements into checkout form
+                    loadMeasurements(user.uid, currentPage); 
                 }
                 
-                // --- NEW: If on Account Page, load data ---
+                // --- If on Account Page, load data ---
                 if (currentPage === 'account.html') {
-                    loadMeasurements(user.uid);
+                    loadMeasurements(user.uid, currentPage);
                 }
 
             } else {
@@ -612,7 +658,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (typeof feather !== 'undefined') setTimeout(feather.replace, 0);
         });
         
-        // --- NEW: ACCOUNT PAGE LOGIC ---
+        // --- ACCOUNT PAGE LOGIC (SAVE FUNCTION) ---
         const accountForm = document.getElementById('account-form');
         
         // Function to SAVE measurements
@@ -632,12 +678,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const userRef = db.collection('users').doc(user.uid);
             
             try {
-                // We use .set() with { merge: true }
-                // This creates the document if it doesn't exist
-                // or updates it if it does (without overwriting other fields)
                 await userRef.set({ measurements: measurements }, { merge: true });
                 
-                // Show success message
                 const successMsg = document.getElementById('success-message');
                 if (successMsg) {
                     successMsg.classList.remove('hidden');
@@ -647,26 +689,6 @@ document.addEventListener('DOMContentLoaded', () => {
             } catch (error) {
                 console.error("Error saving measurements: ", error);
                 alert(`Error saving: ${error.message}`);
-            }
-        };
-
-        // Function to LOAD measurements
-        const loadMeasurements = async (userId) => {
-            const userRef = db.collection('users').doc(userId);
-            try {
-                const doc = await userRef.get();
-                if (doc.exists && doc.data().measurements) {
-                    const measurements = doc.data().measurements;
-                    
-                    // Populate the form
-                    document.getElementById('account-bust').value = measurements.bust || '';
-                    document.getElementById('account-waist').value = measurements.waist || '';
-                    document.getElementById('account-hips').value = measurements.hips || '';
-                    document.getElementById('account-height').value = measurements.height || '';
-                    document.getElementById('account-fit').value = measurements.fit || 'Comfortable';
-                }
-            } catch (error) {
-                console.error("Error loading measurements: ", error);
             }
         };
 
