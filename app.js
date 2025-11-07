@@ -500,17 +500,24 @@ document.addEventListener('DOMContentLoaded', () => {
     // Make sure Firebase is loaded
     if (typeof firebase !== 'undefined' && typeof firebase.auth === 'function') {
         const auth = firebase.auth();
+        const db = firebase.firestore(); // <-- Get reference to Firestore
 
-        // Get references to NAV elements (might not exist on login.html or profile-setup.html)
+        // --- Get references to ALL auth buttons ---
+        // Desktop Nav
         const navGoogleLoginBtn = document.getElementById('google-login-btn');
         const userInfoDiv = document.getElementById('user-info');
         const userDisplayNameSpan = document.getElementById('user-display-name');
         const logoutBtn = document.getElementById('logout-btn');
 
-        // Get reference to LOGIN PAGE button (only exists on login.html)
+        // Mobile Nav
+        const mobileGoogleLoginBtn = document.getElementById('google-login-btn-mobile');
+        const mobileUserInfoDiv = document.getElementById('user-info-mobile');
+        const mobileLogoutBtn = document.getElementById('logout-btn-mobile');
+
+        // Login Page
         const pageGoogleLoginBtn = document.getElementById('google-login-btn-page');
 
-        // Get reference to Checkout inputs
+        // Checkout Inputs
         const checkoutNameInput = document.getElementById('name');
         const checkoutEmailInput = document.getElementById('email');
 
@@ -518,11 +525,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const handleGoogleLogin = () => {
             const provider = new firebase.auth.GoogleAuthProvider();
             console.log("Attempting Google Sign-In...");
-            // Use signInWithRedirect for mobile compatibility, but Popup is easier for this demo setup
             auth.signInWithPopup(provider)
               .then((result) => {
                   console.log("Google Sign-In Successful. User:", result.user?.displayName || result.user?.email);
-                  // The onAuthStateChanged observer handles the redirects and UI updates next
+                  // onAuthStateChanged handles the rest
               }).catch((error) => {
                   console.error("Google Sign-In Error:", error);
                   alert(`Login failed: ${error.code} - ${error.message}`);
@@ -534,9 +540,7 @@ document.addEventListener('DOMContentLoaded', () => {
             auth.signOut()
               .then(() => {
                   console.log("User signed out successfully.");
-                  // Clear potentially sensitive local storage on logout
                   localStorage.removeItem('userProfileData');
-                  // Redirect to login page after logout
                   window.location.replace('login.html');
               }).catch((error) => {
                   console.error("Sign Out Error:", error);
@@ -544,18 +548,13 @@ document.addEventListener('DOMContentLoaded', () => {
               });
         };
 
-        // Add listener to NAV login button (if it exists)
-        if (navGoogleLoginBtn) {
-            navGoogleLoginBtn.addEventListener('click', handleGoogleLogin);
-        }
-        // Add listener to LOGIN PAGE login button (if it exists)
-        if (pageGoogleLoginBtn) {
-             pageGoogleLoginBtn.addEventListener('click', handleGoogleLogin);
-        }
-        // Add listener to NAV logout button (if it exists)
-        if (logoutBtn) {
-            logoutBtn.addEventListener('click', handleLogout);
-        }
+        // --- Add listeners to ALL buttons ---
+        if (navGoogleLoginBtn) navGoogleLoginBtn.addEventListener('click', handleGoogleLogin);
+        if (pageGoogleLoginBtn) pageGoogleLoginBtn.addEventListener('click', handleGoogleLogin);
+        if (mobileGoogleLoginBtn) mobileGoogleLoginBtn.addEventListener('click', handleGoogleLogin);
+        
+        if (logoutBtn) logoutBtn.addEventListener('click', handleLogout);
+        if (mobileLogoutBtn) mobileLogoutBtn.addEventListener('click', handleLogout);
 
         // --- Auth State Observer ---
         auth.onAuthStateChanged((user) => {
@@ -565,73 +564,129 @@ document.addEventListener('DOMContentLoaded', () => {
             if (user) {
                 // --- User is SIGNED IN ---
                 
-                // --- START: NEW REDIRECT FIX ---
                 if (currentPage === 'login.html') {
                     console.log("User just logged in, redirecting from login page to index.");
                     window.location.replace('index.html');
-                    return; // Stop running the rest of the code, we are redirecting
+                    return; 
                 }
-                // --- END: NEW REDIRECT FIX ---
 
-                // 1. Update NAV BAR UI (if elements exist on this page)
+                // --- Update NAV UI (Desktop & Mobile) ---
                 if (navGoogleLoginBtn) navGoogleLoginBtn.style.display = 'none';
                 if (userInfoDiv) userInfoDiv.style.display = 'flex';
-                if (userDisplayNameSpan) {
-                   userDisplayNameSpan.textContent = user.displayName || user.email;
-                }
+                if (userDisplayNameSpan) userDisplayNameSpan.textContent = user.displayName || user.email;
+                
+                if (mobileGoogleLoginBtn) mobileGoogleLoginBtn.style.display = 'none';
+                if (mobileUserInfoDiv) mobileUserInfoDiv.style.display = 'block';
 
-                // 2. AUTOFIL CHECKOUT (If on Checkout Page)
+                // --- AUTOFIL CHECKOUT ---
                 if (currentPage === 'checkout.html' && checkoutEmailInput && checkoutNameInput) {
                     checkoutEmailInput.value = user.email || '';
                     checkoutNameInput.value = user.displayName || '';
-                    // Prevent users from manually changing the email tied to their Google account
                     checkoutEmailInput.readOnly = true; 
                     checkoutEmailInput.classList.add('bg-gray-100');
                 }
-
-                // 3. PROFILE REDIRECT LOGIC -- REMOVED --
-                // User will now be directed to index.html automatically by the
-                // immediate auth check logic at the top of the file.
+                
+                // --- NEW: If on Account Page, load data ---
+                if (currentPage === 'account.html') {
+                    loadMeasurements(user.uid);
+                }
 
             } else {
                 // --- User is SIGNED OUT ---
 
-                // Update NAV BAR UI (if elements exist on this page)
+                // --- Update NAV UI (Desktop & Mobile) ---
                 if (navGoogleLoginBtn) navGoogleLoginBtn.style.display = 'inline-flex';
                 if (userInfoDiv) userInfoDiv.style.display = 'none';
                 if (userDisplayNameSpan) userDisplayNameSpan.textContent = '';
                 
-                // On checkout, clear autofill/readOnly if user somehow logs out
+                if (mobileGoogleLoginBtn) mobileGoogleLoginBtn.style.display = 'flex';
+                if (mobileUserInfoDiv) mobileUserInfoDiv.style.display = 'none';
+                
                 if (currentPage === 'checkout.html' && checkoutEmailInput && checkoutNameInput) {
                     checkoutEmailInput.value = '';
                     checkoutEmailInput.readOnly = false;
                     checkoutEmailInput.classList.remove('bg-gray-100');
                     checkoutNameInput.value = '';
                 }
-
-                // The immediate redirect logic at the top handles redirecting non-logged-in users away from protected pages.
             }
-            // Re-render icons
             if (typeof feather !== 'undefined') setTimeout(feather.replace, 0);
         });
+        
+        // --- NEW: ACCOUNT PAGE LOGIC ---
+        const accountForm = document.getElementById('account-form');
+        
+        // Function to SAVE measurements
+        const saveMeasurements = async (e) => {
+            e.preventDefault();
+            const user = auth.currentUser;
+            if (!user) return alert("You must be logged in to save.");
+
+            const measurements = {
+                bust: document.getElementById('account-bust')?.value || null,
+                waist: document.getElementById('account-waist')?.value || null,
+                hips: document.getElementById('account-hips')?.value || null,
+                height: document.getElementById('account-height')?.value || null,
+                fit: document.getElementById('account-fit')?.value || null,
+            };
+
+            const userRef = db.collection('users').doc(user.uid);
+            
+            try {
+                // We use .set() with { merge: true }
+                // This creates the document if it doesn't exist
+                // or updates it if it does (without overwriting other fields)
+                await userRef.set({ measurements: measurements }, { merge: true });
+                
+                // Show success message
+                const successMsg = document.getElementById('success-message');
+                if (successMsg) {
+                    successMsg.classList.remove('hidden');
+                    setTimeout(() => successMsg.classList.add('hidden'), 3000); // Hide after 3s
+                }
+                
+            } catch (error) {
+                console.error("Error saving measurements: ", error);
+                alert(`Error saving: ${error.message}`);
+            }
+        };
+
+        // Function to LOAD measurements
+        const loadMeasurements = async (userId) => {
+            const userRef = db.collection('users').doc(userId);
+            try {
+                const doc = await userRef.get();
+                if (doc.exists && doc.data().measurements) {
+                    const measurements = doc.data().measurements;
+                    
+                    // Populate the form
+                    document.getElementById('account-bust').value = measurements.bust || '';
+                    document.getElementById('account-waist').value = measurements.waist || '';
+                    document.getElementById('account-hips').value = measurements.hips || '';
+                    document.getElementById('account-height').value = measurements.height || '';
+                    document.getElementById('account-fit').value = measurements.fit || 'Comfortable';
+                }
+            } catch (error) {
+                console.error("Error loading measurements: ", error);
+            }
+        };
+
+        // Add listener to the account form if it exists
+        if (accountForm) {
+            accountForm.addEventListener('submit', saveMeasurements);
+        }
+        // --- END ACCOUNT PAGE LOGIC ---
 
     } else {
         console.error("Firebase library not loaded or initialized correctly!");
-        const navGoogleLoginBtn = document.getElementById('google-login-btn');
-        const pageGoogleLoginBtn = document.getElementById('google-login-btn-page');
-        if(navGoogleLoginBtn) navGoogleLoginBtn.style.display = 'none';
-        if(pageGoogleLoginBtn) pageGoogleLoginBtn.disabled = true;
+        // ... (error handling for missing firebase) ...
     }
     // --- END FIREBASE AUTH LOGIC ---
-
-
-    // --- PROFILE SETUP FORM HANDLER -- REMOVED --
 
 
     // --- INITIAL PAGE LOAD CALLS ---
     updateCartIcon();
     renderCartPage();
-    renderCheckoutSummary(); // This now renders the complex checkout summary
+    renderCheckoutSummary();
 
     if (typeof feather !== 'undefined') feather.replace();
 
