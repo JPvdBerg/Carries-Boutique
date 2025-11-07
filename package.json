@@ -4,7 +4,7 @@
   "description": "**Live Demo:** [**https://jpvdberg.github.io/Carries-Boutique/**](https://jpvdberg.github.io/Carries-Boutique/)",
   "main": "app.js",
   "scripts": {
-    "build": "node_modules\\.bin\\tailwindcss -i ./src/input.css -o ./style.css --minify"
+    "build": "npx tailwindcss -i ./src/input.css -o ./style.css --minify"
   },
   "repository": {
     "type": "git",
@@ -18,7 +18,8 @@
   },
   "homepage": "https://github.com/JPvdBerg/Carries-Boutique#readme",
   "devDependencies": {
+    "autoprefixer": "^10.4.21",
     "postcss": "^8.5.6",
-    "tailwindcss": "^4.1.17"
+    "tailwindcss": "^3.0.0"
   }
 }
