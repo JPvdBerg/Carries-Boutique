@@ -151,7 +151,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const renderCartPage = () => {
         const cartItemsContainer = document.getElementById('cart-items-container');
         const cartSummaryContainer = document.getElementById('cart-summary-container');
-        if (!cartItemsContainer) return;
+        if (!cartItemsContainer) return; // Not on the cart page
 
         const cart = getCart();
         cartItemsContainer.innerHTML = '';
@@ -222,15 +222,16 @@ document.addEventListener('DOMContentLoaded', () => {
         let cart = getCart();
         cart = cart.filter(item => item.id !== productId);
         saveCart(cart);
-        renderCartPage();
+        renderCartPage(); // Rerender cart page
+        renderCheckoutSummary(); // Also rerender checkout summary if on that page
     };
 
     const renderCheckoutSummary = () => {
         const summaryContainer = document.getElementById('checkout-summary');
-        if (!summaryContainer) return;
+        if (!summaryContainer) return; // Not on checkout page
 
         const cart = getCart();
-        summaryContainer.innerHTML = '';
+        summaryContainer.innerHTML = ''; // Clear previous content
         let subtotal = 0;
 
         if (cart.length === 0) {
@@ -240,23 +241,66 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        cart.forEach(item => {
+        // --- 1. Render Each Cart Item ---
+        cart.forEach((item, index) => {
+            // We use the index as a unique ID for this item in the cart
+            const cartItemUniqueId = `${item.id}-${index}`; 
             subtotal += item.price * item.quantity;
+            
             const itemHtml = `
-              <div class="flex justify-between items-center py-3 border-b">
-                <div class="flex items-center space-x-3">
-                  <img src="${item.image}" alt="${item.name}" class="w-12 h-12 md:w-16 md:h-16 object-cover rounded-lg">
-                  <div>
-                    <h4 class="font-medium text-sm md:text-base">${item.name}</h4>
-                    <p class="text-xs md:text-sm text-gray-500">Qty: ${item.quantity}</p>
+              <div class="py-4 border-b" data-cart-item-id="${cartItemUniqueId}">
+                <div class="flex justify-between items-center">
+                  <div class="flex items-center space-x-3">
+                    <img src="${item.image}" alt="${item.name}" class="w-12 h-12 md:w-16 md:h-16 object-cover rounded-lg">
+                    <div>
+                      <h4 class="font-medium text-sm md:text-base">${item.name}</h4>
+                      <p class="text-xs md:text-sm text-gray-500">Qty: ${item.quantity}</p>
+                    </div>
                   </div>
+                  <p class="font-medium text-sm md:text-base">R${(item.price * item.quantity).toFixed(2)}</p>
                 </div>
-                <p class="font-medium text-sm md:text-base">R${(item.price * item.quantity).toFixed(2)}</p>
+                
+                <div class="mt-4">
+                  <h5 class="text-sm font-medium text-gray-800 mb-2">Measurements</h5>
+                  <div class="flex space-x-4">
+                    <label class="flex items-center text-sm">
+                      <input type="radio" name="measurements-option-${cartItemUniqueId}" value="default" class="mr-2 focus:ring-pink-500 text-pink-600 measurement-radio" checked>
+                      Use Default
+                    </label>
+                    <label class="flex items-center text-sm">
+                      <input type="radio" name="measurements-option-${cartItemUniqueId}" value="specific" class="mr-2 focus:ring-pink-500 text-pink-600 measurement-radio">
+                      Specify for item
+                    </label>
+                  </div>
+                  
+                  <div id="specific-measurements-${cartItemUniqueId}" class="hidden mt-3 p-3 bg-gray-50 rounded-md">
+                    <div class="grid grid-cols-2 gap-2">
+                      <div>
+                        <label for="bust-${cartItemUniqueId}" class="block text-xs font-medium text-gray-600">Bust</label>
+                        <input type="number" id="bust-${cartItemUniqueId}" placeholder="cm" class="w-full text-sm mt-1 px-2 py-1 border border-gray-300 rounded-md specific-bust">
+                      </div>
+                      <div>
+                        <label for="waist-${cartItemUniqueId}" class="block text-xs font-medium text-gray-600">Waist</label>
+                        <input type="number" id="waist-${cartItemUniqueId}" placeholder="cm" class="w-full text-sm mt-1 px-2 py-1 border border-gray-300 rounded-md specific-waist">
+                      </div>
+                      <div>
+                        <label for="hips-${cartItemUniqueId}" class="block text-xs font-medium text-gray-600">Hips</label>
+                        <input type="number" id="hips-${cartItemUniqueId}" placeholder="cm" class="w-full text-sm mt-1 px-2 py-1 border border-gray-300 rounded-md specific-hips">
+                      </div>
+                      <div>
+                        <label for="height-${cartItemUniqueId}" class="block text-xs font-medium text-gray-600">Height</label>
+                        <input type="number" id="height-${cartItemUniqueId}" placeholder="cm" class="w-full text-sm mt-1 px-2 py-1 border border-gray-300 rounded-md specific-height">
+                      </div>
+                    </div>
+                  </div>
+                  
+                </div>
               </div>
             `;
             summaryContainer.innerHTML += itemHtml;
         });
 
+        // --- 2. Render Totals ---
         const shipping = 50.00;
         const total = subtotal + shipping;
 
@@ -277,26 +321,122 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
         `;
         summaryContainer.innerHTML += summaryTotalHtml;
-         const placeOrderBtn = document.querySelector('#checkout-form button[type="submit"]');
-         if (placeOrderBtn) placeOrderBtn.disabled = false;
+        
+        // --- 3. Enable Place Order Button ---
+        const placeOrderBtn = document.querySelector('#checkout-form button[type="submit"]');
+        if (placeOrderBtn) placeOrderBtn.disabled = false;
     };
 
-    // --- CHECKOUT FORM SUBMISSION ---
+    // --- NEW EVENT HANDLER FOR CHECKOUT MEASUREMENT TOGGLES ---
+    const summaryContainer = document.getElementById('checkout-summary');
+    if (summaryContainer) {
+        summaryContainer.addEventListener('change', (e) => {
+            // Check if the changed element is one of our radio buttons
+            if (e.target.classList.contains('measurement-radio')) {
+                const selectedValue = e.target.value;
+                // Find the parent item container
+                const itemContainer = e.target.closest('[data-cart-item-id]');
+                if (!itemContainer) return;
+                
+                const cartItemUniqueId = itemContainer.dataset.cartItemId;
+                const specificForm = document.getElementById(`specific-measurements-${cartItemUniqueId}`);
+                
+                if (specificForm) {
+                    if (selectedValue === 'specific') {
+                        specificForm.classList.remove('hidden');
+                    } else {
+                        specificForm.classList.add('hidden');
+                    }
+                }
+            }
+        });
+    }
+
+
+    // --- START STEP 4 MODIFICATION ---
     const checkoutForm = document.getElementById('checkout-form');
     if (checkoutForm) {
         checkoutForm.addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            const formData = {
+            // 1. Get Customer Shipping Info
+            const customerInfo = {
                 name: document.getElementById('name')?.value,
                 email: document.getElementById('email')?.value,
                 address: document.getElementById('address')?.value,
                 city: document.getElementById('city')?.value,
                 postalCode: document.getElementById('postal-code')?.value,
             };
-            const cart = getCart();
+            
+            // 2. Get Default Measurements
+            const defaultMeasurements = {
+                bust: document.getElementById('bust')?.value,
+                waist: document.getElementById('waist')?.value,
+                hips: document.getElementById('hips')?.value,
+                height: document.getElementById('height')?.value,
+                fit: document.getElementById('fit')?.value,
+            };
 
-            if (!formData.email || !formData.name || !formData.address || !formData.city || !formData.postalCode || cart.length === 0) {
+            // 3. Get Cart & Process Measurements for each item
+            const cart = getCart();
+            const processedCart = [];
+            const summaryItems = document.querySelectorAll('#checkout-summary [data-cart-item-id]');
+            
+            let allMeasurementsValid = true;
+
+            // Loop through both the cart data and the DOM elements in the summary
+            for (let i = 0; i < cart.length; i++) {
+                const item = cart[i];
+                const itemElement = summaryItems[i];
+                const cartItemUniqueId = itemElement.dataset.cartItemId;
+
+                const measurementOption = itemElement.querySelector(`input[name="measurements-option-${cartItemUniqueId}"]:checked`).value;
+                
+                const processedItem = { ...item }; // Copy original item data (name, price, etc.)
+                
+                if (measurementOption === 'default') {
+                    // Check if default measurements are filled
+                    if (!defaultMeasurements.bust || !defaultMeasurements.waist || !defaultMeasurements.hips) {
+                        allMeasurementsValid = false;
+                        alert(`Please fill in at least Bust, Waist, and Hips in the 'Your Measurements' section, or specify measurements for ${item.name}.`);
+                        break; // Stop processing
+                    }
+                    processedItem.measurements = {
+                        type: 'default',
+                        ...defaultMeasurements
+                    };
+                } else {
+                    // Get specific measurements
+                    const specificMeasurements = {
+                        bust: itemElement.querySelector(`.specific-bust`)?.value,
+                        waist: itemElement.querySelector(`.specific-waist`)?.value,
+                        hips: itemElement.querySelector(`.specific-hips`)?.value,
+                        height: itemElement.querySelector(`.specific-height`)?.value,
+                        fit: 'custom' // Implied
+                    };
+                    
+                    // Check if specific measurements are filled
+                    if (!specificMeasurements.bust || !specificMeasurements.waist || !specificMeasurements.hips) {
+                        allMeasurementsValid = false;
+                        alert(`You selected 'Specify for item' for ${item.name}, but did not fill in all measurements.`);
+                        break; // Stop processing
+                    }
+                    
+                    processedItem.measurements = {
+                        type: 'specific',
+                        ...specificMeasurements
+                    };
+                }
+                processedCart.push(processedItem);
+            }
+
+            // Stop submission if validation failed
+            if (!allMeasurementsValid) {
+                return;
+            }
+
+            // 4. Basic Form Validation
+            if (!customerInfo.email || !customerInfo.name || !customerInfo.address || !customerInfo.city || !customerInfo.postalCode || cart.length === 0) {
                 alert('Please fill out all shipping fields and ensure your cart is not empty.');
                 return;
             }
@@ -307,12 +447,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 submitButton.textContent = 'Placing Order...';
             }
 
+            // 5. Send Final Data to Backend
             try {
-                console.log("Sending order data to server:", { customer: formData, cart: cart });
+                // This is the final data object
+                const orderData = { 
+                    customer: customerInfo, 
+                    cart: processedCart // Send the cart with measurements
+                };
+
+                console.log("Sending FINAL order data to server:", JSON.stringify(orderData, null, 2));
+                
                 const response = await fetch('https://carries-boutique-server.onrender.com/api/send-order', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ customer: formData, cart: cart }),
+                    body: JSON.stringify(orderData),
                 });
 
                  console.log("Server response status:", response.status);
@@ -346,6 +494,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+    // --- END STEP 4 MODIFICATION ---
+
 
     // --- FIREBASE AUTHENTICATION LOGIC ---
     // Make sure Firebase is loaded
@@ -386,7 +536,6 @@ document.addEventListener('DOMContentLoaded', () => {
               .then(() => {
                   console.log("User signed out successfully.");
                   // Clear potentially sensitive local storage on logout
-                  localStorage.removeItem('profileComplete');
                   localStorage.removeItem('userProfileData');
                   // Redirect to login page after logout
                   window.location.replace('login.html');
@@ -433,21 +582,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     checkoutEmailInput.classList.add('bg-gray-100');
                 }
 
-
-                // 3. PROFILE REDIRECT LOGIC
-                const profileComplete = localStorage.getItem('profileComplete') === 'true';
-                console.log("Profile complete flag:", profileComplete);
-
-                if (!profileComplete && currentPage !== 'profile-setup.html') {
-                    // Redirect logged-in user to profile setup if flag is missing
-                    console.log("Redirecting logged-in user to profile setup.");
-                    window.location.replace('profile-setup.html');
-                } else if (profileComplete && currentPage === 'profile-setup.html') {
-                    // If profile IS complete but user landed on setup, redirect away.
-                    console.log("Profile complete, redirecting from setup page to index.");
-                    window.location.replace('index.html');
-                }
-
+                // 3. PROFILE REDIRECT LOGIC -- REMOVED --
+                // User will now be directed to index.html automatically by the
+                // immediate auth check logic at the top of the file.
 
             } else {
                 // --- User is SIGNED OUT ---
@@ -481,55 +618,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- END FIREBASE AUTH LOGIC ---
 
 
-    // --- PROFILE SETUP FORM HANDLER (only runs on profile-setup.html) ---
-    const profileSetupForm = document.getElementById('profile-setup-form');
-    if (profileSetupForm) {
-        console.log("Profile setup form found. Adding listener.");
-        profileSetupForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-
-             if (typeof firebase === 'undefined' || typeof firebase.auth !== 'function' || !firebase.auth().currentUser) {
-                alert("Error: You seem to be logged out. Please log in again.");
-                window.location.replace('login.html');
-                return;
-            }
-
-            const profileData = {
-                bust: document.getElementById('bust')?.value,
-                waist: document.getElementById('waist')?.value,
-                hips: document.getElementById('hips')?.value,
-                height: document.getElementById('height')?.value,
-                fit: document.getElementById('fit')?.value,
-                userId: firebase.auth().currentUser.uid,
-                email: firebase.auth().currentUser.email
-            };
-
-            if (!profileData.bust || !profileData.waist || !profileData.hips) {
-                alert("Please fill in at least Bust, Waist, and Hips measurements.");
-                return;
-            }
-
-            try {
-                localStorage.setItem('userProfileData', JSON.stringify(profileData));
-                localStorage.setItem('profileComplete', 'true');
-
-                console.log("Profile data saved to localStorage:", profileData);
-                alert("Profile saved successfully! You can now browse the store.");
-
-                window.location.replace('index.html');
-
-            } catch (error) {
-                console.error("Error saving profile data to localStorage:", error);
-                alert("Could not save profile. Please try again.");
-            }
-        });
-    }
+    // --- PROFILE SETUP FORM HANDLER -- REMOVED --
 
 
     // --- INITIAL PAGE LOAD CALLS ---
     updateCartIcon();
     renderCartPage();
-    renderCheckoutSummary();
+    renderCheckoutSummary(); // This now renders the complex checkout summary
 
     if (typeof feather !== 'undefined') feather.replace();
 
