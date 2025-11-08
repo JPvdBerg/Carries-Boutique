@@ -68,7 +68,7 @@
                   <button id="logout-btn" class="px-3 py-1 border border-transparent text-sm font-medium rounded-full text-white bg-pink-600 hover:bg-pink-700">Logout</button>
               </div>
           </div>
-           <a href="https://wa.me/27828735697" target="_blank" class="ml-2 whatsapp-btn inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full text-white">
+          <a href="https://wa.me/27828735697" target="_blank" class="ml-2 whatsapp-btn inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full text-white">
             <i data-feather="message-circle" class="mr-2"></i> WhatsApp
           </a>
         </div>
@@ -86,10 +86,13 @@
     <div class="hidden md:hidden" id="mobile-menu">
       <div class="pt-2 pb-3 space-y-1">
         <a href="index.html" class="border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">Home</a>
-        <a href="shop.html" class="border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">Shop</a>
+        <a href="shop.html" class="border-transparent text-gray-900 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">Shop</a>
         <a href="index.html#collections" class="border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">Collections</a>
         <a href="index.html#about" class="border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">About</a>
         <a href="index.html#contact" class="border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">Contact</a>
+        <a href="https://wa.me/27828735697" target="_blank" class="mt-2 whatsapp-btn inline-flex items-center justify-center px-4 py-2 border border-transparent text-base font-medium rounded-full text-white w-full">
+          <i data-feather="message-circle" class="mr-2"></i> WhatsApp
+        </a>
         
         <div class="pt-4 pb-3 border-t border-gray-200">
             <div id="mobile-auth-container" class="px-2 space-y-2">
@@ -107,7 +110,7 @@
         </div>
         </div>
     </div>
-  </nav>
+    </nav>
 
   <section class="py-16 bg-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -244,6 +247,7 @@
 
   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
   <script>
     // Your web app's Firebase configuration
     const firebaseConfig = {
@@ -258,14 +262,11 @@
 
     // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
-
-    // Make auth globally available (easier for simple apps)
-    // No need to declare 'auth' here if it's not used directly in inline script
-    // const auth = firebase.auth();
+    const auth = firebase.auth(); 
+    const db = firebase.firestore(); // <-- Initialize Firestore
 
   </script>
 
   <script src="app.js"></script>
 </body>
 </html>
-```

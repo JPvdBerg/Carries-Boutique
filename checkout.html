@@ -69,7 +69,7 @@
                   <button id="logout-btn" class="px-3 py-1 border border-transparent text-sm font-medium rounded-full text-white bg-pink-600 hover:bg-pink-700">Logout</button>
               </div>
           </div>
-        </div>
+          </div>
         <div class="-mr-2 flex items-center md:hidden">
           <a href="cart.html" class="relative mr-2 text-gray-900 p-2 rounded-full bg-gray-100">
             <i data-feather="shopping-cart"></i>
@@ -105,7 +105,7 @@
         </div>
         </div>
     </div>
-  </nav>
+    </nav>
 
   <section class="py-16 bg-gray-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -222,6 +222,7 @@
 
   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
   <script>
     // Your web app's Firebase configuration
     const firebaseConfig = {
@@ -236,10 +237,8 @@
 
     // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
-
-    // Make auth globally available (easier for simple apps)
     const auth = firebase.auth(); 
-    // If using Firestore: const db = firebase.firestore(); 
+    const db = firebase.firestore(); // <-- Initialize Firestore
 
   </script>
 
