@@ -4,8 +4,7 @@
     let initialAuthCheckDone = false;
     const checkAuthStatus = () => {
         // Retry mechanism in case Firebase scripts haven't loaded yet
-        if (typeof firebase === 'undefined' || typeof firebase.auth !== 'function') {
-            // console.warn("Firebase not ready for initial auth check, retrying...");
+        if (typeof firebase === 'undefined' || typeof firebase.auth !== 'function' || typeof firebase.firestore !== 'function') {
             setTimeout(checkAuthStatus, 150); // Wait a bit longer
             return;
         }
@@ -19,19 +18,13 @@
                 const currentPage = window.location.pathname.split('/').pop() || 'index.html';
                 const allowedLoggedOutPages = ['login.html']; // Pages accessible when logged out
 
-                // console.log(`Initial Auth Check: User ${user ? 'found' : 'not found'}. Current page: ${currentPage}`);
-
                 if (!user && !allowedLoggedOutPages.includes(currentPage)) {
-                    // If NOT logged in AND NOT on an allowed logged-out page, redirect to login
                     console.log("Redirecting to login.html as user is not logged in.");
                     window.location.replace('login.html'); // Use replace to avoid back button issues
                 } else if (user && currentPage === 'login.html') {
-                    // If logged in BUT somehow on the login page, redirect to index
-                    // Profile check will happen in DOMContentLoaded listener
                     console.log("Already logged in, redirecting from login page to index.");
                     window.location.replace('index.html');
                 }
-                // Otherwise, proceed normally
             }
         });
     };
@@ -41,8 +34,8 @@
 
 
 document.addEventListener('DOMContentLoaded', () => {
-    let isMeasurementsLoaded = false; // Flag for measurement loading
-    console.log("DOM Content Loaded."); // Debug log
+    let isMeasurementsLoaded = false;
+    console.log("DOM Content Loaded.");
 
     // Initialize AOS
     if (typeof AOS !== 'undefined') {
@@ -90,7 +83,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 window.scrollTo({ top: 0, behavior: 'smooth' });
                 return;
             }
-            if (window.location.pathname.split('/').pop() === (this.pathname.split('/').pop() || 'index.html')) {
+            // Check if on the same page for smooth scroll
+            const currentPath = window.location.pathname.split('/').pop() || 'index.html';
+            const anchorPath = this.pathname.split('/').pop() || 'index.html';
+
+            if (currentPath === anchorPath) {
                 try {
                      const targetElement = document.querySelector(href);
                      if (targetElement) {
@@ -108,30 +105,98 @@ document.addEventListener('DOMContentLoaded', () => {
     const scrollDownButton = document.querySelector('.scroll-down');
     if (scrollDownButton) {
         scrollDownButton.addEventListener('click', function() {
-            const target = document.querySelector('#collections');
+            const target = document.querySelector('#view-toggle-btn-section'); // Updated to point to new section
             if (target) {
                 target.scrollIntoView({ behavior: 'smooth' });
             }
         });
     }
 
-    // --- SHOPPING CART LOGIC ---
+    // --- NEW VIEW TOGGLE LOGIC (for index.html) ---
+    const toggleBtn = document.getElementById('view-toggle-btn');
+    const customView = document.getElementById('custom-view');
+    const predefinedView = document.getElementById('predefined-view');
+    const viewTitle = document.getElementById('view-title');
+    const viewSubtitle = document.getElementById('view-subtitle');
+
+    if (toggleBtn && customView && predefinedView && viewTitle && viewSubtitle) {
+        
+        let isCustomView = true; // Default view is custom
+
+        toggleBtn.addEventListener('click', () => {
+            isCustomView = !isCustomView; // Flip the state
+
+            if (isCustomView) {
+                // Show Custom View
+                customView.style.display = 'block';
+                predefinedView.style.display = 'none';
+                
+                // Update text
+                viewTitle.textContent = 'Our Custom Styles';
+                viewSubtitle.textContent = 'Handcrafted pieces tailored to your exact measurements.';
+                toggleBtn.textContent = 'Shop Predefined Retail';
+            } else {
+                // Show Predefined View
+                customView.style.display = 'none';
+                predefinedView.style.display = 'block';
+
+                // Update text
+                viewTitle.textContent = 'Our Retail Collections';
+                viewSubtitle.textContent = 'Curated, predefined items in standard sizes (S, M, L).';
+                toggleBtn.textContent = 'Shop Custom Tailoring';
+            }
+        });
+    }
+    // --- END NEW VIEW TOGGLE LOGIC ---
+
+
+    // --- ================================== ---
+    // --- NEW SHOPPING CART LOGIC (With Sizes) ---
+    // --- ================================== ---
     const getCart = () => JSON.parse(localStorage.getItem('carriesBoutiqueCart')) || [];
     const saveCart = (cart) => {
         localStorage.setItem('carriesBoutiqueCart', JSON.stringify(cart));
         updateCartIcon();
     };
 
-    window.addToCart = (productId, productName, price, image) => {
+    /**
+     * Creates a unique ID for a cart item based on its product ID and size.
+     * e.g., 'prod_001_M'
+     */
+    const createCartItemId = (productId, size) => {
+        if (!size) {
+            console.error("Size is undefined, defaulting to 'default'");
+            size = 'default'; // Failsafe, but should be provided
+        }
+        return `${productId}_${size}`;
+    };
+
+    window.addToCart = (productId, productName, price, image, size) => {
+        if (!size) {
+            alert('Error: No size specified for this item.');
+            return;
+        }
+
         const cart = getCart();
-        const existingItem = cart.find(item => item.id === productId);
+        const cartItemId = createCartItemId(productId, size);
+        
+        const existingItem = cart.find(item => item.cartItemId === cartItemId);
+
         if (existingItem) {
             existingItem.quantity += 1;
         } else {
-            cart.push({ id: productId, name: productName, price: price, image: image, quantity: 1 });
+            cart.push({
+                cartItemId: cartItemId, // e.g., 'prod_001_M'
+                id: productId,          // e.g., 'prod_001'
+                name: productName,
+                price: price,
+                image: image,
+                size: size,             // e.g., 'M'
+                quantity: 1
+            });
         }
         saveCart(cart);
-        alert(`${productName} has been added to your cart!`);
+        alert(`${productName} (Size: ${size}) has been added to your cart!`);
     };
 
     const updateCartIcon = () => {
@@ -174,20 +239,21 @@ document.addEventListener('DOMContentLoaded', () => {
                   <img src="${item.image}" alt="${item.name}" class="w-16 h-16 md:w-20 md:h-20 object-cover rounded-lg">
                   <div>
                     <h3 class="text-base md:text-lg font-medium text-gray-900">${item.name}</h3>
+                    <p class="text-sm text-gray-600 font-medium">Size: ${item.size}</p>
                     <p class="text-sm text-gray-500">R${item.price.toFixed(2)}</p>
                   </div>
                 </div>
                 <div class="flex items-center space-x-1 md:space-x-3">
-                  <button class="p-1 rounded-full text-gray-500 hover:bg-gray-200" onclick="updateCartQuantity('${item.id}', ${item.quantity - 1})">
+                  <button class="p-1 rounded-full text-gray-500 hover:bg-gray-200" onclick="updateCartQuantity('${item.cartItemId}', ${item.quantity - 1})">
                     <i data-feather="minus" class="w-4 h-4"></i>
                   </button>
                   <span class="w-8 text-center text-sm md:text-base">${item.quantity}</span>
-                  <button class="p-1 rounded-full text-gray-500 hover:bg-gray-200" onclick="updateCartQuantity('${item.id}', ${item.quantity + 1})">
+                  <button class="p-1 rounded-full text-gray-500 hover:bg-gray-200" onclick="updateCartQuantity('${item.cartItemId}', ${item.quantity + 1})">
                     <i data-feather="plus" class="w-4 h-4"></i>
                   </button>
                 </div>
                 <p class="text-base md:text-lg font-semibold text-gray-900">R${(item.price * item.quantity).toFixed(2)}</p>
-                <button class="text-red-500 hover:text-red-700" onclick="removeFromCart('${item.id}')">
+                <button class="text-red-500 hover:text-red-700" onclick="removeFromCart('${item.cartItemId}')">
                   <i data-feather="trash-2" class="w-4 h-4 md:w-5 md:h-5"></i>
                 </button>
               </div>
@@ -207,21 +273,23 @@ document.addEventListener('DOMContentLoaded', () => {
         if (typeof feather !== 'undefined') feather.replace();
     };
 
-    window.updateCartQuantity = (productId, quantity) => {
+    // Updated to use the new cartItemId
+    window.updateCartQuantity = (cartItemId, quantity) => {
         let cart = getCart();
         if (quantity <= 0) {
-            cart = cart.filter(item => item.id !== productId);
+            cart = cart.filter(item => item.cartItemId !== cartItemId);
         } else {
-            const item = cart.find(item => item.id === productId);
+            const item = cart.find(item => item.cartItemId === cartItemId);
             if (item) item.quantity = quantity;
         }
         saveCart(cart);
         renderCartPage();
     };
 
-    window.removeFromCart = (productId) => {
+    // Updated to use the new cartItemId
+    window.removeFromCart = (cartItemId) => {
         let cart = getCart();
-        cart = cart.filter(item => item.id !== productId);
+        cart = cart.filter(item => item.cartItemId !== cartItemId);
         saveCart(cart);
         renderCartPage(); // Rerender cart page
         renderCheckoutSummary(); // Also rerender checkout summary if on that page
@@ -247,8 +315,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // --- 1. Render Each Cart Item ---
         cart.forEach((item, index) => {
-            // We use the index as a unique ID for this item in the cart
-            const cartItemUniqueId = `${item.id}-${index}`; 
+            const cartItemUniqueId = item.cartItemId; // Use our new unique ID
             subtotal += item.price * item.quantity;
             
             const itemHtml = `
@@ -258,6 +325,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <img src="${item.image}" alt="${item.name}" class="w-12 h-12 md:w-16 md:h-16 object-cover rounded-lg">
                     <div>
                       <h4 class="font-medium text-sm md:text-base">${item.name}</h4>
+                      <p class="text-sm text-gray-600 font-medium">Size: ${item.size}</p>
                       <p class="text-xs md:text-sm text-gray-500">Qty: ${item.quantity}</p>
                     </div>
                   </div>
@@ -327,7 +395,6 @@ document.addEventListener('DOMContentLoaded', () => {
         summaryContainer.innerHTML += summaryTotalHtml;
         
         // --- 3. Enable/Disable Place Order Button ---
-        // --- MODIFIED FOR RACE CONDITION FIX ---
         const placeOrderBtn = document.querySelector('#checkout-form button[type="submit"]');
         if (placeOrderBtn) {
             const user = firebase.auth().currentUser;
@@ -336,25 +403,78 @@ document.addEventListener('DOMContentLoaded', () => {
                 placeOrderBtn.disabled = true;
                 placeOrderBtn.textContent = 'Place Order';
             } else if (user && !isMeasurementsLoaded) {
-                // Cart has items, user is logged in, but measurements are NOT loaded
                 placeOrderBtn.disabled = true;
                 placeOrderBtn.textContent = 'Loading Measurements...';
             } else {
-                // Cart has items AND (user is logged out OR measurements are loaded)
                 placeOrderBtn.disabled = false;
                 placeOrderBtn.textContent = 'Place Order';
             }
         }
     };
+    // --- END NEW CART LOGIC ---
+    // --- ================== ---
 
-    // --- NEW EVENT HANDLER FOR CHECKOUT MEASUREMENT TOGGLES ---
+
+    // --- ================================ ---
+    // --- NEW PRODUCT PAGE SIZE SELECTOR ---
+    // --- ================================ ---
+    
+    // Check if we are on the product.html page
+    const productSizeSelector = document.getElementById('product-size-selector');
+    if (productSizeSelector) {
+        let selectedSize = null; // Variable to store the selected size
+        const sizeButtons = productSizeSelector.querySelectorAll('.size-btn');
+        const addToCartBtn = document.getElementById('product-add-to-cart-btn');
+
+        // 1. Add click listener to all size buttons
+        sizeButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Get the size from the button's text
+                selectedSize = button.textContent.trim();
+                
+                // Update button styles
+                sizeButtons.forEach(btn => {
+                    btn.classList.remove('bg-pink-100', 'text-pink-700', 'border-pink-300', 'ring-1', 'ring-pink-500');
+                    btn.classList.add('hover:bg-gray-100');
+                });
+                
+                button.classList.add('bg-pink-100', 'text-pink-700', 'border-pink-300', 'ring-1', 'ring-pink-500');
+                button.classList.remove('hover:bg-gray-100');
+            });
+        });
+
+        // 2. Add click listener to the "Add to Cart" button
+        if (addToCartBtn) {
+            addToCartBtn.addEventListener('click', () => {
+                if (!selectedSize) {
+                    alert('Please select a size first!');
+                    return; // Stop the function
+                }
+                
+                // If a size is selected, call the global addToCart function
+                // These values are hard-coded for the demo product.html page
+                addToCart(
+                    'prod_001', 
+                    'Floral Maxi Dress', 
+                    599.00, 
+                    'http://static.photos/fashion/640x360/5',
+                    selectedSize
+                );
+            });
+        }
+    }
+    // --- ================================ ---
+    // --- END PRODUCT PAGE SIZE SELECTOR ---
+    // --- ================================ ---
+
+
+
+    // --- EVENT HANDLER FOR CHECKOUT MEASUREMENT TOGGLES ---
     const summaryContainer = document.getElementById('checkout-summary');
     if (summaryContainer) {
         summaryContainer.addEventListener('change', (e) => {
-            // Check if the changed element is one of our radio buttons
             if (e.target.classList.contains('measurement-radio')) {
                 const selectedValue = e.target.value;
-                // Find the parent item container
                 const itemContainer = e.target.closest('[data-cart-item-id]');
                 if (!itemContainer) return;
                 
@@ -379,14 +499,12 @@ document.addEventListener('DOMContentLoaded', () => {
         checkoutForm.addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            // --- FIX: GET THE LOGGED-IN USER ---
             const user = firebase.auth().currentUser;
             if (!user) {
                 alert('Error: You are not logged in. Redirecting to login page.');
                 window.location.replace('login.html');
                 return;
             }
-            // ------------------------------------
 
             // 1. Get Customer Shipping Info
             const customerInfo = {
@@ -413,7 +531,6 @@ document.addEventListener('DOMContentLoaded', () => {
             
             let allMeasurementsValid = true;
 
-            // Loop through both the cart data and the DOM elements in the summary
             for (let i = 0; i < cart.length; i++) {
                 const item = cart[i];
                 const itemElement = summaryItems[i];
@@ -444,7 +561,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         fit: 'custom' // Implied
                     };
                     
-                    // Check if specific measurements are filled
                     if (!specificMeasurements.bust || !specificMeasurements.waist || !specificMeasurements.hips) {
                         allMeasurementsValid = false;
                         alert(`You selected 'Specify for item' for ${item.name}, but did not fill in all measurements.`);
@@ -459,7 +575,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 processedCart.push(processedItem);
             }
 
-            // Stop submission if validation failed
             if (!allMeasurementsValid) {
                 return;
             }
@@ -478,11 +593,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // 5. Send Final Data to Backend
             try {
-                // This is the final data object
                 const orderData = { 
-                    userId: user.uid, // <-- THE CRITICAL ADDITION
+                    userId: user.uid,
                     customer: customerInfo, 
-                    cart: processedCart // Send the cart with measurements
+                    cart: processedCart 
                 };
 
                 console.log("Sending FINAL order data to server:", JSON.stringify(orderData, null, 2));
@@ -530,24 +644,17 @@ document.addEventListener('DOMContentLoaded', () => {
     // Make sure Firebase is loaded
     if (typeof firebase !== 'undefined' && typeof firebase.auth === 'function') {
         const auth = firebase.auth();
-        const db = firebase.firestore(); // <-- Get reference to Firestore
+        const db = firebase.firestore();
 
         // --- Get references to ALL auth buttons ---
-        // Desktop Nav
         const navGoogleLoginBtn = document.getElementById('google-login-btn');
         const userInfoDiv = document.getElementById('user-info');
         const userDisplayNameSpan = document.getElementById('user-display-name');
         const logoutBtn = document.getElementById('logout-btn');
-
-        // Mobile Nav
         const mobileGoogleLoginBtn = document.getElementById('google-login-btn-mobile');
         const mobileUserInfoDiv = document.getElementById('user-info-mobile');
         const mobileLogoutBtn = document.getElementById('logout-btn-mobile');
-
-        // Login Page
         const pageGoogleLoginBtn = document.getElementById('google-login-btn-page');
-
-        // Checkout Inputs
         const checkoutNameInput = document.getElementById('name');
         const checkoutEmailInput = document.getElementById('email');
 
@@ -558,7 +665,6 @@ document.addEventListener('DOMContentLoaded', () => {
             auth.signInWithPopup(provider)
               .then((result) => {
                   console.log("Google Sign-In Successful. User:", result.user?.displayName || result.user?.email);
-                  // onAuthStateChanged handles the rest
               }).catch((error) => {
                   console.error("Google Sign-In Error:", error);
                   alert(`Login failed: ${error.code} - ${error.message}`);
@@ -587,8 +693,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (mobileLogoutBtn) mobileLogoutBtn.addEventListener('click', handleLogout);
 
         
-        // --- START REFACTORED FUNCTION ---
-        // Function to LOAD measurements
+        // --- Function to LOAD measurements ---
         const loadMeasurements = async (userId, currentPage) => {
             const userRef = db.collection('users').doc(userId);
             try {
@@ -598,7 +703,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     
                     let bustEl, waistEl, hipsEl, heightEl, fitEl;
                     
-                    // Check which page we're on and get the correct elements
                     if (currentPage === 'account.html') {
                         bustEl = document.getElementById('account-bust');
                         waistEl = document.getElementById('account-waist');
@@ -624,11 +728,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.error("Error loading measurements: ", error);
             }
         };
-        // --- END REFACTORED FUNCTION ---
 
 
         // --- Auth State Observer ---
-        // --- MODIFIED FOR RACE CONDITION FIX ---
         auth.onAuthStateChanged((user) => {
             console.log("Auth state changed, user:", user ? (user.displayName || user.email) : null);
             const currentPage = window.location.pathname.split('/').pop() || 'index.html';
@@ -659,24 +761,22 @@ document.addEventListener('DOMContentLoaded', () => {
                         checkoutEmailInput.classList.add('bg-gray-100');
                     }
                     
-                    isMeasurementsLoaded = false; // Set loading to false
-                    renderCheckoutSummary(); // Re-render (this will show "Loading...")
+                    isMeasurementsLoaded = false;
+                    renderCheckoutSummary(); 
                     
-                    // Load measurements into checkout form
                     loadMeasurements(user.uid, currentPage).then(() => {
-                        isMeasurementsLoaded = true; // Set loading to true
-                        renderCheckoutSummary(); // Re-render (this will enable the button)
+                        isMeasurementsLoaded = true; 
+                        renderCheckoutSummary();
                     });
                 }
                 
-                // --- If on Account Page, load data ---
                 if (currentPage === 'account.html') {
                     loadMeasurements(user.uid, currentPage);
                 }
 
             } else {
                 // --- User is SIGNED OUT ---
-                isMeasurementsLoaded = true; // No user, so "loaded"
+                isMeasurementsLoaded = true; 
 
                 // --- Update NAV UI (Desktop & Mobile) ---
                 if (navGoogleLoginBtn) navGoogleLoginBtn.style.display = 'inline-flex';
@@ -690,10 +790,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (checkoutEmailInput && checkoutNameInput) {
                         checkoutEmailInput.value = '';
                         checkoutEmailInput.readOnly = false;
-                        checkoutEmailInput.classList.remove('bg-gray-1S00');
+                        checkoutEmailInput.classList.remove('bg-gray-100');
                         checkoutNameInput.value = '';
                     }
-                    renderCheckoutSummary(); // Re-render to update button state
+                    renderCheckoutSummary();
                 }
             }
             if (typeof feather !== 'undefined') setTimeout(feather.replace, 0);
@@ -702,11 +802,24 @@ document.addEventListener('DOMContentLoaded', () => {
         // --- ACCOUNT PAGE LOGIC (SAVE FUNCTION) ---
         const accountForm = document.getElementById('account-form');
         
-        // Function to SAVE measurements
         const saveMeasurements = async (e) => {
             e.preventDefault();
             const user = auth.currentUser;
-            if (!user) return alert("You must be logged in to save.");
+
+            const button = e.target.querySelector('button[type="submit"]');
+            if (button) {
+                button.disabled = true;
+                button.textContent = 'Saving...';
+            }
+
+            if (!user) {
+                alert("You must be logged in to save.");
+                if (button) {
+                    button.disabled = false;
+                    button.textContent = 'Save Changes';
+                }
+                return;
+            }
 
             const measurements = {
                 bust: document.getElementById('account-bust')?.value || null,
@@ -719,7 +832,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const userRef = db.collection('users').doc(user.uid);
             
             try {
-                await userRef.set({ measurements: measurements }, { merge: true });
+                // 'merge: true' ensures we don't overwrite other user data
+                await userRef.set({ measurements: measurements }, { merge: true }); 
                 
                 const successMsg = document.getElementById('success-message');
                 if (successMsg) {
@@ -730,8 +844,14 @@ document.addEventListener('DOMContentLoaded', () => {
             } catch (error) {
                 console.error("Error saving measurements: ", error);
                 alert(`Error saving: ${error.message}`);
+            } finally {
+                if (button) {
+                    button.disabled = false;
+                    button.textContent = 'Save Changes';
+                }
             }
         };
+
 
         // Add listener to the account form if it exists
         if (accountForm) {
@@ -741,7 +861,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     } else {
         console.error("Firebase library not loaded or initialized correctly!");
-        // ... (error handling for missing firebase) ...
     }
     // --- END FIREBASE AUTH LOGIC ---
 

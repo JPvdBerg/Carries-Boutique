@@ -48,7 +48,7 @@
         </div>
         <div class="hidden md:ml-6 md:flex md:items-center md:space-x-8">
           <a href="index.html" class="nav-link text-gray-500 hover:text-gray-900 px-3 py-2 text-sm font-medium">Home</a>
-          <a href="index.html#collections" class="nav-link text-gray-500 hover:text-gray-900 px-3 py-2 text-sm font-medium">Collections</a>
+          <a href="index.html#view-toggle-btn-section" class="nav-link text-gray-500 hover:text-gray-900 px-3 py-2 text-sm font-medium">Collections</a>
           <a href="shop.html" class="nav-link text-gray-900 px-3 py-2 text-sm font-medium">Shop</a> <a href="index.html#about" class="nav-link text-gray-500 hover:text-gray-900 px-3 py-2 text-sm font-medium">About</a>
           <a href="index.html#contact" class="nav-link text-gray-500 hover:text-gray-900 px-3 py-2 text-sm font-medium">Contact</a>
 
@@ -87,7 +87,7 @@
       <div class="pt-2 pb-3 space-y-1">
         <a href="index.html" class="border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">Home</a>
         <a href="shop.html" class="border-transparent text-gray-900 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">Shop</a>
-        <a href="index.html#collections" class="border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">Collections</a>
+        <a href="index.html#view-toggle-btn-section" class="border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">Collections</a>
         <a href="index.html#about" class="border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">About</a>
         <a href="index.html#contact" class="border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">Contact</a>
         
@@ -128,7 +128,7 @@
             <p class="mt-1 text-sm text-gray-500">Summer Collection</p>
             <div class="mt-4 flex justify-between items-center">
               <span class="text-lg font-bold text-gray-900">R599</span>
-              <button onclick="addToCart('prod_001', 'Floral Maxi Dress', 599.00, 'http://static.photos/fashion/640x360/5')" class="px-3 py-1 bg-pink-100 text-pink-700 rounded-full text-sm font-medium hover:bg-pink-200">Add to Cart</button>
+              <button onclick="addToCart('prod_001', 'Floral Maxi Dress', 599.00, 'http://static.photos/fashion/640x360/5', 'M')" class="px-3 py-1 bg-pink-100 text-pink-700 rounded-full text-sm font-medium hover:bg-pink-200">Add to Cart</button>
             </div>
           </div>
         </div>
@@ -139,7 +139,7 @@
             <p class="mt-1 text-sm text-gray-500">Casual Collection</p>
             <div class="mt-4 flex justify-between items-center">
               <span class="text-lg font-bold text-gray-900">R799</span>
-              <button onclick="addToCart('prod_002', 'Classic Denim Jacket', 799.00, 'http://static.photos/fashion/640x360/6')" class="px-3 py-1 bg-pink-100 text-pink-700 rounded-full text-sm font-medium hover:bg-pink-200">Add to Cart</button>
+              <button onclick="addToCart('prod_002', 'Classic Denim Jacket', 799.00, 'http://static.photos/fashion/640x360/6', 'M')" class="px-3 py-1 bg-pink-100 text-pink-700 rounded-full text-sm font-medium hover:bg-pink-200">Add to Cart</button>
             </div>
           </div>
         </div>
@@ -150,7 +150,7 @@
             <p class="mt-1 text-sm text-gray-500">Elegance Collection</p>
             <div class="mt-4 flex justify-between items-center">
               <span class="text-lg font-bold text-gray-900">R899</span>
-              <button onclick="addToCart('prod_003', 'Silk Evening Blouse', 899.00, 'http://static.photos/fashion/640x360/7')" class="px-3 py-1 bg-pink-100 text-pink-700 rounded-full text-sm font-medium hover:bg-pink-200">Add to Cart</button>
+              <button onclick="addToCart('prod_003', 'Silk Evening Blouse', 899.00, 'http://static.photos/fashion/640x360/7', 'M')" class="px-3 py-1 bg-pink-100 text-pink-700 rounded-full text-sm font-medium hover:bg-pink-200">Add to Cart</button>
             </div>
           </div>
         </div>
@@ -161,7 +161,7 @@
             <p class="mt-1 text-sm text-gray-500">Comfort Collection</p>
             <div class="mt-4 flex justify-between items-center">
               <span class="text-lg font-bold text-gray-900">R699</span>
-              <button onclick="addToCart('prod_004', 'Linen Wide Leg Pants', 699.00, 'http://static.photos/fashion/640x360/8')" class="px-3 py-1 bg-pink-100 text-pink-700 rounded-full text-sm font-medium hover:bg-pink-200">Add to Cart</button>
+              <button onclick="addToCart('prod_004', 'Linen Wide Leg Pants', 699.00, 'http://static.photos/fashion/640x360/8', 'M')" class="px-3 py-1 bg-pink-100 text-pink-700 rounded-full text-sm font-medium hover:bg-pink-200">Add to Cart</button>
             </div>
           </div>
         </div>
@@ -172,7 +172,7 @@
             <p class="mt-1 text-sm text-gray-500">Accessories</p>
             <div class="mt-4 flex justify-between items-center">
               <span class="text-lg font-bold text-gray-900">R349</span>
-              <button onclick="addToCart('prod_005', 'Wide Brim Summer Hat', 349.00, 'http://static.photos/fashion/640x360/9')" class="px-3 py-1 bg-pink-100 text-pink-700 rounded-full text-sm font-medium hover:bg-pink-200">Add to Cart</button>
+              <button onclick="addToCart('prod_005', 'Wide Brim Summer Hat', 349.00, 'http://static.photos/fashion/640x360/9', 'M')" class="px-3 py-1 bg-pink-100 text-pink-700 rounded-full text-sm font-medium hover:bg-pink-200">Add to Cart</button>
             </div>
           </div>
         </div>
@@ -183,7 +183,7 @@
             <p class="mt-1 text-sm text-gray-500">Accessories</p>
             <div class="mt-4 flex justify-between items-center">
               <span class="text-lg font-bold text-gray-900">R1299</span>
-              <button onclick="addToCart('prod_006', 'Leather Crossbody Bag', 1299.00, 'http://static.photos/fashion/640x360/10')" class="px-3 py-1 bg-pink-100 text-pink-700 rounded-full text-sm font-medium hover:bg-pink-200">Add to Cart</button>
+              <button onclick="addToCart('prod_006', 'Leather Crossbody Bag', 1299.00, 'http://static.photos/fashion/640x360/10', 'M')" class="px-3 py-1 bg-pink-100 text-pink-700 rounded-full text-sm font-medium hover:bg-pink-200">Add to Cart</button>
             </div>
           </div>
         </div>
@@ -194,7 +194,7 @@
             <p class="mt-1 text-sm text-gray-500">Evening Elegance</p>
             <div class="mt-4 flex justify-between items-center">
               <span class="text-lg font-bold text-gray-900">R1499</span>
-              <button onclick="addToCart('prod_007', 'Red Satin Evening Dress', 1499.00, 'http://static.photos/fashion/640x360/11')" class="px-3 py-1 bg-pink-100 text-pink-700 rounded-full text-sm font-medium hover:bg-pink-200">Add to Cart</button>
+              <button onclick="addToCart('prod_007', 'Red Satin Evening Dress', 1499.00, 'http://static.photos/fashion/640x360/11', 'M')" class="px-3 py-1 bg-pink-100 text-pink-700 rounded-full text-sm font-medium hover:bg-pink-200">Add to Cart</button>
             </div>
           </div>
         </div>
@@ -205,7 +205,7 @@
             <p class="mt-1 text-sm text-gray-500">Casual Comfort</p>
             <div class="mt-4 flex justify-between items-center">
               <span class="text-lg font-bold text-gray-900">R799</span>
-              <button onclick="addToCart('prod_008', 'Cozy Knit Sweater', 799.00, 'http://static.photos/fashion/640x360/12')" class="px-3 py-1 bg-pink-100 text-pink-700 rounded-full text-sm font-medium hover:bg-pink-200">Add to Cart</button>
+              <button onclick="addToCart('prod_008', 'Cozy Knit Sweater', 799.00, 'http://static.photos/fashion/640x360/12', 'M')" class="px-3 py-1 bg-pink-100 text-pink-700 rounded-full text-sm font-medium hover:bg-pink-200">Add to Cart</button>
             </div>
           </div>
         </div>
@@ -215,19 +215,11 @@
   </section>
 
   <footer class="bg-gray-900 text-white py-12">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-        <div><a href="index.html" class="flex items-center"><img class="h-8 w-auto" src="https://i.imgur.com/KNRtw3t.png" alt="Carries Boutique"><span class="ml-2 text-xl font-semibold">Carries Boutique</span></a><p class="mt-4 text-gray-400">Premium fashion boutique offering handcrafted, sustainable clothing with timeless elegance.</p></div>
-        <div><h3 class="text-lg font-medium mb-4">Shop</h3><ul class="space-y-2"><li><a href="shop.html" class="footer-link text-gray-400 hover:text-white">New Arrivals</a></li><li><a href="shop.html" class="footer-link text-gray-400 hover:text-white">Best Sellers</a></li><li><a href="shop.html" class="footer-link text-gray-400 hover:text-white">Sale Items</a></li><li><a href="index.html#contact" class="footer-link text-gray-400 hover:text-white">Gift Cards</a></li></ul></div>
-        <div><h3 class="text-lg font-medium mb-4">Information</h3><ul class="space-y-2"><li><a href="index.html#about" class="footer-link text-gray-400 hover:text-white">About Us</a></li><li><a href="index.html#about" class="footer-link text-gray-400 hover:text-white">Sustainability</a></li><li><a href="index.html#contact" class="footer-link text-gray-400 hover:text-white">Shipping Policy</a></li><li><a href="index.html#contact" class="footer-link text-gray-400 hover:text-white">Returns & Exchanges</a></li></ul></div>
-        <div><h3 class="text-lg font-medium mb-4">Newsletter</h3><p class="text-gray-400 mb-4">Subscribe to get updates on new arrivals and special offers.</p><form id="newsletter-form" class="flex"><input type="email" placeholder="Your email" class="px-4 py-2 rounded-l-lg w-full text-gray-900 focus:outline-none"><button type="submit" class="bg-pink-600 hover:bg-pink-700 px-4 py-2 rounded-r-lg"><i data-feather="send"></i></button></form></div>
-      </div>
-      <div class="mt-12 pt-8 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center"><p class="text-gray-400 text-sm">&copy; 2023 Carries Boutique. All rights reserved.</p><div class="mt-4 md:mt-0 flex space-x-6"><a href="#" class="text-gray-400 hover:text-white"><i data-feather="credit-card"></i></a><a href="#" class="text-gray-400 hover:text-white"><i data-feather="lock"></i></a><a href="#" class="text-gray-400 hover:text-white"><i data-feather="shield"></i></a></div></div>
-    </div>
-  </footer>
+    </footer>
 
   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
   <script>
     // Your web app's Firebase configuration
     const firebaseConfig = {
@@ -242,11 +234,8 @@
 
     // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
-
-    // Make auth globally available (easier for simple apps)
-    // No need to declare 'auth' here if it's not used directly in inline script
-    // const auth = firebase.auth();
-
+    const auth = firebase.auth(); 
+    const db = firebase.firestore(); // <-- Initialize Firestore
   </script>
 
   <script src="app.js"></script>
