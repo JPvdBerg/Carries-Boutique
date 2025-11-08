@@ -871,5 +871,120 @@ document.addEventListener('DOMContentLoaded', () => {
     renderCheckoutSummary();
 
     if (typeof feather !== 'undefined') feather.replace();
+	
+	// --- ================================ ---
+// --- DYNAMIC PRODUCT PAGE LOADER ---
+// --- ================================ ---
+
+// This function will run ONLY if we are on the product.html page
+async function loadProductPage() {
+    // 1. Get the collection and ID from the URL
+    const params = new URLSearchParams(window.location.search);
+    const collectionName = params.get('collection');
+    const docId = params.get('id');
+
+    // 2. Get all the template elements from product.html
+    const productNameEl = document.getElementById('product-name');
+    const productPriceEl = document.getElementById('product-price');
+    const productImageEl = document.getElementById('product-image');
+    const productDescriptionEl = document.getElementById('product-description-details');
+    const productBreadcrumbEl = document.getElementById('product-breadcrumb');
+    const sizeSelectorContainer = document.getElementById('size-selector-container');
+    const addToCartBtn = document.getElementById('product-add-to-cart-btn');
+
+    // 3. Check for errors
+    if (!collectionName || !docId) {
+        productNameEl.textContent = 'Product not found.';
+        return;
+    }
+
+    // 4. Fetch the correct document from Firestore
+    try {
+        const db = firebase.firestore();
+        const doc = await db.collection(collectionName).doc(docId).get();
+
+        if (!doc.exists) {
+            productNameEl.textContent = 'Product not found.';
+            return;
+        }
+        
+        const product = doc.data();
+        
+        // 5. Populate the template with the product data
+        productNameEl.textContent = product.name;
+        productPriceEl.textContent = `R${product.price.toFixed(2)}`;
+        productImageEl.src = product.image_url;
+        productImageEl.alt = product.name;
+        productBreadcrumbEl.textContent = product.name;
+        document.title = `${product.name} | Carries Boutique`; // Update page title
+        
+        // Add description (if it exists)
+        if (product.description) {
+            productDescriptionEl.innerHTML = `<h3 class="text-lg font-medium text-gray-900">Description</h3><p>${product.description}</p>`;
+        }
+
+        let selectedSize = null;
+
+        // 6. --- THIS IS THE KEY LOGIC ---
+        if (collectionName === 'products') {
+            // This is a RETAIL product
+            sizeSelectorContainer.style.display = 'block'; // Show the size selector
+            
+            // Dynamically create size buttons from product.variants
+            const sizeButtonsContainer = sizeSelectorContainer.querySelector('#size-buttons');
+            sizeButtonsContainer.innerHTML = ''; // Clear hard-coded buttons
+            
+            if (product.variants && product.variants.length > 0) {
+                product.variants.forEach(variant => {
+                    const button = document.createElement('button');
+                    button.className = 'size-btn w-10 h-10 border rounded-md flex items-center justify-center text-sm font-medium hover:bg-gray-100';
+                    button.textContent = variant.size;
+                    
+                    button.onclick = () => {
+                        selectedSize = variant.size;
+                        // Style the active button
+                        sizeButtonsContainer.querySelectorAll('.size-btn').forEach(btn => {
+                            btn.classList.remove('bg-pink-100', 'text-pink-700', 'border-pink-300', 'ring-1', 'ring-pink-500');
+                        });
+                        button.classList.add('bg-pink-100', 'text-pink-700', 'border-pink-300', 'ring-1', 'ring-pink-500');
+                    };
+                    sizeButtonsContainer.appendChild(button);
+                });
+            } else {
+                sizeButtonsContainer.innerHTML = '<p class="text-sm text-gray-500">Sizes not available.</p>';
+            }
+
+            // Wire up Add to Cart button for RETAIL
+            addToCartBtn.onclick = () => {
+                if (!selectedSize) {
+                    alert('Please select a size first!');
+                    return;
+                }
+                window.addToCart(docId, product.name, product.price, product.image_url, selectedSize);
+            };
+            
+        } else if (collectionName === 'custom_styles') {
+            // This is a CUSTOM product
+            sizeSelectorContainer.style.display = 'none'; // Hide the size selector
+            selectedSize = 'Custom'; // Set a default "size" for our cart system
+
+            // Wire up Add to Cart button for CUSTOM
+            addToCartBtn.onclick = () => {
+                // For custom items, we add to cart, but the checkout process
+                // will handle the measurements.
+                window.addToCart(docId, product.name, product.price, product.image_url, selectedSize);
+            };
+        }
+        
+    } catch (error) {
+        console.error("Error loading product:", error);
+        productNameEl.textContent = 'Error loading product.';
+    }
+}
+
+// Add the trigger to run our new function when the page loads
+if (document.body.id === 'product-detail-page') {
+    loadProductPage();
+}
 
 }); // --- END DOMContentLoaded ---
