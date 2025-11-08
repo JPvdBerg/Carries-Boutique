@@ -112,46 +112,10 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- NEW VIEW TOGGLE LOGIC (for index.html) ---
-    const toggleBtn = document.getElementById('view-toggle-btn');
-    const customView = document.getElementById('custom-view');
-    const predefinedView = document.getElementById('predefined-view');
-    const viewTitle = document.getElementById('view-title');
-    const viewSubtitle = document.getElementById('view-subtitle');
-
-    if (toggleBtn && customView && predefinedView && viewTitle && viewSubtitle) {
-        
-        let isCustomView = true; // Default view is custom
-
-        toggleBtn.addEventListener('click', () => {
-            isCustomView = !isCustomView; // Flip the state
-
-            if (isCustomView) {
-                // Show Custom View
-                customView.style.display = 'block';
-                predefinedView.style.display = 'none';
-                
-                // Update text
-                viewTitle.textContent = 'Our Custom Styles';
-                viewSubtitle.textContent = 'Handcrafted pieces tailored to your exact measurements.';
-                toggleBtn.textContent = 'Shop Predefined Retail';
-            } else {
-                // Show Predefined View
-                customView.style.display = 'none';
-                predefinedView.style.display = 'block';
-
-                // Update text
-                viewTitle.textContent = 'Our Retail Collections';
-                viewSubtitle.textContent = 'Curated, predefined items in standard sizes (S, M, L).';
-                toggleBtn.textContent = 'Shop Custom Tailoring';
-            }
-        });
-    }
-    // --- END NEW VIEW TOGGLE LOGIC ---
-
+    // --- REMOVED VIEW TOGGLE LOGIC (Now on separate pages) ---
 
     // --- ================================== ---
-    // --- NEW SHOPPING CART LOGIC (With Sizes) ---
+    // --- SHOPPING CART LOGIC (With Sizes) ---
     // --- ================================== ---
     const getCart = () => JSON.parse(localStorage.getItem('carriesBoutiqueCart')) || [];
     const saveCart = (cart) => {
@@ -173,8 +137,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.addToCart = (productId, productName, price, image, size) => {
         if (!size) {
-            alert('Error: No size specified for this item.');
-            return;
+            // This case handles the "Custom" styles which don't have S,M,L
+            if (productName.toLowerCase().includes('custom')) {
+                size = 'Custom';
+            } else {
+                alert('Error: No size specified for this item.');
+                return;
+            }
         }
 
         const cart = getCart();
@@ -191,7 +160,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 name: productName,
                 price: price,
                 image: image,
-                size: size,             // e.g., 'M'
+                size: size,             // e.g., 'M' or 'Custom'
                 quantity: 1
             });
         }
@@ -233,27 +202,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
         cart.forEach(item => {
             subtotal += item.price * item.quantity;
+            
+            // --- STALE ITEM FIX ---
+            // We need a unique ID for the buttons. Use cartItemId if it exists, fall back to old id
+            const uniqueItemId = item.cartItemId || item.id; 
+            const itemSize = item.size || 'undefined'; // Handle old items with no size
+
             const itemHtml = `
               <div class="flex items-center justify-between py-4 border-b">
                 <div class="flex items-center space-x-4">
                   <img src="${item.image}" alt="${item.name}" class="w-16 h-16 md:w-20 md:h-20 object-cover rounded-lg">
                   <div>
                     <h3 class="text-base md:text-lg font-medium text-gray-900">${item.name}</h3>
-                    <p class="text-sm text-gray-600 font-medium">Size: ${item.size}</p>
+                    <p class="text-sm text-gray-600 font-medium">Size: ${itemSize}</p>
                     <p class="text-sm text-gray-500">R${item.price.toFixed(2)}</p>
                   </div>
                 </div>
                 <div class="flex items-center space-x-1 md:space-x-3">
-                  <button class="p-1 rounded-full text-gray-500 hover:bg-gray-200" onclick="updateCartQuantity('${item.cartItemId}', ${item.quantity - 1})">
+                  <button class="p-1 rounded-full text-gray-500 hover:bg-gray-200" onclick="updateCartQuantity('${uniqueItemId}', ${item.quantity - 1})">
                     <i data-feather="minus" class="w-4 h-4"></i>
                   </button>
                   <span class="w-8 text-center text-sm md:text-base">${item.quantity}</span>
-                  <button class="p-1 rounded-full text-gray-500 hover:bg-gray-200" onclick="updateCartQuantity('${item.cartItemId}', ${item.quantity + 1})">
+                  <button class="p-1 rounded-full text-gray-500 hover:bg-gray-200" onclick="updateCartQuantity('${uniqueItemId}', ${item.quantity + 1})">
                     <i data-feather="plus" class="w-4 h-4"></i>
                   </button>
                 </div>
                 <p class="text-base md:text-lg font-semibold text-gray-900">R${(item.price * item.quantity).toFixed(2)}</p>
-                <button class="text-red-500 hover:text-red-700" onclick="removeFromCart('${item.cartItemId}')">
+                <button class="text-red-500 hover:text-red-700" onclick="removeFromCart('${uniqueItemId}')">
                   <i data-feather="trash-2" class="w-4 h-4 md:w-5 md:h-5"></i>
                 </button>
               </div>
@@ -273,23 +248,28 @@ document.addEventListener('DOMContentLoaded', () => {
         if (typeof feather !== 'undefined') feather.replace();
     };
 
-    // Updated to use the new cartItemId
-    window.updateCartQuantity = (cartItemId, quantity) => {
+    // --- STALE ITEM FIX ---
+    // Updated to handle both old (id) and new (cartItemId) items
+    window.updateCartQuantity = (itemId, quantity) => {
         let cart = getCart();
         if (quantity <= 0) {
-            cart = cart.filter(item => item.cartItemId !== cartItemId);
+            // Remove item if quantity is 0 or less
+            cart = cart.filter(item => (item.cartItemId !== itemId && item.id !== itemId));
         } else {
-            const item = cart.find(item => item.cartItemId === cartItemId);
-            if (item) item.quantity = quantity;
+            const itemToUpdate = cart.find(item => item.cartItemId === itemId || item.id === itemId);
+            if (itemToUpdate) {
+                itemToUpdate.quantity = quantity;
+            }
         }
         saveCart(cart);
         renderCartPage();
     };
 
-    // Updated to use the new cartItemId
-    window.removeFromCart = (cartItemId) => {
+    // --- STALE ITEM FIX ---
+    // Updated to handle both old (id) and new (cartItemId) items
+    window.removeFromCart = (itemId) => {
         let cart = getCart();
-        cart = cart.filter(item => item.cartItemId !== cartItemId);
+        cart = cart.filter(item => (item.cartItemId !== itemId && item.id !== itemId));
         saveCart(cart);
         renderCartPage(); // Rerender cart page
         renderCheckoutSummary(); // Also rerender checkout summary if on that page
@@ -315,7 +295,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // --- 1. Render Each Cart Item ---
         cart.forEach((item, index) => {
-            const cartItemUniqueId = item.cartItemId; // Use our new unique ID
+            // --- STALE ITEM FIX ---
+            const cartItemUniqueId = item.cartItemId || item.id; 
+            const itemSize = item.size || 'undefined';
+
             subtotal += item.price * item.quantity;
             
             const itemHtml = `
@@ -325,7 +308,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <img src="${item.image}" alt="${item.name}" class="w-12 h-12 md:w-16 md:h-16 object-cover rounded-lg">
                     <div>
                       <h4 class="font-medium text-sm md:text-base">${item.name}</h4>
-                      <p class="text-sm text-gray-600 font-medium">Size: ${item.size}</p>
+                      <p class="text-sm text-gray-600 font-medium">Size: ${itemSize}</p>
                       <p class="text-xs md:text-sm text-gray-500">Qty: ${item.quantity}</p>
                     </div>
                   </div>
@@ -413,61 +396,6 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     // --- END NEW CART LOGIC ---
     // --- ================== ---
-
-
-    // --- ================================ ---
-    // --- NEW PRODUCT PAGE SIZE SELECTOR ---
-    // --- ================================ ---
-    
-    // Check if we are on the product.html page
-    const productSizeSelector = document.getElementById('product-size-selector');
-    if (productSizeSelector) {
-        let selectedSize = null; // Variable to store the selected size
-        const sizeButtons = productSizeSelector.querySelectorAll('.size-btn');
-        const addToCartBtn = document.getElementById('product-add-to-cart-btn');
-
-        // 1. Add click listener to all size buttons
-        sizeButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                // Get the size from the button's text
-                selectedSize = button.textContent.trim();
-                
-                // Update button styles
-                sizeButtons.forEach(btn => {
-                    btn.classList.remove('bg-pink-100', 'text-pink-700', 'border-pink-300', 'ring-1', 'ring-pink-500');
-                    btn.classList.add('hover:bg-gray-100');
-                });
-                
-                button.classList.add('bg-pink-100', 'text-pink-700', 'border-pink-300', 'ring-1', 'ring-pink-500');
-                button.classList.remove('hover:bg-gray-100');
-            });
-        });
-
-        // 2. Add click listener to the "Add to Cart" button
-        if (addToCartBtn) {
-            addToCartBtn.addEventListener('click', () => {
-                if (!selectedSize) {
-                    alert('Please select a size first!');
-                    return; // Stop the function
-                }
-                
-                // If a size is selected, call the global addToCart function
-                // These values are hard-coded for the demo product.html page
-                addToCart(
-                    'prod_001', 
-                    'Floral Maxi Dress', 
-                    599.00, 
-                    'http://static.photos/fashion/640x360/5',
-                    selectedSize
-                );
-            });
-        }
-    }
-    // --- ================================ ---
-    // --- END PRODUCT PAGE SIZE SELECTOR ---
-    // --- ================================ ---
-
-
 
     // --- EVENT HANDLER FOR CHECKOUT MEASUREMENT TOGGLES ---
     const summaryContainer = document.getElementById('checkout-summary');
@@ -641,7 +569,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // --- FIREBASE AUTHENTICATION LOGIC ---
-    // Make sure Firebase is loaded
     if (typeof firebase !== 'undefined' && typeof firebase.auth === 'function') {
         const auth = firebase.auth();
         const db = firebase.firestore();
@@ -865,126 +792,196 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- END FIREBASE AUTH LOGIC ---
 
 
+    // --- =================================== ---
+    // --- DYNAMIC PRODUCT GRID LOADER (NEW) ---
+    // --- =================================== ---
+
+    async function loadProductGrid(collectionName, gridElementId) {
+        const gridEl = document.getElementById(gridElementId);
+        if (!gridEl) return; // Not on the right page
+
+        const db = firebase.firestore();
+        let html = '';
+
+        try {
+            const snapshot = await db.collection(collectionName).get();
+            if (snapshot.empty) {
+                gridEl.innerHTML = '<p class="text-gray-500 col-span-full text-center">No products found in this collection.</p>';
+                return;
+            }
+
+            snapshot.forEach(doc => {
+                const product = doc.data();
+                const productUrl = `product.html?collection=${collectionName}&id=${doc.id}`;
+                
+                // --- Conditional Button ---
+                let buttonHtml = '';
+                if (collectionName === 'products') {
+                    // Predefined: Add to Cart (default 'M')
+                    // We must escape quotes inside the onclick string
+                    buttonHtml = `<button onclick="addToCart('${doc.id}', '${product.name.replace(/'/g, "\\'")}', ${product.price}, '${product.image_url}', 'M')" class="px-3 py-1 bg-pink-100 text-pink-700 rounded-full text-sm font-medium hover:bg-pink-200">Add to Cart</button>`;
+                } else {
+                    // Custom: Learn More
+                    buttonHtml = `<a href="${productUrl}" class="px-3 py-1 bg-pink-100 text-pink-700 rounded-full text-sm font-medium hover:bg-pink-200">Learn More</a>`;
+                }
+                // --- End Conditional Button ---
+
+                html += `
+                <div class="product-card bg-white rounded-lg overflow-hidden shadow-md transition-all duration-300">
+                  <a href="${productUrl}" class="relative block">
+                    <img class="w-full h-80 object-cover" src="${product.image_url}" alt="${product.name}">
+                  </a>
+                  <div class="p-4">
+                    <h3 class="text-lg font-medium text-gray-900"><a href="${productUrl}" class="hover:underline">${product.name}</a></h3>
+                    <p class="mt-1 text-sm text-gray-500">${product.category || product.collection_name || 'New Collection'}</p>
+                    <div class="mt-4 flex justify-between items-center">
+                      <span class="text-lg font-bold text-gray-900">R${product.price.toFixed(2)}</span>
+                      ${buttonHtml}
+                    </div>
+                  </div>
+                </div>
+                `;
+            });
+
+            gridEl.innerHTML = html;
+            if (typeof feather !== 'undefined') feather.replace(); // Redraw icons if any
+        } catch (err) {
+            console.error("Error loading products:", err);
+            gridEl.innerHTML = '<p class="text-red-500 col-span-full text-center">Error loading products. Please try again later.</p>';
+        }
+    }
+
+    // --- Triggers for new pages ---
+    if (document.body.id === 'shop-page') {
+        loadProductGrid('products', 'product-grid');
+    }
+    if (document.body.id === 'collections-page') {
+        loadProductGrid('custom_styles', 'product-grid');
+    }
+
+
+    // --- ================================ ---
+    // --- DYNAMIC PRODUCT PAGE LOADER ---
+    // --- ================================ ---
+
+    // This function will run ONLY if we are on the product.html page
+    async function loadProductPage() {
+        // 1. Get the collection and ID from the URL
+        const params = new URLSearchParams(window.location.search);
+        const collectionName = params.get('collection');
+        const docId = params.get('id');
+
+        // 2. Get all the template elements from product.html
+        const productNameEl = document.getElementById('product-name');
+        const productPriceEl = document.getElementById('product-price');
+        const productImageEl = document.getElementById('product-image');
+        const productDescriptionEl = document.getElementById('product-description-details');
+        const productBreadcrumbEl = document.getElementById('product-breadcrumb');
+        const sizeSelectorContainer = document.getElementById('size-selector-container');
+        const addToCartBtn = document.getElementById('product-add-to-cart-btn');
+
+        // 3. Check for errors
+        if (!collectionName || !docId || !productNameEl) {
+            // If any required element isn't here, we're not on the product page.
+            return;
+        }
+
+        // 4. Fetch the correct document from Firestore
+        try {
+            const db = firebase.firestore();
+            const doc = await db.collection(collectionName).doc(docId).get();
+
+            if (!doc.exists) {
+                productNameEl.textContent = 'Product not found.';
+                return;
+            }
+            
+            const product = doc.data();
+            
+            // 5. Populate the template with the product data
+            productNameEl.textContent = product.name;
+            productPriceEl.textContent = `R${product.price.toFixed(2)}`;
+            productImageEl.src = product.image_url;
+            productImageEl.alt = product.name;
+            productBreadcrumbEl.textContent = product.name;
+            document.title = `${product.name} | Carries Boutique`; // Update page title
+            
+            // Add description (if it exists)
+            if (product.description) {
+                productDescriptionEl.innerHTML = `<h3 class="text-lg font-medium text-gray-900">Description</h3><p>${product.description}</p>`;
+            }
+
+            let selectedSize = null;
+
+            // 6. --- THIS IS THE KEY LOGIC ---
+            if (collectionName === 'products') {
+                // This is a RETAIL product
+                sizeSelectorContainer.style.display = 'block'; // Show the size selector
+                
+                // Dynamically create size buttons from product.variants
+                const sizeButtonsContainer = sizeSelectorContainer.querySelector('#size-buttons');
+                sizeButtonsContainer.innerHTML = ''; // Clear hard-coded buttons
+                
+                if (product.variants && product.variants.length > 0) {
+                    product.variants.forEach(variant => {
+                        const button = document.createElement('button');
+                        button.className = 'size-btn w-10 h-10 border rounded-md flex items-center justify-center text-sm font-medium hover:bg-gray-100';
+                        button.textContent = variant.size;
+                        
+                        button.onclick = () => {
+                            selectedSize = variant.size;
+                            // Style the active button
+                            sizeButtonsContainer.querySelectorAll('.size-btn').forEach(btn => {
+                                btn.classList.remove('bg-pink-100', 'text-pink-700', 'border-pink-300', 'ring-1', 'ring-pink-500');
+                            });
+                            button.classList.add('bg-pink-100', 'text-pink-700', 'border-pink-300', 'ring-1', 'ring-pink-500');
+                        };
+                        sizeButtonsContainer.appendChild(button);
+                    });
+                } else {
+                    sizeButtonsContainer.innerHTML = '<p class="text-sm text-gray-500">Sizes not available.</p>';
+                }
+
+                // Wire up Add to Cart button for RETAIL
+                addToCartBtn.onclick = () => {
+                    if (!selectedSize) {
+                        alert('Please select a size first!');
+                        return;
+                    }
+                    window.addToCart(docId, product.name, product.price, product.image_url, selectedSize);
+                };
+                
+            } else if (collectionName === 'custom_styles') {
+                // This is a CUSTOM product
+                sizeSelectorContainer.style.display = 'none'; // Hide the size selector
+                selectedSize = 'Custom'; // Set a default "size" for our cart system
+
+                // Wire up Add to Cart button for CUSTOM
+                addToCartBtn.onclick = () => {
+                    // For custom items, we add to cart, but the checkout process
+                    // will handle the measurements.
+                    window.addToCart(docId, product.name, product.price, product.image_url, selectedSize);
+                };
+            }
+            
+        } catch (error) {
+            console.error("Error loading product:", error);
+            productNameEl.textContent = 'Error loading product.';
+        }
+    }
+
+    // Add the trigger to run our new function when the page loads
+    // We check for the body ID we added to product.html
+    if (document.body.id === 'product-detail-page') {
+        loadProductPage();
+    }
+
+
     // --- INITIAL PAGE LOAD CALLS ---
     updateCartIcon();
     renderCartPage();
     renderCheckoutSummary();
 
     if (typeof feather !== 'undefined') feather.replace();
-	
-	// --- ================================ ---
-// --- DYNAMIC PRODUCT PAGE LOADER ---
-// --- ================================ ---
-
-// This function will run ONLY if we are on the product.html page
-async function loadProductPage() {
-    // 1. Get the collection and ID from the URL
-    const params = new URLSearchParams(window.location.search);
-    const collectionName = params.get('collection');
-    const docId = params.get('id');
-
-    // 2. Get all the template elements from product.html
-    const productNameEl = document.getElementById('product-name');
-    const productPriceEl = document.getElementById('product-price');
-    const productImageEl = document.getElementById('product-image');
-    const productDescriptionEl = document.getElementById('product-description-details');
-    const productBreadcrumbEl = document.getElementById('product-breadcrumb');
-    const sizeSelectorContainer = document.getElementById('size-selector-container');
-    const addToCartBtn = document.getElementById('product-add-to-cart-btn');
-
-    // 3. Check for errors
-    if (!collectionName || !docId) {
-        productNameEl.textContent = 'Product not found.';
-        return;
-    }
-
-    // 4. Fetch the correct document from Firestore
-    try {
-        const db = firebase.firestore();
-        const doc = await db.collection(collectionName).doc(docId).get();
-
-        if (!doc.exists) {
-            productNameEl.textContent = 'Product not found.';
-            return;
-        }
-        
-        const product = doc.data();
-        
-        // 5. Populate the template with the product data
-        productNameEl.textContent = product.name;
-        productPriceEl.textContent = `R${product.price.toFixed(2)}`;
-        productImageEl.src = product.image_url;
-        productImageEl.alt = product.name;
-        productBreadcrumbEl.textContent = product.name;
-        document.title = `${product.name} | Carries Boutique`; // Update page title
-        
-        // Add description (if it exists)
-        if (product.description) {
-            productDescriptionEl.innerHTML = `<h3 class="text-lg font-medium text-gray-900">Description</h3><p>${product.description}</p>`;
-        }
-
-        let selectedSize = null;
-
-        // 6. --- THIS IS THE KEY LOGIC ---
-        if (collectionName === 'products') {
-            // This is a RETAIL product
-            sizeSelectorContainer.style.display = 'block'; // Show the size selector
-            
-            // Dynamically create size buttons from product.variants
-            const sizeButtonsContainer = sizeSelectorContainer.querySelector('#size-buttons');
-            sizeButtonsContainer.innerHTML = ''; // Clear hard-coded buttons
-            
-            if (product.variants && product.variants.length > 0) {
-                product.variants.forEach(variant => {
-                    const button = document.createElement('button');
-                    button.className = 'size-btn w-10 h-10 border rounded-md flex items-center justify-center text-sm font-medium hover:bg-gray-100';
-                    button.textContent = variant.size;
-                    
-                    button.onclick = () => {
-                        selectedSize = variant.size;
-                        // Style the active button
-                        sizeButtonsContainer.querySelectorAll('.size-btn').forEach(btn => {
-                            btn.classList.remove('bg-pink-100', 'text-pink-700', 'border-pink-300', 'ring-1', 'ring-pink-500');
-                        });
-                        button.classList.add('bg-pink-100', 'text-pink-700', 'border-pink-300', 'ring-1', 'ring-pink-500');
-                    };
-                    sizeButtonsContainer.appendChild(button);
-                });
-            } else {
-                sizeButtonsContainer.innerHTML = '<p class="text-sm text-gray-500">Sizes not available.</p>';
-            }
-
-            // Wire up Add to Cart button for RETAIL
-            addToCartBtn.onclick = () => {
-                if (!selectedSize) {
-                    alert('Please select a size first!');
-                    return;
-                }
-                window.addToCart(docId, product.name, product.price, product.image_url, selectedSize);
-            };
-            
-        } else if (collectionName === 'custom_styles') {
-            // This is a CUSTOM product
-            sizeSelectorContainer.style.display = 'none'; // Hide the size selector
-            selectedSize = 'Custom'; // Set a default "size" for our cart system
-
-            // Wire up Add to Cart button for CUSTOM
-            addToCartBtn.onclick = () => {
-                // For custom items, we add to cart, but the checkout process
-                // will handle the measurements.
-                window.addToCart(docId, product.name, product.price, product.image_url, selectedSize);
-            };
-        }
-        
-    } catch (error) {
-        console.error("Error loading product:", error);
-        productNameEl.textContent = 'Error loading product.';
-    }
-}
-
-// Add the trigger to run our new function when the page loads
-if (document.body.id === 'product-detail-page') {
-    loadProductPage();
-}
 
 }); // --- END DOMContentLoaded ---
