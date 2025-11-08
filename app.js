@@ -41,6 +41,7 @@
 
 
 document.addEventListener('DOMContentLoaded', () => {
+    let isMeasurementsLoaded = false; // Flag for measurement loading
     console.log("DOM Content Loaded."); // Debug log
 
     // Initialize AOS
@@ -237,7 +238,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (cart.length === 0) {
             summaryContainer.innerHTML = '<p class="text-gray-500">Your cart is empty.</p>';
             const placeOrderBtn = document.querySelector('#checkout-form button[type="submit"]');
-            if (placeOrderBtn) placeOrderBtn.disabled = true;
+            if (placeOrderBtn) {
+                placeOrderBtn.disabled = true;
+                placeOrderBtn.textContent = 'Place Order';
+            }
             return;
         }
 
@@ -322,9 +326,25 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
         summaryContainer.innerHTML += summaryTotalHtml;
         
-        // --- 3. Enable Place Order Button ---
+        // --- 3. Enable/Disable Place Order Button ---
+        // --- MODIFIED FOR RACE CONDITION FIX ---
         const placeOrderBtn = document.querySelector('#checkout-form button[type="submit"]');
-        if (placeOrderBtn) placeOrderBtn.disabled = false;
+        if (placeOrderBtn) {
+            const user = firebase.auth().currentUser;
+            
+            if (cart.length === 0) {
+                placeOrderBtn.disabled = true;
+                placeOrderBtn.textContent = 'Place Order';
+            } else if (user && !isMeasurementsLoaded) {
+                // Cart has items, user is logged in, but measurements are NOT loaded
+                placeOrderBtn.disabled = true;
+                placeOrderBtn.textContent = 'Loading Measurements...';
+            } else {
+                // Cart has items AND (user is logged out OR measurements are loaded)
+                placeOrderBtn.disabled = false;
+                placeOrderBtn.textContent = 'Place Order';
+            }
+        }
     };
 
     // --- NEW EVENT HANDLER FOR CHECKOUT MEASUREMENT TOGGLES ---
@@ -358,6 +378,15 @@ document.addEventListener('DOMContentLoaded', () => {
     if (checkoutForm) {
         checkoutForm.addEventListener('submit', async (e) => {
             e.preventDefault();
+
+            // --- FIX: GET THE LOGGED-IN USER ---
+            const user = firebase.auth().currentUser;
+            if (!user) {
+                alert('Error: You are not logged in. Redirecting to login page.');
+                window.location.replace('login.html');
+                return;
+            }
+            // ------------------------------------
 
             // 1. Get Customer Shipping Info
             const customerInfo = {
@@ -451,6 +480,7 @@ document.addEventListener('DOMContentLoaded', () => {
             try {
                 // This is the final data object
                 const orderData = { 
+                    userId: user.uid, // <-- THE CRITICAL ADDITION
                     customer: customerInfo, 
                     cart: processedCart // Send the cart with measurements
                 };
@@ -598,6 +628,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
         // --- Auth State Observer ---
+        // --- MODIFIED FOR RACE CONDITION FIX ---
         auth.onAuthStateChanged((user) => {
             console.log("Auth state changed, user:", user ? (user.displayName || user.email) : null);
             const currentPage = window.location.pathname.split('/').pop() || 'index.html';
@@ -627,9 +658,15 @@ document.addEventListener('DOMContentLoaded', () => {
                         checkoutEmailInput.readOnly = true; 
                         checkoutEmailInput.classList.add('bg-gray-100');
                     }
-                    // --- NEW ---
+                    
+                    isMeasurementsLoaded = false; // Set loading to false
+                    renderCheckoutSummary(); // Re-render (this will show "Loading...")
+                    
                     // Load measurements into checkout form
-                    loadMeasurements(user.uid, currentPage); 
+                    loadMeasurements(user.uid, currentPage).then(() => {
+                        isMeasurementsLoaded = true; // Set loading to true
+                        renderCheckoutSummary(); // Re-render (this will enable the button)
+                    });
                 }
                 
                 // --- If on Account Page, load data ---
@@ -639,6 +676,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             } else {
                 // --- User is SIGNED OUT ---
+                isMeasurementsLoaded = true; // No user, so "loaded"
 
                 // --- Update NAV UI (Desktop & Mobile) ---
                 if (navGoogleLoginBtn) navGoogleLoginBtn.style.display = 'inline-flex';
@@ -648,11 +686,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (mobileGoogleLoginBtn) mobileGoogleLoginBtn.style.display = 'flex';
                 if (mobileUserInfoDiv) mobileUserInfoDiv.style.display = 'none';
                 
-                if (currentPage === 'checkout.html' && checkoutEmailInput && checkoutNameInput) {
-                    checkoutEmailInput.value = '';
-                    checkoutEmailInput.readOnly = false;
-                    checkoutEmailInput.classList.remove('bg-gray-100');
-                    checkoutNameInput.value = '';
+                if (currentPage === 'checkout.html') {
+                    if (checkoutEmailInput && checkoutNameInput) {
+                        checkoutEmailInput.value = '';
+                        checkoutEmailInput.readOnly = false;
+                        checkoutEmailInput.classList.remove('bg-gray-1S00');
+                        checkoutNameInput.value = '';
+                    }
+                    renderCheckoutSummary(); // Re-render to update button state
                 }
             }
             if (typeof feather !== 'undefined') setTimeout(feather.replace, 0);
