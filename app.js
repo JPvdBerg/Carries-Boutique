@@ -583,6 +583,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const pageGoogleLoginBtn = document.getElementById('google-login-btn-page');
         const checkoutNameInput = document.getElementById('name');
         const checkoutEmailInput = document.getElementById('email');
+        
+        // --- NEW: Get Admin Links ---
+        const adminLink = document.getElementById('admin-link');
+        const adminLinkMobile = document.getElementById('admin-link-mobile');
 
 
         const handleGoogleLogin = () => {
@@ -657,11 +661,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
         // --- Auth State Observer ---
-        auth.onAuthStateChanged((user) => {
+        auth.onAuthStateChanged(async (user) => { // <-- ADDED ASYNC
             console.log("Auth state changed, user:", user ? (user.displayName || user.email) : null);
             const currentPage = window.location.pathname.split('/').pop() || 'index.html';
 
-            // --- THIS IS THE CHANGED BLOCK ---
             const getFirstName = (user) => {
                 if (!user) return '';
                 const fullName = user.displayName;
@@ -674,7 +677,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 return ''; // Failsafe
             };
-            // --- END OF HELPER FUNCTION ---
 
             if (user) {
                 // --- User is SIGNED IN ---
@@ -692,6 +694,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 if (mobileGoogleLoginBtn) mobileGoogleLoginBtn.classList.add('hidden');
                 if (mobileUserInfoDiv) mobileUserInfoDiv.classList.remove('hidden');
+
+                // --- NEW ADMIN LINK LOGIC ---
+                try {
+                    const adminRef = db.collection('admins').doc(user.uid);
+                    const adminDoc = await adminRef.get();
+                    if (adminDoc.exists) {
+                        if(adminLink) adminLink.classList.remove('hidden'); // Show desktop admin button
+                        if(adminLinkMobile) adminLinkMobile.classList.remove('hidden'); // Show mobile admin button
+                    }
+                } catch (err) {
+                    console.error("Error checking admin status", err);
+                }
+                // --- END NEW LOGIC ---
 
                 // --- AUTOFIL CHECKOUT (Shipping & Measurements) ---
                 if (currentPage === 'checkout.html') {
@@ -726,6 +741,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 if (mobileGoogleLoginBtn) mobileGoogleLoginBtn.classList.remove('hidden');
                 if (mobileUserInfoDiv) mobileUserInfoDiv.classList.add('hidden');
+                
+                // --- NEW: Hide admin links on logout ---
+                if (adminLink) adminLink.classList.add('hidden');
+                if (adminLinkMobile) adminLinkMobile.classList.add('hidden');
                 
                 if (currentPage === 'checkout.html') {
                     if (checkoutEmailInput && checkoutNameInput) {
