@@ -661,6 +661,21 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log("Auth state changed, user:", user ? (user.displayName || user.email) : null);
             const currentPage = window.location.pathname.split('/').pop() || 'index.html';
 
+            // --- THIS IS THE CHANGED BLOCK ---
+            const getFirstName = (user) => {
+                if (!user) return '';
+                const fullName = user.displayName;
+                const email = user.email;
+                if (fullName) {
+                    return fullName.split(' ')[0]; // Get first name
+                }
+                if (email) {
+                    return email.split('@')[0]; // Get email prefix
+                }
+                return ''; // Failsafe
+            };
+            // --- END OF HELPER FUNCTION ---
+
             if (user) {
                 // --- User is SIGNED IN ---
                 
@@ -671,16 +686,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 // --- Update NAV UI (Desktop & Mobile) ---
-                if (navGoogleLoginBtn) navGoogleLoginBtn.style.display = 'none';
-                if (userInfoDiv) userInfoDiv.style.display = 'flex';
+                if (navGoogleLoginBtn) navGoogleLoginBtn.classList.add('hidden');
+                if (userInfoDiv) userInfoDiv.classList.remove('hidden');
+                if (userDisplayNameSpan) userDisplayNameSpan.textContent = getFirstName(user);
                 
-                // --- THIS IS THE CHANGED LINE ---
-                const firstName = user.displayName ? user.displayName.split(' ')[0] : user.email;
-                if (userDisplayNameSpan) userDisplayNameSpan.textContent = firstName;
-                // --- END OF CHANGE ---
-                
-                if (mobileGoogleLoginBtn) mobileGoogleLoginBtn.style.display = 'none';
-                if (mobileUserInfoDiv) mobileUserInfoDiv.style.display = 'block';
+                if (mobileGoogleLoginBtn) mobileGoogleLoginBtn.classList.add('hidden');
+                if (mobileUserInfoDiv) mobileUserInfoDiv.classList.remove('hidden');
 
                 // --- AUTOFIL CHECKOUT (Shipping & Measurements) ---
                 if (currentPage === 'checkout.html') {
@@ -709,12 +720,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 isMeasurementsLoaded = true; 
 
                 // --- Update NAV UI (Desktop & Mobile) ---
-                if (navGoogleLoginBtn) navGoogleLoginBtn.style.display = 'inline-flex';
-                if (userInfoDiv) userInfoDiv.style.display = 'none';
+                if (navGoogleLoginBtn) navGoogleLoginBtn.classList.remove('hidden');
+                if (userInfoDiv) userInfoDiv.classList.add('hidden');
                 if (userDisplayNameSpan) userDisplayNameSpan.textContent = '';
                 
-                if (mobileGoogleLoginBtn) mobileGoogleLoginBtn.style.display = 'flex';
-                if (mobileUserInfoDiv) mobileUserInfoDiv.style.display = 'none';
+                if (mobileGoogleLoginBtn) mobileGoogleLoginBtn.classList.remove('hidden');
+                if (mobileUserInfoDiv) mobileUserInfoDiv.classList.add('hidden');
                 
                 if (currentPage === 'checkout.html') {
                     if (checkoutEmailInput && checkoutNameInput) {
