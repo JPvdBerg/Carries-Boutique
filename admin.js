@@ -88,6 +88,8 @@ function initializeApp(db, user) {
         loadOrders(db);
     } else if (currentPage === 'add-product-page') {
         setupAddProductForm(db);
+    } else if (currentPage === 'manage-products-page') { // NEW
+        loadProductList(db);
     }
     
     // Initialize Feather Icons
@@ -225,22 +227,132 @@ function attachOrderListeners(db) {
 }
 
 
-// --- ADD PRODUCT PAGE LOGIC (admin-add-product.html) ---
+// --- MANAGE PRODUCTS PAGE LOGIC (admin-products.html) ---
+
+async function loadProductList(db) {
+    const container = document.getElementById('product-list-container');
+    if (!container) return;
+    
+    container.innerHTML = '<p class="p-6 text-gray-500">Loading products...</p>';
+
+    try {
+        const productsSnap = await db.collection('products').get();
+        const stylesSnap = await db.collection('custom_styles').get();
+
+        let allProducts = [];
+        
+        productsSnap.forEach(doc => {
+            allProducts.push({ 
+                id: doc.id, 
+                collection: 'products', 
+                ...doc.data() 
+            });
+        });
+        
+        stylesSnap.forEach(doc => {
+            allProducts.push({ 
+                id: doc.id, 
+                collection: 'custom_styles', 
+                ...doc.data() 
+            });
+        });
+
+        if (allProducts.length === 0) {
+            container.innerHTML = '<p class="p-6 text-gray-500">No products found. Add one!</p>';
+            return;
+        }
+
+        container.innerHTML = ''; // Clear loading
+        allProducts.forEach(product => {
+            const productType = product.collection === 'products' ? 'Retail' : 'Custom';
+            const productTypeColor = product.collection === 'products' ? 'bg-blue-100 text-blue-800' : 'bg-pink-100 text-pink-800';
+
+            container.innerHTML += `
+                <div class="p-4 flex items-center justify-between border-b border-gray-200">
+                    <div class="flex items-center">
+                        <img src="${product.image_url}" alt="${product.name}" class="w-16 h-16 object-cover rounded-lg mr-4">
+                        <div>
+                            <p class="font-bold text-lg text-gray-900">${product.name}</p>
+                            <p class="text-sm text-gray-600">R${product.price.toFixed(2)}</p>
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${productTypeColor}">
+                                ${productType}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="flex space-x-2">
+                        <a href="admin-add-product.html?collection=${product.collection}&id=${product.id}" class="button-secondary">Edit</a>
+                        <button data-collection="${product.collection}" data-id="${product.id}" class="button-danger delete-product-btn">
+                            Delete
+                        </button>
+                    </div>
+                </div>
+            `;
+        });
+
+        // Attach listeners to all the new delete buttons
+        attachDeleteListeners(db);
+
+    } catch (error) {
+        console.error("Error loading product list:", error);
+        container.innerHTML = '<p class="p-6 text-red-500">Error loading products.</p>';
+    }
+}
+
+function attachDeleteListeners(db) {
+    document.querySelectorAll('.delete-product-btn').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+            const { collection, id } = e.currentTarget.dataset;
+            
+            if (confirm('Are you sure you want to delete this product? This cannot be undone.')) {
+                try {
+                    await db.collection(collection).doc(id).delete();
+                    console.log('Product deleted');
+                    loadProductList(db); // Refresh the list
+                } catch (error) {
+                    console.error("Error deleting product:", error);
+                    alert('Could not delete product. See console for details.');
+                }
+            }
+        });
+    });
+}
+
+
+// --- ADD/EDIT PRODUCT PAGE LOGIC (admin-add-product.html) ---
 function setupAddProductForm(db) {
     const form = document.getElementById('add-product-form');
     if (!form) return;
 
+    // --- Get URL params to check for EDIT mode ---
+    const params = new URLSearchParams(window.location.search);
+    const docId = params.get('id');
+    const collectionName = params.get('collection');
+    const isEditMode = docId && collectionName;
+
+    // Get form elements
+    const pageTitle = document.getElementById('page-title');
+    const submitBtn = document.getElementById('submit-product-btn');
     const productTypeRadios = document.querySelectorAll('input[name="product-type"]');
     const variantsSection = document.getElementById('variants-section');
     const variantsContainer = document.getElementById('variants-container');
     const addVariantBtn = document.getElementById('add-variant-btn');
+
+    // --- Mode-specific setup ---
+    if (isEditMode) {
+        pageTitle.textContent = 'Edit Product';
+        submitBtn.textContent = 'Save Changes';
+        // Load the product data into the form
+        loadProductForEdit(db, collectionName, docId);
+    } else {
+        pageTitle.textContent = 'Add New Product';
+        submitBtn.textContent = 'Add Product';
+    }
 
     // Toggle for Retail vs. Custom
     productTypeRadios.forEach(radio => {
         radio.addEventListener('change', (e) => {
             if (e.target.value === 'retail') {
                 variantsSection.classList.remove('hidden');
-                // Add one variant row by default if it's empty
                 if (variantsContainer.childElementCount === 0) {
                     addVariantRow();
                 }
@@ -251,16 +363,57 @@ function setupAddProductForm(db) {
     });
 
     // Add new size/stock row
-    addVariantBtn.addEventListener('click', addVariantRow);
+    addVariantBtn.addEventListener('click', () => addVariantRow()); // Pass no params
 
-    function addVariantRow() {
+    // --- FUNCTIONS (hoisted) ---
+
+    async function loadProductForEdit(db, collection, id) {
+        try {
+            const doc = await db.collection(collection).doc(id).get();
+            if (!doc.exists) {
+                alert('Error: Product not found.');
+                return;
+            }
+            const product = doc.data();
+
+            // Populate common fields
+            document.getElementById('product-name').value = product.name;
+            document.getElementById('product-price').value = product.price;
+            document.getElementById('product-image').value = product.image_url;
+            document.getElementById('product-category').value = product.category || product.collection_name;
+            document.getElementById('product-description').value = product.description;
+
+            // Set the correct radio button
+            const productType = collection === 'products' ? 'retail' : 'custom';
+            document.querySelector(`input[name="product-type"][value="${productType}"]`).checked = true;
+            
+            // Disable radio buttons in edit mode to prevent changing collection
+            productTypeRadios.forEach(radio => radio.disabled = true);
+
+            // Populate variants if it's a retail product
+            if (productType === 'retail') {
+                variantsSection.classList.remove('hidden');
+                variantsContainer.innerHTML = ''; // Clear any empty rows
+                if (product.variants && product.variants.length > 0) {
+                    product.variants.forEach(variant => {
+                        addVariantRow(variant.size, variant.stock);
+                    });
+                }
+            }
+        } catch (error) {
+            console.error("Error loading product for edit:", error);
+            alert('Could not load product data.');
+        }
+    }
+
+    function addVariantRow(size = '', stock = '') {
         const rowId = `variant-${variantsContainer.childElementCount}`;
         const row = document.createElement('div');
         row.id = rowId;
         row.className = "flex items-center space-x-2";
         row.innerHTML = `
-            <input type="text" placeholder="Size (e.g., M)" class="form-input w-1/3 variant-size">
-            <input type="number" placeholder="Stock" class="form-input w-1/3 variant-stock">
+            <input type="text" placeholder="Size (e.g., M)" class="form-input w-1/3 variant-size" value="${size}">
+            <input type="number" placeholder="Stock" class="form-input w-1/3 variant-stock" value="${stock}">
             <button type="button" data-remove="${rowId}" class="button-danger remove-variant-btn">
                 <i data-feather="trash-2" class="w-4 h-4"></i>
             </button>
@@ -277,12 +430,12 @@ function setupAddProductForm(db) {
         });
     }
 
-    // Handle Form Submit
+    // Handle Form Submit (Handles BOTH Add and Edit)
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
-        const submitBtn = document.getElementById('submit-product-btn');
+        
         submitBtn.disabled = true;
-        submitBtn.textContent = 'Adding...';
+        submitBtn.textContent = 'Saving...';
 
         const productType = form.querySelector('input[name="product-type"]:checked').value;
         const productName = document.getElementById('product-name').value;
@@ -296,15 +449,14 @@ function setupAddProductForm(db) {
             price: productPrice,
             image_url: imageUrl,
             description: description,
-            // Use 'category' for retail and 'collection_name' for custom, or just pick one
             category: category, 
             collection_name: category,
         };
 
-        let collectionName = '';
+        let collectionToSaveTo = '';
 
         if (productType === 'retail') {
-            collectionName = 'products';
+            collectionToSaveTo = 'products';
             data.variants = [];
             const variantRows = variantsContainer.querySelectorAll('.flex');
             variantRows.forEach(row => {
@@ -318,34 +470,45 @@ function setupAddProductForm(db) {
             if (data.variants.length === 0) {
                 alert('Please add at least one size variant for retail products.');
                 submitBtn.disabled = false;
-                submitBtn.textContent = 'Add Product';
+                submitBtn.textContent = isEditMode ? 'Save Changes' : 'Add Product';
                 return;
             }
 
         } else {
-            collectionName = 'custom_styles';
+            collectionToSaveTo = 'custom_styles';
         }
 
         try {
-            // Add the new document to the correct collection
-            await db.collection(collectionName).add(data);
+            if (isEditMode) {
+                // --- EDIT/UPDATE LOGIC ---
+                // We use .set() here to overwrite the document with the new data.
+                await db.collection(collectionName).doc(docId).set(data, { merge: true }); // merge:true is safer
+            } else {
+                // --- ADD NEW LOGIC ---
+                await db.collection(collectionToSaveTo).add(data);
+            }
             
             // Show success message
-            document.getElementById('success-message').classList.remove('hidden');
-            form.reset(); // Clear the form
-            variantsContainer.innerHTML = ''; // Clear variants
-            variantsSection.classList.add('hidden'); // Hide variants section
-            // Hide success message after 3 seconds
+            const successMsg = document.getElementById('success-message');
+            successMsg.textContent = isEditMode ? 'Product updated successfully!' : 'Product added successfully!';
+            successMsg.classList.remove('hidden');
+            
+            if (!isEditMode) {
+                form.reset(); // Clear the form only if ADDING new
+                variantsContainer.innerHTML = '';
+                variantsSection.classList.add('hidden');
+            }
+
             setTimeout(() => {
-                document.getElementById('success-message').classList.add('hidden');
+                successMsg.classList.add('hidden');
             }, 3000);
 
         } catch (error) {
-            console.error("Error adding product: ", error);
+            console.error("Error saving product: ", error);
             alert(`Error: ${error.message}`);
         } finally {
             submitBtn.disabled = false;
-            submitBtn.textContent = 'Add Product';
+            submitBtn.textContent = isEditMode ? 'Save Changes' : 'Add Product';
         }
     });
 }
