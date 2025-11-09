@@ -149,7 +149,12 @@ function createOrderCard(orderId, order) {
     `).join('');
 
     // Build the measurements details
-    const measurementsHtml = order.cart.map(item => `
+    const measurementsHtml = order.cart.map(item => {
+        // Only show measurements if they exist (for custom items)
+        if (!item.measurements) {
+            return '';
+        }
+        return `
         <div class="mt-2">
             <p class="font-semibold text-sm">${item.name}:</p>
             <ul class="text-xs text-gray-600 list-disc list-inside">
@@ -160,7 +165,8 @@ function createOrderCard(orderId, order) {
                 <li>Fit: ${item.measurements.fit || 'N/A'}</li>
             </ul>
         </div>
-    `).join('');
+        `;
+    }).join('');
 
     // Status options
     const statuses = ['Pending', 'Busy', 'Complete'];
@@ -261,6 +267,9 @@ async function loadProductList(db) {
             container.innerHTML = '<p class="p-6 text-gray-500">No products found. Add one!</p>';
             return;
         }
+        
+        // Sort by name
+        allProducts.sort((a, b) => a.name.localeCompare(b.name));
 
         container.innerHTML = ''; // Clear loading
         allProducts.forEach(product => {
@@ -332,6 +341,7 @@ function setupAddProductForm(db) {
     // Get form elements
     const pageTitle = document.getElementById('page-title');
     const submitBtn = document.getElementById('submit-product-btn');
+    const productIdInput = document.getElementById('product-id'); // NEW
     const productTypeRadios = document.querySelectorAll('input[name="product-type"]');
     const variantsSection = document.getElementById('variants-section');
     const variantsContainer = document.getElementById('variants-container');
@@ -343,9 +353,15 @@ function setupAddProductForm(db) {
         submitBtn.textContent = 'Save Changes';
         // Load the product data into the form
         loadProductForEdit(db, collectionName, docId);
+        // Disable ID field in edit mode
+        productIdInput.disabled = true;
+        productIdInput.classList.add('bg-gray-100');
     } else {
         pageTitle.textContent = 'Add New Product';
         submitBtn.textContent = 'Add Product';
+        // Enable ID field in add mode
+        productIdInput.disabled = false;
+        productIdInput.classList.remove('bg-gray-100');
     }
 
     // Toggle for Retail vs. Custom
@@ -377,6 +393,7 @@ function setupAddProductForm(db) {
             const product = doc.data();
 
             // Populate common fields
+            productIdInput.value = id; // Load the doc ID
             document.getElementById('product-name').value = product.name;
             document.getElementById('product-price').value = product.price;
             document.getElementById('product-image').value = product.image_url;
@@ -437,6 +454,15 @@ function setupAddProductForm(db) {
         submitBtn.disabled = true;
         submitBtn.textContent = 'Saving...';
 
+        // --- NEW: Get the ID from the form ---
+        const newDocId = document.getElementById('product-id').value;
+        if (!newDocId) {
+            alert('Product ID is required.');
+            submitBtn.disabled = false;
+            submitBtn.textContent = isEditMode ? 'Save Changes' : 'Add Product';
+            return;
+        }
+
         const productType = form.querySelector('input[name="product-type"]:checked').value;
         const productName = document.getElementById('product-name').value;
         const productPrice = parseFloat(document.getElementById('product-price').value);
@@ -479,14 +505,12 @@ function setupAddProductForm(db) {
         }
 
         try {
-            if (isEditMode) {
-                // --- EDIT/UPDATE LOGIC ---
-                // We use .set() here to overwrite the document with the new data.
-                await db.collection(collectionName).doc(docId).set(data, { merge: true }); // merge:true is safer
-            } else {
-                // --- ADD NEW LOGIC ---
-                await db.collection(collectionToSaveTo).add(data);
-            }
+            // --- UPDATED LOGIC ---
+            // We now *always* use .doc(ID).set()
+            // For editing, it overwrites the doc.
+            // For adding, it creates a new doc with the specified ID.
+            const docRef = db.collection(collectionToSaveTo).doc(newDocId);
+            await docRef.set(data, { merge: true }); // merge:true is safer, especially for edits
             
             // Show success message
             const successMsg = document.getElementById('success-message');
@@ -497,6 +521,11 @@ function setupAddProductForm(db) {
                 form.reset(); // Clear the form only if ADDING new
                 variantsContainer.innerHTML = '';
                 variantsSection.classList.add('hidden');
+            } else {
+                // If editing, redirect to the product list to see changes
+                setTimeout(() => {
+                    window.location.href = 'admin-products.html';
+                }, 2000);
             }
 
             setTimeout(() => {

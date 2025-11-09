@@ -36,7 +36,7 @@
         <form id="add-product-form" class="bg-white p-8 rounded-lg shadow-lg space-y-6">
 
             <div id="success-message" class="hidden p-4 bg-green-100 text-green-800 border border-green-300 rounded-lg">
-                Product added successfully!
+                Product saved successfully!
             </div>
             
             <div>
@@ -56,6 +56,13 @@
             <div class="pt-6 border-t">
                 <h2 class="text-xl font-semibold text-gray-900">Core Details</h2>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-4">
+                    
+                    <div class="sm:col-span-2">
+                        <label for="product-id" class="form-label">Product ID (e.g., prod_001 or style_001)</label>
+                        <input type="text" id="product-id" class="form-input" required>
+                        <p class="form-help">This is the unique ID. It cannot be changed later.</p>
+                    </div>
+
                     <div class="sm:col-span-2">
                         <label for="product-name" class="form-label">Product Name</label>
                         <input type="text" id="product-name" class="form-input" required>
