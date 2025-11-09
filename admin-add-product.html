@@ -39,8 +39,8 @@
             </div>
             
             <div>
-                <label class="form-label">Product Type</label>
-                <div class="flex items-center space-x-6 mt-2">
+                <label class="form-label font-semibold text-gray-900">Product Type</label>
+                <div class="flex items-center space-x-6 mt-2 pt-2">
                     <label class="flex items-center">
                         <input type="radio" name="product-type" value="custom" class="form-radio" checked>
                         <span class="ml-2 text-sm">Custom Style (Tailored)</span>
@@ -52,40 +52,49 @@
                 </div>
             </div>
 
-            <div>
-                <label for="product-name" class="form-label">Product Name</label>
-                <input type="text" id="product-name" class="form-input" required>
-            </div>
-
-            <div>
-                <label for="product-price" class="form-label">Price (R)</label>
-                <input type="number" id="product-price" class="form-input" required>
+            <div class="pt-6 border-t">
+                <h2 class="text-xl font-semibold text-gray-900">Core Details</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-4">
+                    <div class="sm:col-span-2">
+                        <label for="product-name" class="form-label">Product Name</label>
+                        <input type="text" id="product-name" class="form-input" required>
+                    </div>
+                    <div>
+                        <label for="product-price" class="form-label">Price (R)</label>
+                        <input type="number" id="product-price" class="form-input" required>
+                    </div>
+                    <div>
+                        <label for="product-image" class="form-label">Image URL</label>
+                        <input type="text" id="product-image" class="form-input" required>
+                        <p class="form-help">Upload to Firebase Storage and paste the URL.</p>
+                    </div>
+                </div>
             </div>
             
-            <div>
-                <label for="product-image" class="form-label">Image URL</label>
-                <input type="text" id="product-image" class="form-input" required>
-                <p class="form-help">Upload image to Firebase Storage first, then paste the public URL here.</p>
+            <div class="pt-6 border-t">
+                <h2 class="text-xl font-semibold text-gray-900">Categorization & Description</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-4">
+                    <div>
+                        <label for="product-category" class="form-label">Category / Collection Name</label>
+                        <input type="text" id="product-category" class="form-input" required>
+                    </div>
+                    <div class="sm:col-span-2">
+                        <label for="product-description" class="form-label">Description</label>
+                        <textarea id="product-description" rows="4" class="form-input"></textarea>
+                    </div>
+                </div>
             </div>
 
-            <div>
-                <label for="product-category" class="form-label">Category / Collection Name</label>
-                <input type="text" id="product-category" class="form-input" required>
-            </div>
-
-            <div>
-                <label for="product-description" class="form-label">Description</label>
-                <textarea id="product-description" rows="4" class="form-input"></textarea>
-            </div>
-
-            <div id="variants-section" class="hidden space-y-4 p-4 border rounded-lg bg-gray-50">
-                <h3 class="font-medium text-gray-800">Sizes & Variants</h3>
+            <div id="variants-section" class="hidden space-y-4 pt-6 border-t">
+                <h2 class="text-xl font-semibold text-gray-900">Sizes & Variants</h2>
+                <p class="text-sm text-gray-600">Only required for Retail Products. Add a row for each available size.</p>
+                
                 <div id="variants-container" class="space-y-3">
                     </div>
                 <button type="button" id="add-variant-btn" class="button-secondary">Add Size</button>
             </div>
             
-            <div class="pt-4">
+            <div class="pt-6 border-t">
                 <button type="submit" id="submit-product-btn" class="button-primary w-full justify-center">
                     Add Product
                 </button>
@@ -112,5 +121,13 @@
     </script>
 
     <script src="admin.js"></script>
+    <script>
+        // Initialize Feather Icons
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof feather !== 'undefined') {
+                feather.replace();
+            }
+        });
+    </script>
 </body>
 </html>
