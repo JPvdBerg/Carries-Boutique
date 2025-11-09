@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Carries Boutique</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="https://i.imgur.com/KNRtw3t.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <link href="admin-style.css" rel="stylesheet">
+</head>
+<body id="dashboard-page" class="bg-gray-100 min-h-screen">
+    
+    <nav class="bg-white shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <img class="h-8 w-auto" src="https://i.imgur.com/KNRtw3t.png" alt="Carries Boutique">
+                    <span class="ml-3 text-xl font-serif font-semibold text-gray-900">Admin Dashboard</span>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="admin.html" class="nav-link active">Orders</a>
+                    <a href="admin-add-product.html" class="nav-link">Add Product</a>
+                    <button id="logout-btn" class="text-sm font-medium text-pink-600 hover:text-pink-800">Logout</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-3xl font-bold text-gray-900">Incoming Orders</h1>
+        </div>
+
+        <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+            <div class="divide-y divide-gray-200" id="order-list">
+                <p class="p-6 text-gray-500">Loading orders...</p>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
+
+    <script>
+      const firebaseConfig = {
+        apiKey: "AIzaSyCkyMyRLCc98BifcSYbIgs3_v3u2qBvdpg", // Your Key
+        authDomain: "carries-boutique.firebaseapp.com",
+        projectId: "carries-boutique",
+        storageBucket: "carries-boutique.firebasestorage.app",
+        messagingSenderId: "512525813635",
+        appId: "1:512525813635:web:afe3d28c5bd2db68ae58b6",
+        measurementId: "G-2Q2QY4HJ9Y"
+      };
+      firebase.initializeApp(firebaseConfig);
+    </script>
+
+    <script src="admin.js"></script>
+    <script>
+        // Initialize Feather Icons
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof feather !== 'undefined') {
+                feather.replace();
+            }
+        });
+    </script>
+</body>
+</html>

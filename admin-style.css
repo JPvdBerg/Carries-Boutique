@@ -1,0 +1,46 @@
+/* Using Tailwind's @apply directive to create reusable components */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+    .form-label {
+        @apply block text-sm font-medium text-gray-700;
+    }
+
+    .form-input {
+        @apply mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500 sm:text-sm;
+    }
+
+    .form-radio {
+        @apply h-4 w-4 text-pink-600 border-gray-300 focus:ring-pink-500;
+    }
+
+    .form-help {
+        @apply mt-1 text-xs text-gray-500;
+    }
+
+    .button-primary {
+        @apply inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-lg shadow-sm text-white bg-pink-600 hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500;
+    }
+
+    .button-secondary {
+        @apply inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-lg shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500;
+    }
+    
+    .button-danger {
+         @apply inline-flex items-center px-3 py-1 border border-transparent text-xs font-medium rounded-lg text-white bg-red-600 hover:bg-red-700;
+    }
+
+    .nav-link {
+        @apply text-gray-500 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium;
+    }
+
+    .nav-link.active {
+        @apply font-bold text-pink-600;
+    }
+
+    .status-select {
+        @apply block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-pink-500 focus:border-pink-500 sm:text-sm rounded-md;
+    }
+}

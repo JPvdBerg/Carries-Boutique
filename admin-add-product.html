@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Product | Admin Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="https://i.imgur.com/KNRtw3t.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <link href="admin-style.css" rel="stylesheet">
+</head>
+<body id="add-product-page" class="bg-gray-100 min-h-screen">
+    
+    <nav class="bg-white shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <img class="h-8 w-auto" src="https://i.imgur.com/KNRtw3t.png" alt="Carries Boutique">
+                    <span class="ml-3 text-xl font-serif font-semibold text-gray-900">Admin Dashboard</span>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="admin.html" class="nav-link">Orders</a>
+                    <a href="admin-add-product.html" class="nav-link active">Add Product</a>
+                    <button id="logout-btn" class="text-sm font-medium text-pink-600 hover:text-pink-800">Logout</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-3xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
+        <h1 class="text-3xl font-bold text-gray-900 mb-6">Add New Product</h1>
+        
+        <form id="add-product-form" class="bg-white p-8 rounded-lg shadow-lg space-y-6">
+
+            <div id="success-message" class="hidden p-4 bg-green-100 text-green-800 border border-green-300 rounded-lg">
+                Product added successfully!
+            </div>
+            
+            <div>
+                <label class="form-label">Product Type</label>
+                <div class="flex items-center space-x-6 mt-2">
+                    <label class="flex items-center">
+                        <input type="radio" name="product-type" value="custom" class="form-radio" checked>
+                        <span class="ml-2 text-sm">Custom Style (Tailored)</span>
+                    </label>
+                    <label class="flex items-center">
+                        <input type="radio" name="product-type" value="retail" class="form-radio">
+                        <span class="ml-2 text-sm">Retail Product (S, M, L)</span>
+                    </label>
+                </div>
+            </div>
+
+            <div>
+                <label for="product-name" class="form-label">Product Name</label>
+                <input type="text" id="product-name" class="form-input" required>
+            </div>
+
+            <div>
+                <label for="product-price" class="form-label">Price (R)</label>
+                <input type="number" id="product-price" class="form-input" required>
+            </div>
+            
+            <div>
+                <label for="product-image" class="form-label">Image URL</label>
+                <input type="text" id="product-image" class="form-input" required>
+                <p class="form-help">Upload image to Firebase Storage first, then paste the public URL here.</p>
+            </div>
+
+            <div>
+                <label for="product-category" class="form-label">Category / Collection Name</label>
+                <input type="text" id="product-category" class="form-input" required>
+            </div>
+
+            <div>
+                <label for="product-description" class="form-label">Description</label>
+                <textarea id="product-description" rows="4" class="form-input"></textarea>
+            </div>
+
+            <div id="variants-section" class="hidden space-y-4 p-4 border rounded-lg bg-gray-50">
+                <h3 class="font-medium text-gray-800">Sizes & Variants</h3>
+                <div id="variants-container" class="space-y-3">
+                    </div>
+                <button type="button" id="add-variant-btn" class="button-secondary">Add Size</button>
+            </div>
+            
+            <div class="pt-4">
+                <button type="submit" id="submit-product-btn" class="button-primary w-full justify-center">
+                    Add Product
+                </button>
+            </div>
+
+        </form>
+    </main>
+
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
+
+    <script>
+      const firebaseConfig = {
+        apiKey: "AIzaSyCkyMyRLCc98BifcSYbIgs3_v3u2qBvdpg", // Your Key
+        authDomain: "carries-boutique.firebaseapp.com",
+        projectId: "carries-boutique",
+        storageBucket: "carries-boutique.firebasestorage.app",
+        messagingSenderId: "512525813635",
+        appId: "1:512525813635:web:afe3d28c5bd2db68ae58b6",
+        measurementId: "G-2Q2QY4HJ9Y"
+      };
+      firebase.initializeApp(firebaseConfig);
+    </script>
+
+    <script src="admin.js"></script>
+</body>
+</html>
