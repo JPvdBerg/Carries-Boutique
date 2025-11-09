@@ -274,6 +274,9 @@ document.addEventListener('DOMContentLoaded', () => {
         renderCheckoutSummary(); // Also rerender checkout summary if on that page
     };
 
+    // --- =================================== ---
+    // --- UPDATED CHECKOUT SUMMARY RENDERER ---
+    // --- =================================== ---
     const renderCheckoutSummary = () => {
         const summaryContainer = document.getElementById('checkout-summary');
         if (!summaryContainer) return; // Not on checkout page
@@ -281,6 +284,19 @@ document.addEventListener('DOMContentLoaded', () => {
         const cart = getCart();
         summaryContainer.innerHTML = ''; // Clear previous content
         let subtotal = 0;
+
+        // --- NEW LOGIC: Check if any custom items are in the cart ---
+        const hasCustomItem = cart.some(item => item.size === 'Custom');
+        const defaultMeasurementsSection = document.getElementById('default-measurements-section');
+        
+        if (defaultMeasurementsSection) {
+            if (hasCustomItem) {
+                defaultMeasurementsSection.style.display = 'block'; // Show
+            } else {
+                defaultMeasurementsSection.style.display = 'none'; // Hide
+            }
+        }
+        // --- END NEW LOGIC ---
 
         if (cart.length === 0) {
             summaryContainer.innerHTML = '<p class="text-gray-500">Your cart is empty.</p>';
@@ -294,26 +310,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // --- 1. Render Each Cart Item ---
         cart.forEach((item, index) => {
-            // --- STALE ITEM FIX ---
             const cartItemUniqueId = item.cartItemId || item.id; 
             const itemSize = item.size || 'undefined';
-
             subtotal += item.price * item.quantity;
-            
-            const itemHtml = `
-              <div class="py-4 border-b" data-cart-item-id="${cartItemUniqueId}">
-                <div class="flex justify-between items-center">
-                  <div class="flex items-center space-x-3">
-                    <img src="${item.image}" alt="${item.name}" class="w-12 h-12 md:w-16 md:h-16 object-cover rounded-lg">
-                    <div>
-                      <h4 class="font-medium text-sm md:text-base">${item.name}</h4>
-                      <p class="text-sm text-gray-600 font-medium">Size: ${itemSize}</p>
-                      <p class="text-xs md:text-sm text-gray-500">Qty: ${item.quantity}</p>
-                    </div>
-                  </div>
-                  <p class="font-medium text-sm md:text-base">R${(item.price * item.quantity).toFixed(2)}</p>
-                </div>
-                
+
+            // --- NEW LOGIC: Conditionally show measurement HTML ---
+            let measurementHtml = '';
+            if (item.size === 'Custom') {
+                // This is a custom item, so show the measurement options
+                measurementHtml = `
                 <div class="mt-4">
                   <h5 class="text-sm font-medium text-gray-800 mb-2">Measurements</h5>
                   <div class="flex space-x-4">
@@ -347,8 +352,27 @@ document.addEventListener('DOMContentLoaded', () => {
                       </div>
                     </div>
                   </div>
-                  
                 </div>
+                `;
+            }
+            // --- END NEW LOGIC ---
+            
+            const itemHtml = `
+              <div class="py-4 border-b" data-cart-item-id="${cartItemUniqueId}">
+                <div class="flex justify-between items-center">
+                  <div class="flex items-center space-x-3">
+                    <img src="${item.image}" alt="${item.name}" class="w-12 h-12 md:w-16 md:h-16 object-cover rounded-lg">
+                    <div>
+                      <h4 class="font-medium text-sm md:text-base">${item.name}</h4>
+                      <p class="text-sm text-gray-600 font-medium">Size: ${itemSize}</p>
+                      <p class="text-xs md:text-sm text-gray-500">Qty: ${item.quantity}</p>
+                    </div>
+                  </div>
+                  <p class="font-medium text-sm md:text-base">R${(item.price * item.quantity).toFixed(2)}</p>
+                </div>
+                
+                ${measurementHtml}
+
               </div>
             `;
             summaryContainer.innerHTML += itemHtml;
@@ -393,8 +417,10 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     };
-    // --- END NEW CART LOGIC ---
-    // --- ================== ---
+    // --- =================================== ---
+    // --- END UPDATED CHECKOUT SUMMARY RENDERER ---
+    // --- =================================== ---
+
 
     // --- EVENT HANDLER FOR CHECKOUT MEASUREMENT TOGGLES ---
     const summaryContainer = document.getElementById('checkout-summary');
@@ -420,7 +446,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 
-    // --- CHECKOUT FORM SUBMISSION ---
+    // --- =================================== ---
+    // --- UPDATED CHECKOUT FORM SUBMISSION ---
+    // --- =================================== ---
     const checkoutForm = document.getElementById('checkout-form');
     if (checkoutForm) {
         checkoutForm.addEventListener('submit', async (e) => {
@@ -460,45 +488,53 @@ document.addEventListener('DOMContentLoaded', () => {
 
             for (let i = 0; i < cart.length; i++) {
                 const item = cart[i];
-                const itemElement = summaryItems[i];
-                const cartItemUniqueId = itemElement.dataset.cartItemId;
-
-                const measurementOption = itemElement.querySelector(`input[name="measurements-option-${cartItemUniqueId}"]:checked`).value;
+                const processedItem = { ...item }; // Copy original item data
                 
-                const processedItem = { ...item }; // Copy original item data (name, price, etc.)
-                
-                if (measurementOption === 'default') {
-                    // Check if default measurements are filled
-                    if (!defaultMeasurements.bust || !defaultMeasurements.waist || !defaultMeasurements.hips) {
-                        allMeasurementsValid = false;
-                        alert(`Please fill in at least Bust, Waist, and Hips in the 'Your Measurements' section, or specify measurements for ${item.name}.`);
-                        break; // Stop processing
+                // --- NEW LOGIC: Only process measurements for CUSTOM items ---
+                if (item.size === 'Custom') {
+                    const itemElement = summaryItems[i];
+                    const cartItemUniqueId = itemElement.dataset.cartItemId;
+                    const measurementOption = itemElement.querySelector(`input[name="measurements-option-${cartItemUniqueId}"]:checked`).value;
+                    
+                    if (measurementOption === 'default') {
+                        // Check if default measurements are filled
+                        if (!defaultMeasurements.bust || !defaultMeasurements.waist || !defaultMeasurements.hips) {
+                            allMeasurementsValid = false;
+                            alert(`Please fill in at least Bust, Waist, and Hips in the 'Your Measurements' section, or specify measurements for ${item.name}.`);
+                            break; // Stop processing
+                        }
+                        processedItem.measurements = {
+                            type: 'default',
+                            ...defaultMeasurements
+                        };
+                    } else {
+                        // Get specific measurements
+                        const specificMeasurements = {
+                            bust: itemElement.querySelector(`.specific-bust`)?.value,
+                            waist: itemElement.querySelector(`.specific-waist`)?.value,
+                            hips: itemElement.querySelector(`.specific-hips`)?.value,
+                            height: itemElement.querySelector(`.specific-height`)?.value,
+                            fit: 'custom' // Implied
+                        };
+                        
+                        // Check if specific measurements are filled
+                        if (!specificMeasurements.bust || !specificMeasurements.waist || !specificMeasurements.hips) {
+                            allMeasurementsValid = false;
+                            alert(`You selected 'Specify for item' for ${item.name}, but did not fill in all measurements.`);
+                            break; // Stop processing
+                        }
+                        
+                        processedItem.measurements = {
+                            type: 'specific',
+                            ...specificMeasurements
+                        };
                     }
-                    processedItem.measurements = {
-                        type: 'default',
-                        ...defaultMeasurements
-                    };
                 } else {
-                    // Get specific measurements
-                    const specificMeasurements = {
-                        bust: itemElement.querySelector(`.specific-bust`)?.value,
-                        waist: itemElement.querySelector(`.specific-waist`)?.value,
-                        hips: itemElement.querySelector(`.specific-hips`)?.value,
-                        height: itemElement.querySelector(`.specific-height`)?.value,
-                        fit: 'custom' // Implied
-                    };
-                    
-                    if (!specificMeasurements.bust || !specificMeasurements.waist || !specificMeasurements.hips) {
-                        allMeasurementsValid = false;
-                        alert(`You selected 'Specify for item' for ${item.name}, but did not fill in all measurements.`);
-                        break; // Stop processing
-                    }
-                    
-                    processedItem.measurements = {
-                        type: 'specific',
-                        ...specificMeasurements
-                    };
+                    // This is a RETAIL item (S, M, L), no measurements needed
+                    processedItem.measurements = null; 
                 }
+                // --- END NEW LOGIC ---
+
                 processedCart.push(processedItem);
             }
 
@@ -565,6 +601,9 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+    // --- =================================== ---
+    // --- END UPDATED CHECKOUT FORM SUBMISSION ---
+    // --- =================================== ---
 
 
     // --- FIREBASE AUTHENTICATION LOGIC ---

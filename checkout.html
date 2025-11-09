@@ -14,26 +14,9 @@
     /* ... (Your existing styles) ... */
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Inter', sans-serif; color: #333; background-color: #faf9f7; overflow-x: hidden; }
-    .hero-gradient { background: linear-gradient(135deg, #ff6f91, #ff9671, #ffc75f); background-size: 200% 200%; animation: gradientShift 10s ease infinite; }
-    @keyframes gradientShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
     .nav-link { position: relative; }
     .nav-link::after { content: ''; position: absolute; width: 0; height: 2px; bottom: -2px; left: 0; background-color: #b93e65; transition: width 0.3s ease; }
     .nav-link:hover::after { width: 100%; }
-    .product-card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.1); }
-    .whatsapp-btn { background: linear-gradient(135deg, #25D366, #1ebe5a); transition: all 0.3s ease; }
-    .whatsapp-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(37, 211, 102, 0.3); }
-    .collection-card { transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-    .collection-card:hover { transform: scale(1.03); }
-    .testimonial-card { background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,255,255,0.7)); backdrop-filter: blur(10px); }
-    .footer-link:hover { color: #b93e65; }
-    .blob { position: absolute; border-radius: 50%; filter: blur(100px); opacity: 0.15; z-index: 0; }
-    .blob-1 { width: 400px; height: 400px; background: #ff6f91; top: -100px; left: -150px; }
-    .blob-2 { width: 500px; height: 500px; background: #ff9671; bottom: -150px; right: -200px; }
-    .blob-3 { width: 300px; height: 300px; background: #ffc75f; top: 150px; right: -100px; }
-    @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-15px); } 100% { transform: translateY(0px); } }
-    .floating { animation: float 6s ease-in-out infinite; }
-    .scroll-down { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); color: white; font-size: 1.5rem; animation: bounce 2s infinite; cursor: pointer; }
-    @keyframes bounce { 0%, 20%, 50%, 80%, 100% {transform: translateY(0);} 40% {transform: translateY(-20px);} 60% {transform: translateY(-10px);} }
   </style>
 </head>
 <body>
@@ -146,9 +129,9 @@
             </div>
           </div>
 
-          <div class="mt-12">
+          <div id="default-measurements-section" class="mt-12" style="display: none;">
             <h2 class="text-2xl font-semibold text-gray-900 mb-6">Your Measurements</h2>
-            <p class="text-sm text-gray-600 mb-4">Please provide your default measurements. You can adjust these for individual items in the order summary.</p>
+            <p class="text-sm text-gray-600 mb-4">Please provide your default measurements. You can adjust these for individual custom items in the order summary.</p>
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
                 <label for="bust" class="block text-sm font-medium text-gray-700 mb-1">Bust (cm)</label>
