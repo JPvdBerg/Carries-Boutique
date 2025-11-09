@@ -105,14 +105,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const scrollDownButton = document.querySelector('.scroll-down');
     if (scrollDownButton) {
         scrollDownButton.addEventListener('click', function() {
-            const target = document.querySelector('#view-toggle-btn-section'); // Updated to point to new section
+            // Updated to scroll to the "about" section on the new index page
+            const target = document.querySelector('#about');
             if (target) {
                 target.scrollIntoView({ behavior: 'smooth' });
             }
         });
     }
-
-    // --- REMOVED VIEW TOGGLE LOGIC (Now on separate pages) ---
 
     // --- ================================== ---
     // --- SHOPPING CART LOGIC (With Sizes) ---
@@ -674,7 +673,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 // --- Update NAV UI (Desktop & Mobile) ---
                 if (navGoogleLoginBtn) navGoogleLoginBtn.style.display = 'none';
                 if (userInfoDiv) userInfoDiv.style.display = 'flex';
-                if (userDisplayNameSpan) userDisplayNameSpan.textContent = user.displayName || user.email;
+                
+                // --- THIS IS THE CHANGED LINE ---
+                const firstName = user.displayName ? user.displayName.split(' ')[0] : user.email;
+                if (userDisplayNameSpan) userDisplayNameSpan.textContent = firstName;
+                // --- END OF CHANGE ---
                 
                 if (mobileGoogleLoginBtn) mobileGoogleLoginBtn.style.display = 'none';
                 if (mobileUserInfoDiv) mobileUserInfoDiv.style.display = 'block';
