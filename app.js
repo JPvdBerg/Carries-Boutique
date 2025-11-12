@@ -555,50 +555,41 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             // 5. Send Final Data to Backend
-            try {
-                const orderData = { 
-                    userId: user.uid,
-                    customer: customerInfo, 
-                    cart: processedCart 
-                };
+            // ... inside checkoutForm listener ...
+try {
+    // 1. Prepare the data
+    const orderData = { 
+        userId: user.uid,
+        customer: customerInfo, 
+        cart: processedCart,
+        // Add a server timestamp so we know exactly when it happened
+        order_date: firebase.firestore.FieldValue.serverTimestamp(),
+        status: 'Pending' 
+    };
 
-                console.log("Sending FINAL order data to server:", JSON.stringify(orderData, null, 2));
-                
-                const response = await fetch('https://carries-boutique-server.onrender.com/api/send-order', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(orderData),
-                });
+    console.log("Saving order directly to Firestore...");
+    
+    // 2. Save directly to the 'orders' collection
+    // (This works because we added the Security Rules earlier!)
+    const docRef = await db.collection('orders').add(orderData);
 
-                 console.log("Server response status:", response.status);
+    console.log("Order saved! ID:", docRef.id);
 
-                if (!response.ok) {
-                    let errorMsg = 'Server responded with an error';
-                    try {
-                        const errorData = await response.json();
-                        errorMsg = errorData.message || `Status: ${response.status}`;
-                         console.error("Server error data:", errorData);
-                    } catch(jsonError) {
-                         console.error("Could not parse error response as JSON:", await response.text());
-                    }
-                    throw new Error(errorMsg);
-                }
+    // 3. Clear cart and Redirect
+    localStorage.removeItem('carriesBoutiqueCart');
+    updateCartIcon();
+    
+    // Redirect to confirmation page with the REAL ID
+    window.location.href = `confirmation.html?orderId=${docRef.id}`;
 
-                 const result = await response.json();
-                 console.log("Server success response:", result);
-
-                localStorage.removeItem('carriesBoutiqueCart');
-                updateCartIcon();
-                window.location.href = 'confirmation.html';
-
-            } catch (error) {
-                console.error('Failed to send order:', error);
-                alert(`There was an error placing your order: ${error.message}. Please check console for details.`);
-                if (submitButton) {
-                    submitButton.disabled = false;
-                    submitButton.textContent = 'Place Order';
-                }
-            }
+} catch (error) {
+    console.error('Failed to save order:', error);
+    alert(`Error placing order: ${error.message}`);
+    if (submitButton) {
+        submitButton.disabled = false;
+        submitButton.textContent = 'Place Order';
+    }
+}
         });
     }
     // --- =================================== ---

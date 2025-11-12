@@ -168,5 +168,12 @@
   </script>
 
   <script src="app.js"></script>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get('orderId');
+    if (id) {
+        document.getElementById('order-id').textContent = '#' + id;
+    }
+</script>
 </body>
 </html>
