@@ -4,6 +4,64 @@ document.addEventListener('DOMContentLoaded', () => {
     const db = firebase.firestore();
 
     const currentPage = document.body.id;
+	
+	// --- IMAGE UPLOAD LOGIC ---
+    const fileInput = document.getElementById('file-upload');
+    const progressBarContainer = document.getElementById('upload-progress-container');
+    const progressBar = document.getElementById('upload-progress-bar');
+    const urlInput = document.getElementById('product-image');
+
+    if (fileInput) {
+        fileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            // 1. Create a reference to Firebase Storage
+            // Path: products/TIMESTAMP_FILENAME
+            const storageRef = firebase.storage().ref('products/' + Date.now() + '_' + file.name);
+
+            // 2. Start Upload
+            const uploadTask = storageRef.put(file);
+
+            // 3. Disable Submit Button while uploading
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Uploading Image...';
+            progressBarContainer.classList.remove('hidden');
+
+            uploadTask.on('state_changed', 
+                (snapshot) => {
+                    // Update Progress Bar
+                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                    progressBar.style.width = progress + '%';
+                }, 
+                (error) => {
+                    // Handle Error
+                    console.error("Upload failed:", error);
+                    alert("Image upload failed: " + error.message);
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = isEditMode ? 'Save Changes' : 'Add Product';
+                }, 
+                () => {
+                    // Handle Success
+                    uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+                        console.log('File available at', downloadURL);
+                        
+                        // Auto-fill the URL input
+                        urlInput.value = downloadURL;
+                        
+                        // Re-enable submit button
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = isEditMode ? 'Save Changes' : 'Add Product';
+                        
+                        // Optional: Show a checkmark or success state
+                        progressBar.classList.add('bg-green-500');
+                        progressBar.classList.remove('bg-pink-600');
+                    });
+                }
+            );
+        });
+    }
+    // --- END IMAGE UPLOAD LOGIC ---
 
     // Add click listener for all logout buttons
     const logoutButtons = document.querySelectorAll('#logout-btn');

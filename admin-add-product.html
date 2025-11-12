@@ -72,10 +72,25 @@
                         <input type="number" id="product-price" class="form-input" required>
                     </div>
                     <div>
-                        <label for="product-image" class="form-label">Image URL</label>
-                        <input type="text" id="product-image" class="form-input" required>
-                        <p class="form-help">Upload to Firebase Storage and paste the URL.</p>
-                    </div>
+        <label class="form-label">Product Image</label>
+        
+        <div class="mt-2 flex items-center">
+            <input type="file" id="file-upload" accept="image/*" 
+                   class="block w-full text-sm text-slate-500
+                          file:mr-4 file:py-2 file:px-4
+                          file:rounded-full file:border-0
+                          file:text-sm file:font-semibold
+                          file:bg-pink-50 file:text-pink-700
+                          hover:file:bg-pink-100"/>
+        </div>
+
+        <div id="upload-progress-container" class="w-full bg-gray-200 rounded-full h-2.5 mt-3 hidden">
+            <div id="upload-progress-bar" class="bg-pink-600 h-2.5 rounded-full" style="width: 0%"></div>
+        </div>
+
+        <label for="product-image" class="text-xs text-gray-500 mt-3 block">Image URL (Auto-filled)</label>
+        <input type="text" id="product-image" class="form-input bg-gray-100 text-gray-500 cursor-not-allowed" readonly required>
+    </div>
                 </div>
             </div>
             
@@ -114,7 +129,8 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
-
+	<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-storage-compat.js"></script>
+	
     <script>
       const firebaseConfig = {
         apiKey: "AIzaSyCkyMyRLCc98BifcSYbIgs3_v3u2qBvdpg", // Your Key
