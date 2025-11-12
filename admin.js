@@ -52,6 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         if (urlInput) urlInput.value = downloadURL;
                         if (submitBtn) {
                             submitBtn.disabled = false;
+                            // Check if we are in edit mode
                             const params = new URLSearchParams(window.location.search);
                             const isEdit = params.get('id') && params.get('collection');
                             submitBtn.textContent = isEdit ? 'Save Changes' : 'Add Product';
@@ -63,7 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     
-    // Add click listener for all logout buttons
+    // Logout Logic
     const logoutButtons = document.querySelectorAll('#logout-btn');
     logoutButtons.forEach(btn => {
         btn.addEventListener('click', () => {
@@ -76,6 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // Auth Check
     auth.onAuthStateChanged(async (user) => {
         if (user) {
             try {
@@ -90,7 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         initializeApp(db, user);
                     }
                 } else {
-                    console.warn('Access Denied. User is not an admin.');
+                    console.warn('Access Denied.');
                     alert('You do not have permission to access this page.');
                     auth.signOut();
                     window.location.href = 'index.html'; 
@@ -102,7 +104,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         } else {
             if (currentPage !== 'login-page') {
-                console.log('User not logged in. Redirecting to admin login.');
                 window.location.href = 'admin-login.html';
             } else {
                 setupLoginPage(auth);
@@ -204,8 +205,7 @@ function createOrderCard(orderId, order) {
         `;
     }).join('');
 
-    const statuses = ['Pending', 'Busy', 'Complete'];
-    const statusOptions = statuses.map(s => 
+    const statusOptions = ['Pending', 'Busy', 'Complete'].map(s => 
         `<option value="${s}" ${order.status === s ? 'selected' : ''}>${s}</option>`
     ).join('');
 
@@ -231,8 +231,8 @@ function createOrderCard(orderId, order) {
                     ${measurementsHtml}
                 </div>
                 <div class="mt-6">
-                    <label for="status-${orderId}" class="block text-sm font-medium text-gray-700">Order Status</label>
-                    <select id="status-${orderId}" data-id="${orderId}" class="status-select status-updater mt-1">
+                    <label class="block text-sm font-medium text-gray-700">Status</label>
+                    <select data-id="${orderId}" class="status-select status-updater mt-1">
                         ${statusOptions}
                     </select>
                 </div>
@@ -245,11 +245,7 @@ function createOrderCard(orderId, order) {
 function attachOrderListeners(db) {
     document.querySelectorAll('.status-updater').forEach(select => {
         select.addEventListener('change', (e) => {
-            const orderId = e.target.dataset.id;
-            const newStatus = e.target.value;
-            db.collection('orders').doc(orderId).update({ status: newStatus })
-                .then(() => console.log(`Order ${orderId} updated`))
-                .catch(error => console.error("Error updating status: ", error));
+            db.collection('orders').doc(e.target.dataset.id).update({ status: e.target.value });
         });
     });
 }
@@ -262,22 +258,23 @@ async function loadProductList(db) {
     container.innerHTML = '<p class="p-6 text-gray-500">Loading products...</p>';
 
     try {
-        const productsSnap = await db.collection('products').get();
-        const stylesSnap = await db.collection('custom_styles').get();
+        const [productsSnap, stylesSnap] = await Promise.all([
+            db.collection('products').get(),
+            db.collection('custom_styles').get()
+        ]);
 
         let allProducts = [];
-        
         productsSnap.forEach(doc => allProducts.push({ id: doc.id, collection: 'products', ...doc.data() }));
         stylesSnap.forEach(doc => allProducts.push({ id: doc.id, collection: 'custom_styles', ...doc.data() }));
 
         if (allProducts.length === 0) {
-            container.innerHTML = '<p class="p-6 text-gray-500">No products found. Add one!</p>';
+            container.innerHTML = '<p class="p-6 text-gray-500">No products found.</p>';
             return;
         }
         
         allProducts.sort((a, b) => a.name.localeCompare(b.name));
-
         container.innerHTML = ''; 
+
         allProducts.forEach(product => {
             const productType = product.collection === 'products' ? 'Retail' : 'Custom';
             const productTypeColor = product.collection === 'products' ? 'bg-blue-100 text-blue-800' : 'bg-pink-100 text-pink-800';
@@ -320,7 +317,7 @@ function attachDeleteListeners(db) {
     document.querySelectorAll('.delete-product-btn').forEach(btn => {
         btn.addEventListener('click', async (e) => {
             const { collection, id } = e.currentTarget.dataset;
-            if (confirm('Are you sure you want to delete this product? This cannot be undone.')) {
+            if (confirm('Are you sure you want to delete this product?')) {
                 try {
                     await db.collection(collection).doc(id).delete();
                     loadProductList(db); 
@@ -351,25 +348,62 @@ function setupAddProductForm(db) {
     const variantsContainer = document.getElementById('variants-container');
     const addVariantBtn = document.getElementById('add-variant-btn');
 
+    // --- NEW: AUTO ID GENERATOR ---
+    async function generateNextId() {
+        try {
+            const [productsSnap, stylesSnap] = await Promise.all([
+                db.collection('products').get(),
+                db.collection('custom_styles').get()
+            ]);
+
+            let maxId = 0;
+            const checkMax = (id) => {
+                if (id && id.startsWith('prod_')) {
+                    const parts = id.split('_');
+                    const num = parseInt(parts[1]);
+                    if (!isNaN(num) && num > maxId) {
+                        maxId = num;
+                    }
+                }
+            };
+
+            productsSnap.forEach(doc => checkMax(doc.id));
+            stylesSnap.forEach(doc => checkMax(doc.id));
+
+            // Increment and format: prod_001, prod_002...
+            const nextNum = maxId + 1;
+            const nextId = `prod_${String(nextNum).padStart(3, '0')}`;
+            console.log("Generated ID:", nextId);
+            return nextId;
+
+        } catch (error) {
+            console.error("Error generating ID:", error);
+            return `prod_${Date.now()}`;
+        }
+    }
+
     if (isEditMode) {
         pageTitle.textContent = 'Edit Product';
         submitBtn.textContent = 'Save Changes';
         loadProductForEdit(db, collectionName, docId);
-        productIdInput.disabled = true;
-        productIdInput.classList.add('bg-gray-100');
+        productIdInput.disabled = true; // Lock ID on edit
     } else {
         pageTitle.textContent = 'Add New Product';
         submitBtn.textContent = 'Add Product';
-        productIdInput.disabled = false;
-        productIdInput.classList.remove('bg-gray-100');
+        // Generate ID immediately for new products
+        generateNextId().then(id => {
+            productIdInput.value = id;
+        });
     }
 
+    // --- AUTO SIZES LOGIC ---
     productTypeRadios.forEach(radio => {
         radio.addEventListener('change', (e) => {
             if (e.target.value === 'retail') {
                 variantsSection.classList.remove('hidden');
+                // If list is empty, Auto-Fill S, M, L, XL
                 if (variantsContainer.childElementCount === 0) {
-                    addVariantRow();
+                    ['S', 'M', 'L', 'XL'].forEach(size => addVariantRow(size, 1));
                 }
             } else {
                 variantsSection.classList.add('hidden');
@@ -397,6 +431,8 @@ function setupAddProductForm(db) {
 
             const productType = collection === 'products' ? 'retail' : 'custom';
             document.querySelector(`input[name="product-type"][value="${productType}"]`).checked = true;
+            
+            // Disable radio buttons in edit mode
             productTypeRadios.forEach(radio => radio.disabled = true);
 
             if (productType === 'retail') {
@@ -409,6 +445,7 @@ function setupAddProductForm(db) {
                 }
             }
 
+            // Show preview if editing
             if (product.image_url) {
                 const previewContainer = document.getElementById('preview-container');
                 const previewImg = document.getElementById('image-preview');
@@ -425,14 +462,14 @@ function setupAddProductForm(db) {
     }
 
     function addVariantRow(size = '', stock = '') {
-        const rowId = `variant-${variantsContainer.childElementCount}`;
+        const rowId = `variant-${Math.random().toString(36).substr(2, 9)}`;
         const row = document.createElement('div');
         row.id = rowId;
         row.className = "flex items-center space-x-2";
         row.innerHTML = `
-            <input type="text" placeholder="Size (e.g., M)" class="form-input w-1/3 variant-size" value="${size}">
+            <input type="text" placeholder="Size" class="form-input w-1/3 variant-size" value="${size}">
             <input type="number" placeholder="Stock" class="form-input w-1/3 variant-stock" value="${stock}">
-            <button type="button" data-remove="${rowId}" class="button-danger remove-variant-btn">
+            <button type="button" class="button-danger remove-variant-btn">
                 <i data-feather="trash-2" class="w-4 h-4"></i>
             </button>
         `;
@@ -453,59 +490,47 @@ function setupAddProductForm(db) {
 
         const newDocId = document.getElementById('product-id').value;
         if (!newDocId) {
-            alert('Product ID is required.');
+            alert('Product ID missing. Please refresh page.');
             submitBtn.disabled = false;
-            submitBtn.textContent = isEditMode ? 'Save Changes' : 'Add Product';
             return;
         }
 
         const productType = form.querySelector('input[name="product-type"]:checked').value;
-        const productName = document.getElementById('product-name').value;
-        const productPrice = parseFloat(document.getElementById('product-price').value);
-        const imageUrl = document.getElementById('product-image').value;
-        const category = document.getElementById('product-category').value;
-        const description = document.getElementById('product-description').value;
-
+        
         let data = {
-            name: productName,
-            price: productPrice,
-            image_url: imageUrl,
-            description: description,
-            category: category, 
-            collection_name: category,
+            name: document.getElementById('product-name').value,
+            price: parseFloat(document.getElementById('product-price').value),
+            image_url: document.getElementById('product-image').value,
+            description: document.getElementById('product-description').value,
+            category: document.getElementById('product-category').value,
+            collection_name: document.getElementById('product-category').value,
         };
 
-        let collectionToSaveTo = '';
+        let collectionToSaveTo = productType === 'retail' ? 'products' : 'custom_styles';
 
         if (productType === 'retail') {
-            collectionToSaveTo = 'products';
             data.variants = [];
-            const variantRows = variantsContainer.querySelectorAll('.flex');
-            variantRows.forEach(row => {
+            variantsContainer.querySelectorAll('.flex').forEach(row => {
                 const size = row.querySelector('.variant-size').value;
                 const stock = parseInt(row.querySelector('.variant-stock').value);
-                if (size && !isNaN(stock)) {
-                    data.variants.push({ size: size, stock: stock });
+                if (size) {
+                    data.variants.push({ size, stock: isNaN(stock) ? 0 : stock });
                 }
             });
 
             if (data.variants.length === 0) {
-                alert('Please add at least one size variant for retail products.');
+                alert('Retail products need at least one size.');
                 submitBtn.disabled = false;
                 submitBtn.textContent = isEditMode ? 'Save Changes' : 'Add Product';
                 return;
             }
-
-        } else {
-            collectionToSaveTo = 'custom_styles';
         }
 
         try {
-            const docRef = db.collection(collectionToSaveTo).doc(newDocId);
-            await docRef.set(data, { merge: true });
+            await db.collection(collectionToSaveTo).doc(newDocId).set(data, { merge: true });
             
             const successMsg = document.getElementById('success-message');
-            successMsg.textContent = isEditMode ? 'Product updated successfully!' : 'Product added successfully!';
+            successMsg.textContent = isEditMode ? 'Product updated!' : 'Product added!';
             successMsg.classList.remove('hidden');
             
             if (!isEditMode) {
@@ -516,6 +541,15 @@ function setupAddProductForm(db) {
                 const previewImg = document.getElementById('image-preview');
                 if (previewContainer) previewContainer.classList.add('hidden');
                 if (previewImg) previewImg.src = "";
+                
+                // Reset checkbox to custom (default)
+                document.querySelector(`input[name="product-type"][value="custom"]`).checked = true;
+
+                // GENERATE NEXT ID AGAIN
+                generateNextId().then(id => {
+                    productIdInput.value = id;
+                });
+
             } else {
                 setTimeout(() => {
                     window.location.href = 'admin-products.html';
