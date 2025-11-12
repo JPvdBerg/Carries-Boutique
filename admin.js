@@ -620,4 +620,3 @@ function setupAddProductForm(db) {
             submitBtn.textContent = isEditMode ? 'Save Changes' : 'Add Product';
         }
     });
-}
