@@ -563,7 +563,7 @@ try {
         customer: customerInfo, 
         cart: processedCart,
         // Add a server timestamp so we know exactly when it happened
-        order_date: firebase.firestore.FieldValue.serverTimestamp(),
+        order_date: new Date(),
         status: 'Pending' 
     };
 
