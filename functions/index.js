@@ -5,12 +5,11 @@ const nodemailer = require("nodemailer");
 admin.initializeApp();
 
 // 1. Configure the email transporter
-const transporter = nodemailer.createTransport({
+    const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
-        // REPLACE THESE WITH YOUR REAL DETAILS DIRECTLY:
-        user: "janpaulvdberg@gmail.com", 
-        pass: "joxo mzxx fzgp eiai ", // Paste your new 16-char code here
+        user: "drunknine323@gmail.com", 
+        pass: "kivyiuekofbrxliw", // New password (spaces removed)
       },
     });
 
