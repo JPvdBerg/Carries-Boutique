@@ -146,34 +146,33 @@
 
   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
+
   <script>
     // Your web app's Firebase configuration
     const firebaseConfig = {
-      apiKey: "AIzaSyCkyMyRLCc98BifcSYbIgs3_v3u2qBvdpg", // Use your actual key
+      apiKey: "AIzaSyCkyMyRLCc98BifcSYbIgs3_v3u2qBvdpg", 
       authDomain: "carries-boutique.firebaseapp.com",
       projectId: "carries-boutique",
       storageBucket: "carries-boutique.firebasestorage.app",
       messagingSenderId: "512525813635",
       appId: "1:512525813635:web:afe3d28c5bd2db68ae58b6",
-      measurementId: "G-2Q2QY4HJ9Y" // Optional
+      measurementId: "G-2Q2QY4HJ9Y" 
     };
 
     // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
-
-    // Make auth globally available (easier for simple apps)
-    // No need to declare 'auth' here if it's not used directly in inline script
-    // const auth = firebase.auth();
-
   </script>
 
   <script src="app.js"></script>
+  
   <script>
+    // Display the real Order ID from the URL
     const params = new URLSearchParams(window.location.search);
     const id = params.get('orderId');
     if (id) {
         document.getElementById('order-id').textContent = '#' + id;
     }
-</script>
+  </script>
 </body>
 </html>
