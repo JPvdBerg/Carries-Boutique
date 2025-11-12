@@ -1,87 +1,133 @@
-# Carries Boutique - Full-Stack E-commerce Demo
+# Carries Boutique - Serverless E-commerce Platform
 
-**Live Demo:** [**https://jpvdberg.github.io/Carries-Boutique/**](https://jpvdberg.github.io/Carries-Boutique/)
+**Live Demo:** [https://carries-boutique.web.app](https://www.google.com/search?q=https://carries-boutique.web.app) *(or your custom domain)*
 
-This project is a dynamic, multi-page e-commerce storefront built with a **Full-Stack JavaScript architecture**. It serves as a comprehensive demonstration of client-side logic, external API integration, and user authentication management, moving beyond a simple static demo.
-
------
-
-## Key Features
-
-###  Full-Stack Authentication & Onboarding
-
-The application enforces a complete, persistent user journey:
-
-1.  **Mandatory Login:** All protected pages redirect non-logged-in users to a dedicated `login.html`.
-2.  **Google Sign-In:** Utilizes **Firebase Authentication** for secure user identity and session management.
-3.  **First-Time Profile Setup:** Upon first successful Google login, the user is immediately redirected to a `profile-setup.html` form to collect measurements (Bust, Waist, etc.).
-4.  **Persistent Profile:** User data and the "profile complete" flag are stored in `localStorage`, allowing the user to bypass the setup on subsequent logins.
-5.  **Secure Logout:** Logging out clears the session and the local profile flags, returning the user to the login page.
-
-###  Live Order Processing
-
-  * **Custom Backend API:** A dedicated Node.js/Express server (hosted on Render) manages business logic outside of the static frontend.
-  * **Auto-Email Confirmation:** After checkout, the frontend sends the order data to the live Render API, which then triggers a **real confirmation email** via **SendGrid**.
-
-###  E-commerce Functionality
-
-  * **Dynamic Cart:** Cart items and totals are managed and persisted across sessions using `localStorage`.
-  * **Checkout Autofill:** Logged-in users have their name and verified Google email automatically filled in and locked on the checkout form.
+This project is a production-ready, full-stack e-commerce storefront built on a **Serverless Firebase Architecture**. It features a dual-product catalog (Retail vs. Custom Tailoring), a comprehensive mobile-responsive Admin Dashboard, and automated backend logic for order processing and email notifications.
 
 -----
 
-## Tech Stack
+##  Key Features
+
+###  Advanced Shopping Experience
+
+  * **Dual Product Logic:** Supports two distinct product types:
+      * **Retail:** Standard sizing (S, M, L) with real-time stock checking.
+      * **Custom Styles:** Dynamic forms that capture specific user measurements (Bust, Waist, Hips) during checkout.
+  * **Guest Checkout:** Users can browse and purchase without creating an account (utilizing Firebase Anonymous Auth).
+  * **Related Products:** Algorithmic suggestions on product pages based on category matching.
+  * **Dynamic Cart:** Persistent cart management with complex item validation.
+
+###  User Accounts & History
+
+  * **Google Sign-In:** Secure authentication via Firebase.
+  * **Order History:** Logged-in users can view past orders, status updates, and total spend.
+  * **Profile Management:** Users can save their body measurements to auto-fill future Custom orders.
+
+###  Mobile-First Admin Dashboard
+
+A fully responsive command center for the store owner:
+
+  * **Product Management:** Add, Edit, and Delete products.
+  * **Image Handling:** Direct image uploads with previews via **Firebase Storage**.
+  * **Order Management:** View incoming orders and update statuses (Pending -\> Busy -\> Complete) in real-time.
+  * **Secure:** Protected by strict Firestore Security Rules (Admin-only write access).
+
+###  Automated Backend (Serverless)
+
+  * **Firestore Database:** Real-time NoSQL database storing Users, Products, and Orders.
+  * **Cloud Functions:** A Node.js backend trigger that listens for new orders.
+  * **Transactional Emails:** Automatically sends HTML-formatted order confirmation emails via **Nodemailer** (Gmail SMTP) immediately upon purchase.
+
+-----
+
+##  Tech Stack
 
 | Layer | Technology | Purpose |
 | :--- | :--- | :--- |
-| **Frontend** | HTML, Tailwind CSS, Vanilla JS | UI/UX, DOM Manipulation, and Cart Logic. |
-| **Authentication** | **Google Firebase Auth** | Identity management and persistent user sessions. |
-| **Backend (API)** | **Node.js, Express.js, Render** | Hosting the server, API routing (`/api/send-order`), and health checks. |
-| **Email Service** | **SendGrid** | Processing and delivering transactional emails. |
+| **Frontend** | HTML, Tailwind CSS, Vanilla JS | UI/UX, DOM Manipulation, Cart Logic, Toast Notifications. |
+| **Auth** | **Firebase Auth** | Google Sign-In, Anonymous (Guest) Sessions, Admin Verification. |
+| **Database** | **Cloud Firestore** | NoSQL data structure for Products, Orders, and Users. |
+| **Storage** | **Firebase Storage** | Hosting product images uploaded via the Admin Dashboard. |
+| **Backend** | **Firebase Cloud Functions** | Server-side logic triggered by database events. |
+| **Email** | **Nodemailer** | SMTP transport for sending confirmation emails. |
 
 -----
 
-## Project Structure
+##  Project Structure
 
 ```
 /Carries-Boutique
-├── backend/                  <-- The Node.js Express Server (Requires 'npm install')
-│   ├── server.js             <-- Handles API routes, SendGrid, and Render health check
-│   └── package.json          <-- Node.js dependencies
-├── login.html                <-- Mandatory sign-in page
-├── profile-setup.html        <-- First-time user profile setup page
-├── app.js                    <-- Primary JavaScript (Cart, Fetch, Firebase Auth Logic)
-├── index.html                (Home Page)
-└── ... (other pages, README.md, .gitignore)
+├── functions/                <-- The Backend Code (Node.js)
+│   ├── index.js              <-- Cloud Function triggers (Email logic)
+│   └── package.json          <-- Backend dependencies (Nodemailer)
+├── admin.html                <-- Admin: Order Dashboard
+├── admin-add-product.html    <-- Admin: Create/Edit Product Form
+├── app.js                    <-- Core Client Logic (Cart, Auth, Firestore interactions)
+├── admin.js                  <-- Admin Logic (Uploads, CRUD operations)
+├── firestore.rules           <-- Database Security Rules
+├── firebase.json             <-- Hosting & Functions configuration
+└── index.html                <-- Storefront Home
 ```
 
 -----
 
-## Important: How to Run Locally
+##  Setup & Installation
 
-You must run this project on a local server to avoid browser security restrictions (CORS and `localStorage`).
+To run this project locally or deploy it, you need the **Firebase CLI**.
 
-### Running the Frontend (UI)
+### 1\. Prerequisites
 
-1.  Clone or download this repository.
-2.  Open the project folder in **Visual Studio Code**.
-3.  Right-click on `index.html` and select **"Open with Live Server"** (using the VS Code extension).
+  * Node.js installed.
+  * A Firebase Project created in the [Firebase Console](https://console.firebase.google.com/).
+  * **Blaze Plan** (Pay-as-you-go) enabled on Firebase (Required for Cloud Functions external network requests).
 
-### Running the Backend (Server/Email)
+### 2\. Installation
 
-To test the email functionality, you must run the server locally:
+```bash
+# 1. Clone the repo
+git clone https://github.com/yourusername/Carries-Boutique.git
 
-1.  Open your terminal inside the **`backend`** subdirectory.
-2.  Install dependencies:
-    ```bash
-    npm install
-    ```
-3.  Ensure you have a **`.env`** file containing your actual SendGrid API Key (this file must be created locally and is excluded by `.gitignore`):
-    ```
-    SENDGRID_API_KEY=SG.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-    ```
-4.  Start the server:
-    ```bash
-    node server.js
-    ```
-5.  Your local frontend (on `localhost:5500`) can now talk to your local backend (on `localhost:3000`).
+# 2. Install Firebase Tools globally
+npm install -g firebase-tools
+
+# 3. Login to Firebase
+firebase login
+
+# 4. Initialize Project (Link local folder to your Firebase project)
+firebase init
+# Select: Firestore, Functions, Hosting, Storage
+```
+
+### 3\. Backend Setup (Email)
+
+To make the email system work, you must configure your SMTP credentials securely in the Firebase environment (do not hardcode them).
+
+```bash
+# Generate a Gmail App Password first!
+firebase functions:config:set email.user="your-email@gmail.com" email.pass="your-16-char-app-password"
+```
+
+### 4\. Running & Deploying
+
+**To Run Frontend Locally:**
+Simply use "Live Server" in VS Code on `index.html`.
+
+**To Deploy to Live Production:**
+
+```bash
+# Deploy everything (Frontend + Backend + Database Rules)
+firebase deploy
+```
+
+-----
+
+##  Security
+
+This project implements strict security measures:
+
+1.  **Firestore Rules:**
+      * **Public:** Read access to Products.
+      * **User:** Read/Write access only to their own User document and Orders.
+      * **Admin:** Full Read/Write access to all collections.
+2.  **Environment Variables:** Email credentials are stored in Firebase Config, not in the source code.
+3.  **Input Validation:** Frontend logic prevents adding out-of-stock items to the cart.
