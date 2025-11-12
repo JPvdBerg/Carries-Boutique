@@ -15,25 +15,26 @@
     <nav class="bg-white shadow-md">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
-                <div class="flex items-center">
+                <div class="flex items-center flex-shrink-0">
                     <img class="h-8 w-auto" src="https://i.imgur.com/KNRtw3t.png" alt="Carries Boutique">
                     <span class="ml-3 text-xl font-serif font-semibold text-gray-900 hidden md:block">Admin Dashboard</span>
                 </div>
-                <div class="flex items-center space-x-4 overflow-x-auto pb-2 sm:pb-0 w-full sm:w-auto no-scrollbar">
-                    <a href="index.html" class="nav-link">Back to Site</a>
-                    <a href="admin.html" class="nav-link">Orders</a>
-                    <a href="admin-products.html" class="nav-link active">Manage Products</a>
-                    <a href="admin-add-product.html" class="nav-link">Add Product</a>
-                    <button id="logout-btn" class="text-sm font-medium text-pink-600 hover:text-pink-800">Logout</button>
+
+                <div class="flex items-center space-x-4 overflow-x-auto w-full sm:w-auto justify-end pl-4 pb-2 sm:pb-0 no-scrollbar">
+                    <a href="index.html" class="whitespace-nowrap text-sm font-medium text-gray-500 hover:text-gray-900">Back to Site</a>
+                    <a href="admin.html" class="whitespace-nowrap text-sm font-medium text-gray-500 hover:text-gray-900">Orders</a>
+                    <a href="admin-products.html" class="whitespace-nowrap text-sm font-medium text-pink-600 font-bold">Manage Products</a>
+                    <a href="admin-add-product.html" class="whitespace-nowrap text-sm font-medium text-gray-500 hover:text-gray-900">Add Product</a>
+                    <button id="logout-btn" class="whitespace-nowrap text-sm font-medium text-pink-600 hover:text-pink-800">Logout</button>
                 </div>
             </div>
         </div>
     </nav>
 
     <main class="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between items-center mb-6">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
             <h1 class="text-3xl font-bold text-gray-900">Manage Products</h1>
-            <a href="admin-add-product.html" class="button-primary">Add New Product</a>
+            <a href="admin-add-product.html" class="button-primary w-full sm:w-auto text-center">Add New Product</a>
         </div>
 
         <div class="bg-white shadow-lg rounded-lg overflow-hidden">
