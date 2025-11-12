@@ -3,28 +3,42 @@ const showToast = (message) => {
     const container = document.getElementById('toast-container');
     const msgEl = document.getElementById('toast-message');
     
-    if (!container || !msgEl) return;
+    if (!container || !msgEl) {
+        console.error("Toast container not found in DOM");
+        return;
+    }
 
-    // Set message
+    // 1. Set message
     msgEl.textContent = message;
     
-    // Show (remove hidden, animate in)
+    // 2. Reset state (in case it's already showing)
+    container.classList.add('hidden', 'translate-y-10', 'opacity-0');
+    
+    // 3. Make it visible (but still transparent and lower down)
     container.classList.remove('hidden');
-    setTimeout(() => {
-        container.classList.remove('translate-y-10', 'opacity-0');
-    }, 10);
+    
+    // 4. FORCE REFLOW (The Magic Fix)
+    // Reading this property forces the browser to paint the frame immediately
+    void container.offsetWidth; 
 
-    // Re-initialize icons
+    // 5. Animate In (Remove the classes that hide it)
+    container.classList.remove('translate-y-10', 'opacity-0');
+
+    // Re-initialize icons if feather is loaded
     if (typeof feather !== 'undefined') feather.replace();
 
-    // Hide after 3 seconds
+    // 6. Hide after 3 seconds
     setTimeout(() => {
+        // Fade out and move down
         container.classList.add('translate-y-10', 'opacity-0');
+        
+        // Wait for transition to finish (300ms), then hide display
         setTimeout(() => {
             container.classList.add('hidden');
         }, 300);
     }, 3000);
 };
+
 
 document.addEventListener('DOMContentLoaded', () => {
     let isMeasurementsLoaded = false;
