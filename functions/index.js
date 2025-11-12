@@ -5,13 +5,13 @@ const nodemailer = require("nodemailer");
 admin.initializeApp();
 
 // 1. Configure the email transporter
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: "drunknine323@gmail.com", 
-        pass: "kivyiuekofbrxliw", // New password (spaces removed)
-      },
-    });
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: "drunknine323@gmail.com", 
+    pass: "kivyiuekofbrxliw", // New password (spaces removed)
+  },
+});
 
 // 2. The Cloud Function: Listens for new orders
 exports.sendOrderConfirmation = functions.firestore
@@ -29,7 +29,8 @@ exports.sendOrderConfirmation = functions.firestore
     const totalCost = items.reduce((sum, item) => sum + (item.price * item.quantity), 0) + 50;
 
     const mailOptions = {
-      from: '"Carries Boutique" <' + functions.config().email.user + '>',
+      // UPDATE: Use the same email here so it matches the auth user above
+      from: '"Carries Boutique" <drunknine323@gmail.com>',
       to: customerEmail,
       subject: `Order Confirmation: #${snapshot.id}`,
       html: `
