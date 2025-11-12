@@ -15,16 +15,16 @@
     <nav class="bg-white shadow-md">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
-                <div class="flex items-center">
+                <div class="flex items-center flex-shrink-0">
                     <img class="h-8 w-auto" src="https://i.imgur.com/KNRtw3t.png" alt="Carries Boutique">
-                    <span class="ml-3 text-xl font-serif font-semibold text-gray-900">Admin Dashboard</span>
+                    <span class="ml-3 text-xl font-serif font-semibold text-gray-900 hidden sm:block">Admin</span>
                 </div>
-                <div class="flex items-center space-x-4">
-                    <a href="index.html" class="nav-link">Back to Site</a>
-                    <a href="admin.html" class="nav-link">Orders</a>
-                    <a href="admin-products.html" class="nav-link">Manage Products</a>
-                    <a href="admin-add-product.html" class="nav-link active">Add Product</a>
-                    <button id="logout-btn" class="text-sm font-medium text-pink-600 hover:text-pink-800">Logout</button>
+                <div class="flex items-center space-x-4 overflow-x-auto w-full sm:w-auto justify-end pl-4">
+                    <a href="index.html" class="whitespace-nowrap text-sm font-medium text-gray-500 hover:text-gray-900">Back to Site</a>
+                    <a href="admin.html" class="whitespace-nowrap text-sm font-medium text-gray-500 hover:text-gray-900">Orders</a>
+                    <a href="admin-products.html" class="whitespace-nowrap text-sm font-medium text-gray-500 hover:text-gray-900">Products</a>
+                    <a href="admin-add-product.html" class="whitespace-nowrap text-sm font-medium text-pink-600 font-bold">Add Product</a>
+                    <button id="logout-btn" class="whitespace-nowrap text-sm font-medium text-pink-600 hover:text-pink-800">Logout</button>
                 </div>
             </div>
         </div>
@@ -41,7 +41,7 @@
             
             <div>
                 <label class="form-label font-semibold text-gray-900">Product Type</label>
-                <div class="flex items-center space-x-6 mt-2 pt-2">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:space-x-6 mt-2 pt-2 space-y-2 sm:space-y-0">
                     <label class="flex items-center">
                         <input type="radio" name="product-type" value="custom" class="form-radio" checked>
                         <span class="ml-2 text-sm">Custom Style (Tailored)</span>
@@ -58,7 +58,7 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-4">
                     
                     <div class="sm:col-span-2">
-                        <label for="product-id" class="form-label">Product ID (e.g., prod_001 or style_001)</label>
+                        <label for="product-id" class="form-label">Product ID (e.g., prod_001)</label>
                         <input type="text" id="product-id" class="form-input" required>
                         <p class="form-help">This is the unique ID. It cannot be changed later.</p>
                     </div>
@@ -71,26 +71,32 @@
                         <label for="product-price" class="form-label">Price (R)</label>
                         <input type="number" id="product-price" class="form-input" required>
                     </div>
+                    
                     <div>
-        <label class="form-label">Product Image</label>
-        
-        <div class="mt-2 flex items-center">
-            <input type="file" id="file-upload" accept="image/*" 
-                   class="block w-full text-sm text-slate-500
-                          file:mr-4 file:py-2 file:px-4
-                          file:rounded-full file:border-0
-                          file:text-sm file:font-semibold
-                          file:bg-pink-50 file:text-pink-700
-                          hover:file:bg-pink-100"/>
-        </div>
+                        <label class="form-label font-semibold text-gray-900">Product Image</label>
+                        
+                        <div class="mt-2">
+                            <input type="file" id="file-upload" accept="image/*" 
+                                   class="block w-full text-sm text-slate-500
+                                          file:mr-4 file:py-2 file:px-4
+                                          file:rounded-full file:border-0
+                                          file:text-sm file:font-semibold
+                                          file:bg-pink-50 file:text-pink-700
+                                          hover:file:bg-pink-100"/>
+                        </div>
 
-        <div id="upload-progress-container" class="w-full bg-gray-200 rounded-full h-2.5 mt-3 hidden">
-            <div id="upload-progress-bar" class="bg-pink-600 h-2.5 rounded-full" style="width: 0%"></div>
-        </div>
+                        <div id="preview-container" class="mt-4 hidden">
+                            <p class="text-xs text-gray-500 mb-1">Preview:</p>
+                            <img id="image-preview" src="" alt="Preview" class="w-32 h-32 object-cover rounded-lg shadow-md border border-gray-200">
+                        </div>
 
-        <label for="product-image" class="text-xs text-gray-500 mt-3 block">Image URL (Auto-filled)</label>
-        <input type="text" id="product-image" class="form-input bg-gray-100 text-gray-500 cursor-not-allowed" readonly required>
-    </div>
+                        <div id="upload-progress-container" class="w-full bg-gray-200 rounded-full h-2.5 mt-4 hidden">
+                            <div id="upload-progress-bar" class="bg-pink-600 h-2.5 rounded-full transition-all duration-300" style="width: 0%"></div>
+                        </div>
+
+                        <label for="product-image" class="text-xs text-gray-500 mt-4 block">Image URL (Auto-filled)</label>
+                        <input type="text" id="product-image" class="form-input bg-gray-100 text-gray-500 cursor-not-allowed" readonly required>
+                    </div>
                 </div>
             </div>
             
@@ -110,7 +116,7 @@
 
             <div id="variants-section" class="hidden space-y-4 pt-6 border-t">
                 <h2 class="text-xl font-semibold text-gray-900">Sizes & Variants</h2>
-                <p class="text-sm text-gray-600">Only required for Retail Products. Add a row for each available size.</p>
+                <p class="text-sm text-gray-600">Only required for Retail Products.</p>
                 
                 <div id="variants-container" class="space-y-3">
                     </div>
@@ -129,8 +135,8 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
-	<script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-storage-compat.js"></script>
-	
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-storage-compat.js"></script>
+    
     <script>
       const firebaseConfig = {
         apiKey: "AIzaSyCkyMyRLCc98BifcSYbIgs3_v3u2qBvdpg", // Your Key
@@ -146,7 +152,6 @@
 
     <script src="admin.js"></script>
     <script>
-        // Initialize Feather Icons
         document.addEventListener('DOMContentLoaded', () => {
             if (typeof feather !== 'undefined') {
                 feather.replace();

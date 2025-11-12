@@ -4,65 +4,66 @@ document.addEventListener('DOMContentLoaded', () => {
     const db = firebase.firestore();
 
     const currentPage = document.body.id;
-	
-	// --- IMAGE UPLOAD LOGIC ---
+    
+    // --- IMAGE UPLOAD & PREVIEW LOGIC ---
     const fileInput = document.getElementById('file-upload');
     const progressBarContainer = document.getElementById('upload-progress-container');
     const progressBar = document.getElementById('upload-progress-bar');
     const urlInput = document.getElementById('product-image');
+    const previewContainer = document.getElementById('preview-container'); 
+    const previewImg = document.getElementById('image-preview');       
 
     if (fileInput) {
         fileInput.addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (!file) return;
 
-            // 1. Create a reference to Firebase Storage
-            // Path: products/TIMESTAMP_FILENAME
-            const storageRef = firebase.storage().ref('products/' + Date.now() + '_' + file.name);
+            // 1. Show Local Preview Immediately
+            const objectUrl = URL.createObjectURL(file);
+            if (previewImg && previewContainer) {
+                previewImg.src = objectUrl;
+                previewContainer.classList.remove('hidden');
+            }
 
-            // 2. Start Upload
+            // 2. Create Ref & Start Upload
+            const storageRef = firebase.storage().ref('products/' + Date.now() + '_' + file.name);
             const uploadTask = storageRef.put(file);
 
-            // 3. Disable Submit Button while uploading
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Uploading Image...';
-            progressBarContainer.classList.remove('hidden');
+            // 3. UI Updates
+            const submitBtn = document.getElementById('submit-product-btn');
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Uploading...';
+            }
+            if (progressBarContainer) progressBarContainer.classList.remove('hidden');
 
             uploadTask.on('state_changed', 
                 (snapshot) => {
-                    // Update Progress Bar
                     const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                    progressBar.style.width = progress + '%';
+                    if (progressBar) progressBar.style.width = progress + '%';
                 }, 
                 (error) => {
-                    // Handle Error
                     console.error("Upload failed:", error);
-                    alert("Image upload failed: " + error.message);
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = isEditMode ? 'Save Changes' : 'Add Product';
+                    alert("Upload failed: " + error.message);
+                    if (submitBtn) submitBtn.disabled = false;
                 }, 
                 () => {
-                    // Handle Success
                     uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
-                        console.log('File available at', downloadURL);
-                        
-                        // Auto-fill the URL input
-                        urlInput.value = downloadURL;
-                        
-                        // Re-enable submit button
-                        submitBtn.disabled = false;
-                        submitBtn.textContent = isEditMode ? 'Save Changes' : 'Add Product';
-                        
-                        // Optional: Show a checkmark or success state
-                        progressBar.classList.add('bg-green-500');
-                        progressBar.classList.remove('bg-pink-600');
+                        if (urlInput) urlInput.value = downloadURL;
+                        if (submitBtn) {
+                            submitBtn.disabled = false;
+                            // Check if we are in edit mode by looking for URL params, strictly for button text
+                            const params = new URLSearchParams(window.location.search);
+                            const isEdit = params.get('id') && params.get('collection');
+                            submitBtn.textContent = isEdit ? 'Save Changes' : 'Add Product';
+                        }
+                        if (progressBar) progressBar.classList.add('bg-green-500');
                     });
                 }
             );
         });
     }
-    // --- END IMAGE UPLOAD LOGIC ---
-
+    
     // Add click listener for all logout buttons
     const logoutButtons = document.querySelectorAll('#logout-btn');
     logoutButtons.forEach(btn => {
@@ -146,7 +147,7 @@ function initializeApp(db, user) {
         loadOrders(db);
     } else if (currentPage === 'add-product-page') {
         setupAddProductForm(db);
-    } else if (currentPage === 'manage-products-page') { // NEW
+    } else if (currentPage === 'manage-products-page') { 
         loadProductList(db);
     }
     
@@ -282,7 +283,6 @@ function attachOrderListeners(db) {
                 status: newStatus
             }).then(() => {
                 console.log(`Order ${orderId} updated to ${newStatus}`);
-                // You can add a small temporary "Saved!" message here
             }).catch(error => {
                 console.error("Error updating status: ", error);
             });
@@ -334,21 +334,26 @@ async function loadProductList(db) {
             const productType = product.collection === 'products' ? 'Retail' : 'Custom';
             const productTypeColor = product.collection === 'products' ? 'bg-blue-100 text-blue-800' : 'bg-pink-100 text-pink-800';
 
+            // --- MOBILE OPTIMIZED LIST LAYOUT ---
             container.innerHTML += `
-                <div class="p-4 flex items-center justify-between border-b border-gray-200">
-                    <div class="flex items-center">
-                        <img src="${product.image_url}" alt="${product.name}" class="w-16 h-16 object-cover rounded-lg mr-4">
+                <div class="p-4 flex flex-col sm:flex-row sm:items-center justify-between border-b border-gray-200 gap-4">
+                    <div class="flex items-center w-full sm:w-auto">
+                        <img src="${product.image_url}" alt="${product.name}" class="w-16 h-16 object-cover rounded-lg mr-4 flex-shrink-0">
                         <div>
                             <p class="font-bold text-lg text-gray-900">${product.name}</p>
                             <p class="text-sm text-gray-600">R${product.price.toFixed(2)}</p>
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${productTypeColor}">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${productTypeColor} mt-1">
                                 ${productType}
                             </span>
                         </div>
                     </div>
-                    <div class="flex space-x-2">
-                        <a href="admin-add-product.html?collection=${product.collection}&id=${product.id}" class="button-secondary">Edit</a>
-                        <button data-collection="${product.collection}" data-id="${product.id}" class="button-danger delete-product-btn">
+                    <div class="flex space-x-2 w-full sm:w-auto mt-2 sm:mt-0">
+                        <a href="admin-add-product.html?collection=${product.collection}&id=${product.id}" 
+                           class="flex-1 sm:flex-none text-center bg-gray-100 text-gray-700 px-4 py-2 rounded-lg font-medium hover:bg-gray-200 border border-gray-300 transition">
+                           Edit
+                        </a>
+                        <button data-collection="${product.collection}" data-id="${product.id}" 
+                                class="flex-1 sm:flex-none delete-product-btn bg-red-50 text-red-600 px-4 py-2 rounded-lg font-medium hover:bg-red-100 border border-red-200 transition">
                             Delete
                         </button>
                     </div>
@@ -399,7 +404,7 @@ function setupAddProductForm(db) {
     // Get form elements
     const pageTitle = document.getElementById('page-title');
     const submitBtn = document.getElementById('submit-product-btn');
-    const productIdInput = document.getElementById('product-id'); // NEW
+    const productIdInput = document.getElementById('product-id'); 
     const productTypeRadios = document.querySelectorAll('input[name="product-type"]');
     const variantsSection = document.getElementById('variants-section');
     const variantsContainer = document.getElementById('variants-container');
@@ -475,6 +480,17 @@ function setupAddProductForm(db) {
                     });
                 }
             }
+
+            // --- SHOW PREVIEW FOR EDIT MODE ---
+            if (product.image_url) {
+                const previewContainer = document.getElementById('preview-container');
+                const previewImg = document.getElementById('image-preview');
+                if (previewContainer && previewImg) {
+                    previewImg.src = product.image_url;
+                    previewContainer.classList.remove('hidden');
+                }
+            }
+
         } catch (error) {
             console.error("Error loading product for edit:", error);
             alert('Could not load product data.');
@@ -579,6 +595,12 @@ function setupAddProductForm(db) {
                 form.reset(); // Clear the form only if ADDING new
                 variantsContainer.innerHTML = '';
                 variantsSection.classList.add('hidden');
+                
+                // Clear preview
+                const previewContainer = document.getElementById('preview-container');
+                const previewImg = document.getElementById('image-preview');
+                if (previewContainer) previewContainer.classList.add('hidden');
+                if (previewImg) previewImg.src = "";
             } else {
                 // If editing, redirect to the product list to see changes
                 setTimeout(() => {
