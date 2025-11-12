@@ -566,7 +566,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const handleLogout = () => {
             auth.signOut().then(() => {
                   localStorage.removeItem('userProfileData');
-                  window.location.replace('login.html');
+                  window.location.replace('index.html'); // <--- Redirect to Home
             }).catch((error) => {
                   alert(`Logout failed: ${error.message}`);
             });
