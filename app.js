@@ -1,38 +1,3 @@
-// --- IMMEDIATE AUTH REDIRECT LOGIC ---
-// This runs before the DOM is fully loaded to redirect quickly.
-(function() {
-    let initialAuthCheckDone = false;
-    const checkAuthStatus = () => {
-        // Retry mechanism in case Firebase scripts haven't loaded yet
-        if (typeof firebase === 'undefined' || typeof firebase.auth !== 'function' || typeof firebase.firestore !== 'function') {
-            setTimeout(checkAuthStatus, 150); // Wait a bit longer
-            return;
-        }
-
-        const auth = firebase.auth();
-        const unsubscribe = auth.onAuthStateChanged(user => {
-            if (!initialAuthCheckDone) {
-                initialAuthCheckDone = true;
-                unsubscribe(); // Stop listening after the first check
-
-                const currentPage = window.location.pathname.split('/').pop() || 'index.html';
-                const allowedLoggedOutPages = ['login.html']; // Pages accessible when logged out
-
-                if (!user && !allowedLoggedOutPages.includes(currentPage)) {
-                    console.log("Redirecting to login.html as user is not logged in.");
-                    window.location.replace('login.html'); // Use replace to avoid back button issues
-                } else if (user && currentPage === 'login.html') {
-                    console.log("Already logged in, redirecting from login page to index.");
-                    window.location.replace('index.html');
-                }
-            }
-        });
-    };
-    checkAuthStatus();
-})();
-// --- END IMMEDIATE AUTH REDIRECT LOGIC ---
-
-
 document.addEventListener('DOMContentLoaded', () => {
     let isMeasurementsLoaded = false;
     console.log("DOM Content Loaded.");
