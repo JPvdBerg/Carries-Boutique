@@ -766,8 +766,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 
                 if (currentPage === 'account.html') {
-                    loadMeasurements(user.uid, currentPage);
-                }
+    loadMeasurements(user.uid, currentPage);
+    loadOrderHistory(user.uid); // <--- ADD THIS LINE
+}
 
             } else {
                 // --- User is SIGNED OUT ---
@@ -1077,5 +1078,83 @@ document.addEventListener('DOMContentLoaded', () => {
     renderCheckoutSummary();
 
     if (typeof feather !== 'undefined') feather.replace();
+	
+	// --- LOAD USER ORDER HISTORY ---
+async function loadOrderHistory(userId) {
+    const container = document.getElementById('order-history-list');
+    if (!container) return;
 
+    const db = firebase.firestore();
+    
+    try {
+        // Query orders where userId matches the logged-in user
+        const snapshot = await db.collection('orders')
+            .where('userId', '==', userId)
+            .get(); // Note: If you want to sort by date, you may need to create a Firestore Index
+
+        if (snapshot.empty) {
+            container.innerHTML = '<div class="bg-white p-6 rounded-lg shadow-md text-gray-500 text-center">You haven\'t placed any orders yet.</div>';
+            return;
+        }
+
+        // Sort manually in client to avoid index errors for now
+        const orders = [];
+        snapshot.forEach(doc => orders.push({ id: doc.id, ...doc.data() }));
+        orders.sort((a, b) => {
+             // Handle potential missing dates or Firestore timestamps
+             const dateA = a.order_date && a.order_date.toDate ? a.order_date.toDate() : new Date(0);
+             const dateB = b.order_date && b.order_date.toDate ? b.order_date.toDate() : new Date(0);
+             return dateB - dateA; // Newest first
+        });
+
+        container.innerHTML = ''; // Clear loading text
+
+        orders.forEach(order => {
+            // Format Date
+            const date = order.order_date && order.order_date.toDate ? order.order_date.toDate().toLocaleDateString('en-ZA') : 'Unknown Date';
+            
+            // Calculate Total (Cart + Shipping)
+            const subtotal = order.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const total = subtotal + 50; // Assuming flat 50 shipping
+
+            // Status Color
+            let statusColor = 'bg-gray-100 text-gray-800';
+            if (order.status === 'Complete' || order.status === 'Shipped') statusColor = 'bg-green-100 text-green-800';
+            if (order.status === 'Busy') statusColor = 'bg-blue-100 text-blue-800';
+
+            const html = `
+            <div class="bg-white p-6 rounded-lg shadow-md border border-gray-100 transition hover:shadow-lg">
+                <div class="flex flex-wrap justify-between items-start mb-4">
+                    <div>
+                        <span class="inline-block px-3 py-1 text-xs font-medium rounded-full ${statusColor} mb-2">
+                            ${order.status || 'Pending'}
+                        </span>
+                        <p class="text-sm text-gray-500">Order #${order.id}</p>
+                        <p class="text-sm text-gray-500">${date}</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="font-bold text-gray-900">R${total.toFixed(2)}</p>
+                        <p class="text-xs text-gray-500">${order.cart.length} Item(s)</p>
+                    </div>
+                </div>
+                <div class="border-t pt-4">
+                    <h4 class="text-sm font-medium text-gray-900 mb-2">Items:</h4>
+                    <ul class="space-y-1">
+                        ${order.cart.map(item => `
+                            <li class="text-sm text-gray-600 flex justify-between">
+                                <span>${item.quantity}x ${item.name} (${item.size})</span>
+                            </li>
+                        `).join('')}
+                    </ul>
+                </div>
+            </div>
+            `;
+            container.innerHTML += html;
+        });
+
+    } catch (error) {
+        console.error("Error loading history:", error);
+        container.innerHTML = '<p class="text-red-500">Error loading orders.</p>';
+    }
+}
 }); // --- END DOMContentLoaded ---
