@@ -995,22 +995,44 @@ document.addEventListener('DOMContentLoaded', () => {
                 sizeButtonsContainer.innerHTML = ''; // Clear hard-coded buttons
                 
                 if (product.variants && product.variants.length > 0) {
-                    product.variants.forEach(variant => {
-                        const button = document.createElement('button');
-                        button.className = 'size-btn w-10 h-10 border rounded-md flex items-center justify-center text-sm font-medium hover:bg-gray-100';
-                        button.textContent = variant.size;
-                        
-                        button.onclick = () => {
-                            selectedSize = variant.size;
-                            // Style the active button
-                            sizeButtonsContainer.querySelectorAll('.size-btn').forEach(btn => {
-                                btn.classList.remove('bg-pink-100', 'text-pink-700', 'border-pink-300', 'ring-1', 'ring-pink-500');
-                            });
-                            button.classList.add('bg-pink-100', 'text-pink-700', 'border-pink-300', 'ring-1', 'ring-pink-500');
-                        };
-                        sizeButtonsContainer.appendChild(button);
-                    });
-                } else {
+    product.variants.forEach(variant => {
+        const button = document.createElement('button');
+        
+        // Check stock level
+        const isOutOfStock = !variant.stock || variant.stock <= 0;
+
+        if (isOutOfStock) {
+            // --- STYLE FOR OUT OF STOCK ---
+            // Gray background, crossed out text, not clickable
+            button.className = 'size-btn w-10 h-10 border border-gray-200 rounded-md flex items-center justify-center text-sm font-medium bg-gray-100 text-gray-400 cursor-not-allowed decoration-line-through';
+            button.textContent = variant.size;
+            button.disabled = true; // Disable clicks
+            button.title = "Out of Stock"; // Tooltip
+        } else {
+            // --- STYLE FOR IN STOCK ---
+            button.className = 'size-btn w-10 h-10 border rounded-md flex items-center justify-center text-sm font-medium hover:bg-gray-100 cursor-pointer transition-colors';
+            button.textContent = variant.size;
+            
+            // Only add click listener if in stock
+            button.onclick = () => {
+                selectedSize = variant.size;
+                // Reset all buttons
+                sizeButtonsContainer.querySelectorAll('.size-btn').forEach(btn => {
+                    // Don't remove the 'disabled' look from out-of-stock items
+                    if (!btn.disabled) {
+                         btn.classList.remove('bg-pink-100', 'text-pink-700', 'border-pink-300', 'ring-1', 'ring-pink-500');
+                    }
+                });
+                // Highlight this button
+                button.classList.add('bg-pink-100', 'text-pink-700', 'border-pink-300', 'ring-1', 'ring-pink-500');
+            };
+        }
+        
+        sizeButtonsContainer.appendChild(button);
+    });
+} 
+				else 
+				{
                     sizeButtonsContainer.innerHTML = '<p class="text-sm text-gray-500">Sizes not available.</p>';
                 }
 
