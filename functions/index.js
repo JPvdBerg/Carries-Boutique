@@ -6,12 +6,13 @@ admin.initializeApp();
 
 // 1. Configure the email transporter
 const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: functions.config().email.user,
-    pass: functions.config().email.pass,
-  },
-});
+      service: "gmail",
+      auth: {
+        // REPLACE THESE WITH YOUR REAL DETAILS DIRECTLY:
+        user: "janpaulvdberg@gmail.com", 
+        pass: "joxo mzxx fzgp eiai ", // Paste your new 16-char code here
+      },
+    });
 
 // 2. The Cloud Function: Listens for new orders
 exports.sendOrderConfirmation = functions.firestore
