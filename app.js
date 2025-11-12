@@ -992,9 +992,24 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+// 1. Check if we are on the Product Page
     if (document.body.id === 'product-detail-page') {
         loadProductPage();
     }
+
+    // 2. Check if we are on the Home Page (Separate check!)
+    if (document.body.id === 'home-page') {
+        loadHomepageCarousel();
+    }
+
+    // --- INITIAL PAGE LOAD CALLS ---
+    updateCartIcon();
+    renderCartPage();
+    renderCheckoutSummary();
+
+    if (typeof feather !== 'undefined') feather.replace();
+
+}); // --- END DOMContentLoaded ---
 
     // --- INITIAL PAGE LOAD CALLS ---
     updateCartIcon();
