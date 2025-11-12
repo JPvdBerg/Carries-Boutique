@@ -907,101 +907,88 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- DYNAMIC PRODUCT PAGE LOADER ---
-    async function loadProductPage() {
-        const params = new URLSearchParams(window.location.search);
-        const collectionName = params.get('collection');
-        const docId = params.get('id');
+    // --- LOAD HOMEPAGE CAROUSEL (Retail + Custom) ---
+    async function loadHomepageCarousel() {
+        const container = document.getElementById('featured-carousel');
+        if (!container) return;
 
-        const productNameEl = document.getElementById('product-name');
-        const productPriceEl = document.getElementById('product-price');
-        const productImageEl = document.getElementById('product-image');
-        const productDescriptionEl = document.getElementById('product-description-details');
-        const productBreadcrumbEl = document.getElementById('product-breadcrumb');
-        const sizeSelectorContainer = document.getElementById('size-selector-container');
-        const addToCartBtn = document.getElementById('product-add-to-cart-btn');
-
-        if (!collectionName || !docId || !productNameEl) return;
-
+        const db = firebase.firestore();
+        
         try {
-            const db = firebase.firestore();
-            const doc = await db.collection(collectionName).doc(docId).get();
+            // 1. Fetch from BOTH collections in parallel
+            const [productsSnap, stylesSnap] = await Promise.all([
+                db.collection('products').limit(5).get(),
+                db.collection('custom_styles').limit(5).get()
+            ]);
 
-            if (!doc.exists) {
-                productNameEl.textContent = 'Product not found.';
+            // 2. Combine the data
+            let allItems = [];
+            
+            productsSnap.forEach(doc => {
+                allItems.push({ id: doc.id, collection: 'products', ...doc.data() });
+            });
+            
+            stylesSnap.forEach(doc => {
+                allItems.push({ id: doc.id, collection: 'custom_styles', ...doc.data() });
+            });
+
+            // 3. Handle "No Items" case
+            if (allItems.length === 0) {
+                container.innerHTML = '<div class="w-full text-center p-10 text-gray-400">Check back soon for new arrivals!</div>';
                 return;
             }
-            
-            const product = doc.data();
-            productNameEl.textContent = product.name;
-            productPriceEl.textContent = `R${product.price.toFixed(2)}`;
-            productImageEl.src = product.image_url;
-            productImageEl.alt = product.name;
-            productBreadcrumbEl.textContent = product.name;
-            document.title = `${product.name} | Carries Boutique`; 
-            
-            if (product.description) {
-                productDescriptionEl.innerHTML = `<h3 class="text-lg font-medium text-gray-900">Description</h3><p>${product.description}</p>`;
-            }
 
-            let selectedSize = null;
+            // 4. Randomize or Sort (Optional: Here we just mix them)
+            // allItems.sort(() => Math.random() - 0.5); 
 
-            if (collectionName === 'products') {
-                sizeSelectorContainer.style.display = 'block'; 
-                const sizeButtonsContainer = sizeSelectorContainer.querySelector('#size-buttons');
-                sizeButtonsContainer.innerHTML = ''; 
+            container.innerHTML = ''; // Clear skeleton loader
+
+            // 5. Render
+            allItems.forEach(product => {
+                const productUrl = `product.html?collection=${product.collection}&id=${product.id}`;
+                const safeName = product.name.replace(/'/g, "\\'");
                 
-                if (product.variants && product.variants.length > 0) {
-                    product.variants.forEach(variant => {
-                        const button = document.createElement('button');
-                        const isOutOfStock = !variant.stock || variant.stock <= 0;
-
-                        if (isOutOfStock) {
-                            button.className = 'size-btn w-10 h-10 border border-gray-200 rounded-md flex items-center justify-center text-sm font-medium bg-gray-100 text-gray-400 cursor-not-allowed decoration-line-through';
-                            button.textContent = variant.size;
-                            button.disabled = true; 
-                            button.title = "Out of Stock"; 
-                        } else {
-                            button.className = 'size-btn w-10 h-10 border rounded-md flex items-center justify-center text-sm font-medium hover:bg-gray-100 cursor-pointer transition-colors';
-                            button.textContent = variant.size;
-                            button.onclick = () => {
-                                selectedSize = variant.size;
-                                sizeButtonsContainer.querySelectorAll('.size-btn').forEach(btn => {
-                                    if (!btn.disabled) {
-                                         btn.classList.remove('bg-pink-100', 'text-pink-700', 'border-pink-300', 'ring-1', 'ring-pink-500');
-                                    }
-                                });
-                                button.classList.add('bg-pink-100', 'text-pink-700', 'border-pink-300', 'ring-1', 'ring-pink-500');
-                            };
-                        }
-                        sizeButtonsContainer.appendChild(button);
-                    });
+                // Determine button action based on type
+                let actionButton = '';
+                if (product.collection === 'products') {
+                    // Retail: Add to Cart
+                    actionButton = `
+                    <button onclick="addToCart('${product.id}', '${safeName}', ${product.price}, '${product.image_url}', 'M')" 
+                            class="p-2 bg-pink-100 text-pink-600 rounded-full hover:bg-pink-200 transition shadow-sm" title="Add to Cart">
+                        <i data-feather="shopping-bag" class="w-4 h-4"></i>
+                    </button>`;
                 } else {
-                    sizeButtonsContainer.innerHTML = '<p class="text-sm text-gray-500">Sizes not available.</p>';
+                    // Custom: View Details
+                    actionButton = `
+                    <a href="${productUrl}" class="p-2 bg-gray-100 text-gray-600 rounded-full hover:bg-gray-200 transition shadow-sm" title="View Details">
+                        <i data-feather="eye" class="w-4 h-4"></i>
+                    </a>`;
                 }
 
-                addToCartBtn.onclick = () => {
-                    if (!selectedSize) {
-                        alert('Please select a size first!');
-                        return;
-                    }
-                    window.addToCart(docId, product.name, product.price, product.image_url, selectedSize);
-                };
-                
-            } else if (collectionName === 'custom_styles') {
-                sizeSelectorContainer.style.display = 'none'; 
-                selectedSize = 'Custom'; 
+                const html = `
+                <div class="min-w-[280px] w-[280px] snap-center bg-white rounded-xl shadow-md overflow-hidden flex-shrink-0 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 border border-gray-100">
+                    <a href="${productUrl}" class="block h-64 overflow-hidden relative group">
+                        <img src="${product.image_url}" alt="${product.name}" loading="lazy" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+                    </a>
+                    <div class="p-4">
+                        <h3 class="font-bold text-gray-900 truncate text-lg"><a href="${productUrl}">${product.name}</a></h3>
+                        <p class="text-sm text-gray-500 mb-3">${product.category || (product.collection === 'products' ? 'Retail' : 'Custom Style')}</p>
+                        <div class="flex justify-between items-center">
+                            <span class="font-bold text-gray-900 text-lg">R${product.price.toFixed(2)}</span>
+                            ${actionButton}
+                        </div>
+                    </div>
+                </div>
+                `;
+                container.innerHTML += html;
+            });
 
-                addToCartBtn.onclick = () => {
-                    window.addToCart(docId, product.name, product.price, product.image_url, selectedSize);
-                };
-            }
-            
-            // NEW: Load Related Products
-            loadRelatedProducts(collectionName, docId, product.category);
+            // Re-init icons
+            if (typeof feather !== 'undefined') feather.replace();
 
-        } catch (error) {
-            console.error("Error loading product:", error);
-            productNameEl.textContent = 'Error loading product.';
+        } catch (e) {
+            console.error("Carousel error:", e);
+            container.innerHTML = '<p class="text-red-400 w-full text-center">Could not load products.</p>';
         }
     }
 
