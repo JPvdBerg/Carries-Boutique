@@ -196,10 +196,8 @@ document.addEventListener('DOMContentLoaded', () => {
         cart.forEach(item => {
             subtotal += item.price * item.quantity;
             
-            // --- STALE ITEM FIX ---
-            // We need a unique ID for the buttons. Use cartItemId if it exists, fall back to old id
             const uniqueItemId = item.cartItemId || item.id; 
-            const itemSize = item.size || 'undefined'; // Handle old items with no size
+            const itemSize = item.size || 'undefined'; 
 
             const itemHtml = `
               <div class="flex items-center justify-between py-4 border-b">
@@ -241,12 +239,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (typeof feather !== 'undefined') feather.replace();
     };
 
-    // --- STALE ITEM FIX ---
-    // Updated to handle both old (id) and new (cartItemId) items
     window.updateCartQuantity = (itemId, quantity) => {
         let cart = getCart();
         if (quantity <= 0) {
-            // Remove item if quantity is 0 or less
             cart = cart.filter(item => (item.cartItemId !== itemId && item.id !== itemId));
         } else {
             const itemToUpdate = cart.find(item => item.cartItemId === itemId || item.id === itemId);
@@ -258,39 +253,35 @@ document.addEventListener('DOMContentLoaded', () => {
         renderCartPage();
     };
 
-    // --- STALE ITEM FIX ---
-    // Updated to handle both old (id) and new (cartItemId) items
     window.removeFromCart = (itemId) => {
         let cart = getCart();
         cart = cart.filter(item => (item.cartItemId !== itemId && item.id !== itemId));
         saveCart(cart);
-        renderCartPage(); // Rerender cart page
-        renderCheckoutSummary(); // Also rerender checkout summary if on that page
+        renderCartPage(); 
+        renderCheckoutSummary(); 
     };
 
     // --- =================================== ---
-    // --- UPDATED CHECKOUT SUMMARY RENDERER ---
+    // --- CHECKOUT SUMMARY RENDERER ---
     // --- =================================== ---
     const renderCheckoutSummary = () => {
         const summaryContainer = document.getElementById('checkout-summary');
-        if (!summaryContainer) return; // Not on checkout page
+        if (!summaryContainer) return; 
 
         const cart = getCart();
-        summaryContainer.innerHTML = ''; // Clear previous content
+        summaryContainer.innerHTML = ''; 
         let subtotal = 0;
 
-        // --- NEW LOGIC: Check if any custom items are in the cart ---
         const hasCustomItem = cart.some(item => item.size === 'Custom');
         const defaultMeasurementsSection = document.getElementById('default-measurements-section');
         
         if (defaultMeasurementsSection) {
             if (hasCustomItem) {
-                defaultMeasurementsSection.style.display = 'block'; // Show
+                defaultMeasurementsSection.style.display = 'block'; 
             } else {
-                defaultMeasurementsSection.style.display = 'none'; // Hide
+                defaultMeasurementsSection.style.display = 'none'; 
             }
         }
-        // --- END NEW LOGIC ---
 
         if (cart.length === 0) {
             summaryContainer.innerHTML = '<p class="text-gray-500">Your cart is empty.</p>';
@@ -302,16 +293,13 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // --- 1. Render Each Cart Item ---
         cart.forEach((item, index) => {
             const cartItemUniqueId = item.cartItemId || item.id; 
             const itemSize = item.size || 'undefined';
             subtotal += item.price * item.quantity;
 
-            // --- NEW LOGIC: Conditionally show measurement HTML ---
             let measurementHtml = '';
             if (item.size === 'Custom') {
-                // This is a custom item, so show the measurement options
                 measurementHtml = `
                 <div class="mt-4">
                   <h5 class="text-sm font-medium text-gray-800 mb-2">Measurements</h5>
@@ -349,7 +337,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
                 `;
             }
-            // --- END NEW LOGIC ---
             
             const itemHtml = `
               <div class="py-4 border-b" data-cart-item-id="${cartItemUniqueId}">
@@ -364,15 +351,12 @@ document.addEventListener('DOMContentLoaded', () => {
                   </div>
                   <p class="font-medium text-sm md:text-base">R${(item.price * item.quantity).toFixed(2)}</p>
                 </div>
-                
                 ${measurementHtml}
-
               </div>
             `;
             summaryContainer.innerHTML += itemHtml;
         });
 
-        // --- 2. Render Totals ---
         const shipping = 50.00;
         const total = subtotal + shipping;
 
@@ -394,7 +378,7 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
         summaryContainer.innerHTML += summaryTotalHtml;
         
-        // --- 3. Enable/Disable Place Order Button ---
+        // Enable/Disable Place Order Button
         const placeOrderBtn = document.querySelector('#checkout-form button[type="submit"]');
         if (placeOrderBtn) {
             const user = firebase.auth().currentUser;
@@ -412,10 +396,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     };
-    // --- =================================== ---
-    // --- END UPDATED CHECKOUT SUMMARY RENDERER ---
-    // --- =================================== ---
-
 
     // --- EVENT HANDLER FOR CHECKOUT MEASUREMENT TOGGLES ---
     const summaryContainer = document.getElementById('checkout-summary');
@@ -439,7 +419,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
-
 
     // --- =================================== ---
     // --- UPDATED CHECKOUT FORM SUBMISSION ---
@@ -509,8 +488,24 @@ document.addEventListener('DOMContentLoaded', () => {
                 // --- NEW LOGIC: Only process measurements for CUSTOM items ---
                 if (item.size === 'Custom') {
                     const itemElement = summaryItems[i];
+                    // Check if itemElement exists before accessing properties
+                    if (!itemElement) {
+                        console.error("Could not find summary item element for cart item:", item);
+                        allMeasurementsValid = false;
+                        alert("An error occurred processing your cart. Please refresh and try again.");
+                        break;
+                    }
                     const cartItemUniqueId = itemElement.dataset.cartItemId;
-                    const measurementOption = itemElement.querySelector(`input[name="measurements-option-${cartItemUniqueId}"]:checked`).value;
+                    const checkedRadio = itemElement.querySelector(`input[name="measurements-option-${cartItemUniqueId}"]:checked`);
+                    
+                    if (!checkedRadio) {
+                         console.error("Could not find measurement option for cart item:", item);
+                         allMeasurementsValid = false;
+                         alert(`Please select a measurement option for ${item.name}.`);
+                         break;
+                    }
+                    
+                    const measurementOption = checkedRadio.value;
                     
                     if (measurementOption === 'default') {
                         // Check if default measurements are filled
@@ -574,7 +569,6 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // 5. Save Final Data to Firestore
             try {
-                // Get db instance inside function for safety
                 const db = firebase.firestore();
                 const orderData = { 
                     userId: user.uid,
@@ -607,17 +601,12 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
-    // --- =================================== ---
-    // --- END UPDATED CHECKOUT FORM SUBMISSION ---
-    // --- =================================== ---
-
 
     // --- FIREBASE AUTHENTICATION LOGIC ---
     if (typeof firebase !== 'undefined' && typeof firebase.auth === 'function') {
         const auth = firebase.auth();
         const db = firebase.firestore();
 
-        // --- Get references to ALL auth buttons ---
         const navGoogleLoginBtn = document.getElementById('google-login-btn');
         const userInfoDiv = document.getElementById('user-info');
         const userDisplayNameSpan = document.getElementById('user-display-name');
@@ -628,54 +617,40 @@ document.addEventListener('DOMContentLoaded', () => {
         const pageGoogleLoginBtn = document.getElementById('google-login-btn-page');
         const checkoutNameInput = document.getElementById('name');
         const checkoutEmailInput = document.getElementById('email');
-        
-        // --- NEW: Get Admin Links ---
         const adminLink = document.getElementById('admin-link');
         const adminLinkMobile = document.getElementById('admin-link-mobile');
 
-
         const handleGoogleLogin = () => {
             const provider = new firebase.auth.GoogleAuthProvider();
-            console.log("Attempting Google Sign-In...");
-            auth.signInWithPopup(provider)
-              .then((result) => {
-                  console.log("Google Sign-In Successful. User:", result.user?.displayName || result.user?.email);
-              }).catch((error) => {
+            auth.signInWithPopup(provider).then((result) => {
+                  console.log("Google Sign-In Successful.");
+            }).catch((error) => {
                   console.error("Google Sign-In Error:", error);
                   alert(`Login failed: ${error.code} - ${error.message}`);
-              });
+            });
         };
 
         const handleLogout = () => {
-            console.log("Attempting Sign-Out...");
-            auth.signOut()
-              .then(() => {
-                  console.log("User signed out successfully.");
+            auth.signOut().then(() => {
                   localStorage.removeItem('userProfileData');
                   window.location.replace('index.html'); // <-- Redirect to Home
-              }).catch((error) => {
-                  console.error("Sign Out Error:", error);
+            }).catch((error) => {
                   alert(`Logout failed: ${error.message}`);
-              });
+            });
         };
 
-        // --- Add listeners to ALL buttons ---
         if (navGoogleLoginBtn) navGoogleLoginBtn.addEventListener('click', handleGoogleLogin);
         if (pageGoogleLoginBtn) pageGoogleLoginBtn.addEventListener('click', handleGoogleLogin);
         if (mobileGoogleLoginBtn) mobileGoogleLoginBtn.addEventListener('click', handleGoogleLogin);
-        
         if (logoutBtn) logoutBtn.addEventListener('click', handleLogout);
         if (mobileLogoutBtn) mobileLogoutBtn.addEventListener('click', handleLogout);
 
-        
-        // --- Function to LOAD measurements ---
         const loadMeasurements = async (userId, currentPage) => {
             const userRef = db.collection('users').doc(userId);
             try {
                 const doc = await userRef.get();
                 if (doc.exists && doc.data().measurements) {
                     const measurements = doc.data().measurements;
-                    
                     let bustEl, waistEl, hipsEl, heightEl, fitEl;
                     
                     if (currentPage === 'account.html') {
@@ -692,7 +667,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         fitEl = document.getElementById('fit');
                     }
 
-                    // Populate the form if the elements exist
                     if (bustEl) bustEl.value = measurements.bust || '';
                     if (waistEl) waistEl.value = measurements.waist || '';
                     if (hipsEl) hipsEl.value = measurements.hips || '';
@@ -704,26 +678,23 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         };
 
-
         // --- Auth State Observer ---
-        auth.onAuthStateChanged(async (user) => { // <-- ADDED ASYNC
-            console.log("Auth state changed, user:", user ? (user.displayName || user.email) : null);
+        auth.onAuthStateChanged(async (user) => { 
             const currentPage = window.location.pathname.split('/').pop() || 'index.html';
 
             const getFirstName = (user) => {
                 if (!user || user.isAnonymous) return 'Guest';
                 const fullName = user.displayName;
                 const email = user.email;
-                if (fullName) return fullName.split(' ')[0]; // Get first name
-                if (email) return email.split('@')[0]; // Get email prefix
-                return 'User'; // Failsafe
+                if (fullName) return fullName.split(' ')[0]; 
+                if (email) return email.split('@')[0]; 
+                return 'User'; 
             };
 
             if (user) {
                 // --- User is SIGNED IN (Real or Guest) ---
                 
                 if (currentPage === 'login.html') {
-                    console.log("User just logged in, redirecting from login page to index.");
                     window.location.replace('index.html');
                     return; 
                 }
@@ -742,15 +713,15 @@ document.addEventListener('DOMContentLoaded', () => {
                         const adminRef = db.collection('admins').doc(user.uid);
                         const adminDoc = await adminRef.get();
                         if (adminDoc.exists) {
-                            if(adminLink) adminLink.classList.remove('hidden'); // Show desktop admin button
-                            if(adminLinkMobile) adminLinkMobile.classList.remove('hidden'); // Show mobile admin button
+                            if(adminLink) adminLink.classList.remove('hidden'); 
+                            if(adminLinkMobile) adminLinkMobile.classList.remove('hidden'); 
                         }
                     } catch (err) {
                         console.error("Error checking admin status", err);
                     }
                 }
 
-                // --- AUTOFIL CHECKOUT (Shipping & Measurements) ---
+                // --- AUTOFILL CHECKOUT (Shipping & Measurements) ---
                 if (currentPage === 'checkout.html') {
                     // Only autofill/lock if the user is NOT anonymous (Real Google User)
                     if (!user.isAnonymous) {
@@ -762,6 +733,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         if (checkoutNameInput) checkoutNameInput.value = user.displayName || '';
                         
                         // Load saved measurements for real users
+                        isMeasurementsLoaded = false;
+                        renderCheckoutSummary(); 
                         loadMeasurements(user.uid, currentPage).then(() => {
                             isMeasurementsLoaded = true; 
                             renderCheckoutSummary();
@@ -787,7 +760,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 // --- User is SIGNED OUT ---
                 isMeasurementsLoaded = true; 
 
-                // --- Update NAV UI (Desktop & Mobile) ---
                 if (navGoogleLoginBtn) navGoogleLoginBtn.classList.remove('hidden');
                 if (userInfoDiv) userInfoDiv.classList.add('hidden');
                 if (userDisplayNameSpan) userDisplayNameSpan.textContent = '';
@@ -795,7 +767,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (mobileGoogleLoginBtn) mobileGoogleLoginBtn.classList.remove('hidden');
                 if (mobileUserInfoDiv) mobileUserInfoDiv.classList.add('hidden');
                 
-                // --- NEW: Hide admin links on logout ---
                 if (adminLink) adminLink.classList.add('hidden');
                 if (adminLinkMobile) adminLinkMobile.classList.add('hidden');
                 
@@ -845,15 +816,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const userRef = db.collection('users').doc(user.uid);
             
             try {
-                // 'merge: true' ensures we don't overwrite other user data
                 await userRef.set({ measurements: measurements }, { merge: true }); 
-                
                 const successMsg = document.getElementById('success-message');
                 if (successMsg) {
                     successMsg.classList.remove('hidden');
-                    setTimeout(() => successMsg.classList.add('hidden'), 3000); // Hide after 3s
+                    setTimeout(() => successMsg.classList.add('hidden'), 3000); 
                 }
-                
             } catch (error) {
                 console.error("Error saving measurements: ", error);
                 alert(`Error saving: ${error.message}`);
@@ -865,26 +833,17 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         };
 
-
-        // Add listener to the account form if it exists
         if (accountForm) {
             accountForm.addEventListener('submit', saveMeasurements);
         }
-        // --- END ACCOUNT PAGE LOGIC ---
-
     } else {
         console.error("Firebase library not loaded or initialized correctly!");
     }
-    // --- END FIREBASE AUTH LOGIC ---
 
-
-    // --- =================================== ---
-    // --- DYNAMIC PRODUCT GRID LOADER (NEW) ---
-    // --- =================================== ---
-
+    // --- DYNAMIC PRODUCT GRID LOADER ---
     async function loadProductGrid(collectionName, gridElementId) {
         const gridEl = document.getElementById(gridElementId);
-        if (!gridEl) return; // Not on the right page
+        if (!gridEl) return; 
 
         const db = firebase.firestore();
         let html = '';
@@ -899,18 +858,13 @@ document.addEventListener('DOMContentLoaded', () => {
             snapshot.forEach(doc => {
                 const product = doc.data();
                 const productUrl = `product.html?collection=${collectionName}&id=${doc.id}`;
-                
-                // --- Conditional Button ---
                 let buttonHtml = '';
                 if (collectionName === 'products') {
-                    // Predefined: Add to Cart (default 'M')
-                    // We must escape quotes inside the onclick string
-                    buttonHtml = `<button onclick="addToCart('${doc.id}', '${product.name.replace(/'/g, "\\'")}', ${product.price}, '${product.image_url}', 'M')" class="px-3 py-1 bg-pink-100 text-pink-700 rounded-full text-sm font-medium hover:bg-pink-200">Add to Cart</button>`;
+                    const safeName = product.name.replace(/'/g, "\\'");
+                    buttonHtml = `<button onclick="addToCart('${doc.id}', '${safeName}', ${product.price}, '${product.image_url}', 'M')" class="px-3 py-1 bg-pink-100 text-pink-700 rounded-full text-sm font-medium hover:bg-pink-200">Add to Cart</button>`;
                 } else {
-                    // Custom: Learn More
                     buttonHtml = `<a href="${productUrl}" class="px-3 py-1 bg-pink-100 text-pink-700 rounded-full text-sm font-medium hover:bg-pink-200">Learn More</a>`;
                 }
-                // --- End Conditional Button ---
 
                 html += `
                 <div class="product-card bg-white rounded-lg overflow-hidden shadow-md transition-all duration-300">
@@ -930,14 +884,13 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             gridEl.innerHTML = html;
-            if (typeof feather !== 'undefined') feather.replace(); // Redraw icons if any
+            if (typeof feather !== 'undefined') feather.replace(); 
         } catch (err) {
             console.error("Error loading products:", err);
             gridEl.innerHTML = '<p class="text-red-500 col-span-full text-center">Error loading products. Please try again later.</p>';
         }
     }
 
-    // --- Triggers for new pages ---
     if (document.body.id === 'shop-page') {
         loadProductGrid('products', 'product-grid');
     }
@@ -945,19 +898,77 @@ document.addEventListener('DOMContentLoaded', () => {
         loadProductGrid('custom_styles', 'product-grid');
     }
 
+    // --- LOAD RELATED PRODUCTS ---
+    async function loadRelatedProducts(currentCollection, currentProductId, category) {
+        const container = document.querySelector('#related-products .grid');
+        if (!container) return;
 
-    // --- ================================ ---
+        const db = firebase.firestore();
+        
+        try {
+            let query = db.collection(currentCollection);
+            if (category) {
+                query = query.where('category', '==', category);
+            }
+            const snapshot = await query.limit(5).get();
+            
+            if (snapshot.empty) {
+                document.getElementById('related-products').style.display = 'none';
+                return;
+            }
+
+            let count = 0;
+            container.innerHTML = '';
+
+            snapshot.forEach(doc => {
+                if (doc.id === currentProductId) return;
+                if (count >= 4) return;
+
+                const product = doc.data();
+                const productUrl = `product.html?collection=${currentCollection}&id=${doc.id}`;
+                
+                let buttonHtml = '';
+                if (currentCollection === 'products') {
+                    const safeName = product.name.replace(/'/g, "\\'");
+                    buttonHtml = `<button onclick="addToCart('${doc.id}', '${safeName}', ${product.price}, '${product.image_url}', 'M')" class="px-3 py-1 bg-pink-100 text-pink-700 rounded-full text-sm font-medium hover:bg-pink-200">Add to Cart</button>`;
+                } else {
+                    buttonHtml = `<a href="${productUrl}" class="px-3 py-1 bg-pink-100 text-pink-700 rounded-full text-sm font-medium hover:bg-pink-200">View</a>`;
+                }
+
+                const html = `
+                <div class="product-card bg-white rounded-lg overflow-hidden shadow-md transition-all duration-300">
+                  <a href="${productUrl}" class="relative block">
+                    <img class="w-full h-64 object-cover" src="${product.image_url}" alt="${product.name}">
+                  </a>
+                  <div class="p-4">
+                    <h3 class="text-lg font-medium text-gray-900 truncate"><a href="${productUrl}">${product.name}</a></h3>
+                    <p class="mt-1 text-sm text-gray-500">${product.category || 'Collection'}</p>
+                    <div class="mt-4 flex justify-between items-center">
+                      <span class="text-lg font-bold text-gray-900">R${product.price.toFixed(2)}</span>
+                      ${buttonHtml}
+                    </div>
+                  </div>
+                </div>
+                `;
+                container.innerHTML += html;
+                count++;
+            });
+
+            if (count === 0) {
+                 document.getElementById('related-products').style.display = 'none';
+            }
+
+        } catch (error) {
+            console.error("Error loading related products:", error);
+        }
+    }
+
     // --- DYNAMIC PRODUCT PAGE LOADER ---
-    // --- ================================ ---
-
-    // This function will run ONLY if we are on the product.html page
     async function loadProductPage() {
-        // 1. Get the collection and ID from the URL
         const params = new URLSearchParams(window.location.search);
         const collectionName = params.get('collection');
         const docId = params.get('id');
 
-        // 2. Get all the template elements from product.html
         const productNameEl = document.getElementById('product-name');
         const productPriceEl = document.getElementById('product-price');
         const productImageEl = document.getElementById('product-image');
@@ -966,13 +977,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const sizeSelectorContainer = document.getElementById('size-selector-container');
         const addToCartBtn = document.getElementById('product-add-to-cart-btn');
 
-        // 3. Check for errors
-        if (!collectionName || !docId || !productNameEl) {
-            // If any required element isn't here, we're not on the product page.
-            return;
-        }
+        if (!collectionName || !docId || !productNameEl) return;
 
-        // 4. Fetch the correct document from Firestore
         try {
             const db = firebase.firestore();
             const doc = await db.collection(collectionName).doc(docId).get();
@@ -983,73 +989,53 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             
             const product = doc.data();
-            
-            // 5. Populate the template with the product data
             productNameEl.textContent = product.name;
             productPriceEl.textContent = `R${product.price.toFixed(2)}`;
             productImageEl.src = product.image_url;
             productImageEl.alt = product.name;
             productBreadcrumbEl.textContent = product.name;
-            document.title = `${product.name} | Carries Boutique`; // Update page title
+            document.title = `${product.name} | Carries Boutique`; 
             
-            // Add description (if it exists)
             if (product.description) {
                 productDescriptionEl.innerHTML = `<h3 class="text-lg font-medium text-gray-900">Description</h3><p>${product.description}</p>`;
             }
 
             let selectedSize = null;
 
-            // 6. --- THIS IS THE KEY LOGIC ---
             if (collectionName === 'products') {
-                // This is a RETAIL product
-                sizeSelectorContainer.style.display = 'block'; // Show the size selector
-                
-                // Dynamically create size buttons from product.variants
+                sizeSelectorContainer.style.display = 'block'; 
                 const sizeButtonsContainer = sizeSelectorContainer.querySelector('#size-buttons');
-                sizeButtonsContainer.innerHTML = ''; // Clear hard-coded buttons
+                sizeButtonsContainer.innerHTML = ''; 
                 
                 if (product.variants && product.variants.length > 0) {
                     product.variants.forEach(variant => {
                         const button = document.createElement('button');
-                        
-                        // Check stock level
                         const isOutOfStock = !variant.stock || variant.stock <= 0;
 
                         if (isOutOfStock) {
-                            // --- STYLE FOR OUT OF STOCK ---
                             button.className = 'size-btn w-10 h-10 border border-gray-200 rounded-md flex items-center justify-center text-sm font-medium bg-gray-100 text-gray-400 cursor-not-allowed decoration-line-through';
                             button.textContent = variant.size;
-                            button.disabled = true; // Disable clicks
-                            button.title = "Out of Stock"; // Tooltip
+                            button.disabled = true; 
+                            button.title = "Out of Stock"; 
                         } else {
-                            // --- STYLE FOR IN STOCK ---
                             button.className = 'size-btn w-10 h-10 border rounded-md flex items-center justify-center text-sm font-medium hover:bg-gray-100 cursor-pointer transition-colors';
                             button.textContent = variant.size;
-                            
-                            // Only add click listener if in stock
                             button.onclick = () => {
                                 selectedSize = variant.size;
-                                // Reset all buttons
                                 sizeButtonsContainer.querySelectorAll('.size-btn').forEach(btn => {
-                                    // Don't remove the 'disabled' look from out-of-stock items
                                     if (!btn.disabled) {
                                          btn.classList.remove('bg-pink-100', 'text-pink-700', 'border-pink-300', 'ring-1', 'ring-pink-500');
                                     }
                                 });
-                                // Highlight this button
                                 button.classList.add('bg-pink-100', 'text-pink-700', 'border-pink-300', 'ring-1', 'ring-pink-500');
                             };
                         }
-                        
                         sizeButtonsContainer.appendChild(button);
                     });
-                } 
-                else 
-                {
+                } else {
                     sizeButtonsContainer.innerHTML = '<p class="text-sm text-gray-500">Sizes not available.</p>';
                 }
 
-                // Wire up Add to Cart button for RETAIL
                 addToCartBtn.onclick = () => {
                     if (!selectedSize) {
                         alert('Please select a size first!');
@@ -1059,14 +1045,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 };
                 
             } else if (collectionName === 'custom_styles') {
-                // This is a CUSTOM product
-                sizeSelectorContainer.style.display = 'none'; // Hide the size selector
-                selectedSize = 'Custom'; // Set a default "size" for our cart system
+                sizeSelectorContainer.style.display = 'none'; 
+                selectedSize = 'Custom'; 
 
-                // Wire up Add to Cart button for CUSTOM
                 addToCartBtn.onclick = () => {
-                    // For custom items, we add to cart, but the checkout process
-                    // will handle the measurements.
                     window.addToCart(docId, product.name, product.price, product.image_url, selectedSize);
                 };
             }
@@ -1136,7 +1118,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 const html = `
-                <div class.="min-w-72 w-72 snap-center bg-white rounded-xl shadow-md overflow-hidden flex-shrink-0 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 border border-gray-100">
+                <div class="min-w-72 w-72 snap-center bg-white rounded-xl shadow-md overflow-hidden flex-shrink-0 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 border border-gray-100">
                     <a href="${productUrl}" class="block h-64 overflow-hidden relative group">
                         <img src="${product.image_url}" alt="${product.name}" loading="lazy" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
                     </a>
