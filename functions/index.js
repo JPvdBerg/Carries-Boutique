@@ -1,32 +1,50 @@
-/**
- * Import function triggers from their respective submodules:
- *
- * const {onCall} = require("firebase-functions/v2/https");
- * const {onDocumentWritten} = require("firebase-functions/v2/firestore");
- *
- * See a full list of supported triggers at https://firebase.google.com/docs/functions
- */
+const functions = require("firebase-functions");
+const admin = require("firebase-admin");
+const nodemailer = require("nodemailer");
 
-const {setGlobalOptions} = require("firebase-functions");
-const {onRequest} = require("firebase-functions/https");
-const logger = require("firebase-functions/logger");
+admin.initializeApp();
 
-// For cost control, you can set the maximum number of containers that can be
-// running at the same time. This helps mitigate the impact of unexpected
-// traffic spikes by instead downgrading performance. This limit is a
-// per-function limit. You can override the limit for each function using the
-// `maxInstances` option in the function's options, e.g.
-// `onRequest({ maxInstances: 5 }, (req, res) => { ... })`.
-// NOTE: setGlobalOptions does not apply to functions using the v1 API. V1
-// functions should each use functions.runWith({ maxInstances: 10 }) instead.
-// In the v1 API, each function can only serve one request per container, so
-// this will be the maximum concurrent request count.
-setGlobalOptions({ maxInstances: 10 });
+// 1. Configure the email transporter
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: functions.config().email.user,
+    pass: functions.config().email.pass,
+  },
+});
 
-// Create and deploy your first functions
-// https://firebase.google.com/docs/functions/get-started
+// 2. The Cloud Function: Listens for new orders
+exports.sendOrderConfirmation = functions.firestore
+  .document("orders/{orderId}")
+  .onCreate(async (snapshot, context) => {
+    const orderData = snapshot.data();
+    const customerEmail = orderData.customer.email;
+    const items = orderData.cart;
 
-// exports.helloWorld = onRequest((request, response) => {
-//   logger.info("Hello logs!", {structuredData: true});
-//   response.send("Hello from Firebase!");
-// });
+    // Build email HTML
+    const itemsHtml = items.map(item => 
+      `<li>${item.quantity}x ${item.name} (${item.size}) - R${item.price}</li>`
+    ).join("");
+
+    const totalCost = items.reduce((sum, item) => sum + (item.price * item.quantity), 0) + 50;
+
+    const mailOptions = {
+      from: '"Carries Boutique" <' + functions.config().email.user + '>',
+      to: customerEmail,
+      subject: `Order Confirmation: #${snapshot.id}`,
+      html: `
+        <h2>Thank you for your order!</h2>
+        <h3>Order #${snapshot.id}</h3>
+        <ul>${itemsHtml}</ul>
+        <p><strong>Total: R${totalCost.toFixed(2)}</strong></p>
+        <p>We will notify you when it ships.</p>
+      `,
+    };
+
+    try {
+      await transporter.sendMail(mailOptions);
+      console.log(`Email sent to ${customerEmail}`);
+    } catch (error) {
+      console.error("Error sending email:", error);
+    }
+  });
