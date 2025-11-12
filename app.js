@@ -1059,7 +1059,8 @@ try {
     // Add the trigger to run our new function when the page loads
     // We check for the body ID we added to product.html
     if (document.body.id === 'product-detail-page') {
-        loadProductPage();
+        // Load related items from the same collection
+loadRelatedProducts(collectionName, docId, product.category);
     }
 
 
@@ -1146,6 +1147,79 @@ async function loadOrderHistory(userId) {
     } catch (error) {
         console.error("Error loading history:", error);
         container.innerHTML = '<p class="text-red-500">Error loading orders.</p>';
+    }
+}
+
+// --- LOAD RELATED PRODUCTS ---
+async function loadRelatedProducts(currentCollection, currentProductId, category) {
+    const container = document.querySelector('#related-products .grid');
+    if (!container) return;
+
+    const db = firebase.firestore();
+    
+    try {
+        let query = db.collection(currentCollection);
+        
+        // Try to filter by category if it exists, otherwise just get recent items
+        if (category) {
+            query = query.where('category', '==', category);
+        }
+        
+        // Limit to 4 items
+        const snapshot = await query.limit(5).get();
+        
+        if (snapshot.empty) {
+            document.getElementById('related-products').style.display = 'none';
+            return;
+        }
+
+        let count = 0;
+        container.innerHTML = '';
+
+        snapshot.forEach(doc => {
+            // Don't show the product we are currently looking at
+            if (doc.id === currentProductId) return;
+            // Only show 4 items max
+            if (count >= 4) return;
+
+            const product = doc.data();
+            const productUrl = `product.html?collection=${currentCollection}&id=${doc.id}`;
+            
+            // Determine button type (Retail vs Custom)
+            let buttonHtml = '';
+            if (currentCollection === 'products') {
+                // Escape quotes for the onclick handler
+                const safeName = product.name.replace(/'/g, "\\'");
+                buttonHtml = `<button onclick="addToCart('${doc.id}', '${safeName}', ${product.price}, '${product.image_url}', 'M')" class="px-3 py-1 bg-pink-100 text-pink-700 rounded-full text-sm font-medium hover:bg-pink-200">Add to Cart</button>`;
+            } else {
+                buttonHtml = `<a href="${productUrl}" class="px-3 py-1 bg-pink-100 text-pink-700 rounded-full text-sm font-medium hover:bg-pink-200">View</a>`;
+            }
+
+            const html = `
+            <div class="product-card bg-white rounded-lg overflow-hidden shadow-md transition-all duration-300">
+              <a href="${productUrl}" class="relative block">
+                <img class="w-full h-64 object-cover" src="${product.image_url}" alt="${product.name}">
+              </a>
+              <div class="p-4">
+                <h3 class="text-lg font-medium text-gray-900 truncate"><a href="${productUrl}">${product.name}</a></h3>
+                <p class="mt-1 text-sm text-gray-500">${product.category || 'Collection'}</p>
+                <div class="mt-4 flex justify-between items-center">
+                  <span class="text-lg font-bold text-gray-900">R${product.price.toFixed(2)}</span>
+                  ${buttonHtml}
+                </div>
+              </div>
+            </div>
+            `;
+            container.innerHTML += html;
+            count++;
+        });
+
+        if (count === 0) {
+             document.getElementById('related-products').style.display = 'none';
+        }
+
+    } catch (error) {
+        console.error("Error loading related products:", error);
     }
 }
 }); // --- END DOMContentLoaded ---
