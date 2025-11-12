@@ -36,7 +36,7 @@
     @keyframes bounce { 0%, 20%, 50%, 80%, 100% {transform: translateY(0);} 40% {transform: translateY(-20px);} 60% {transform: translateY(-10px);} }
   </style>
 </head>
-<body>
+<body id="home-page">
   <nav class="bg-white shadow-sm sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between h-16">
@@ -62,17 +62,14 @@
                   Login with Google
               </button>
               <div id="user-info" class="hidden flex items-center space-x-6">
-    <a href="admin.html" id="admin-link" class="hidden text-sm font-bold text-pink-600 hover:text-pink-800 transition-colors">Admin</a>
-    
-    <a href="account.html" class="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">My Account</a>
-    
-    <div class="flex items-center space-x-2 bg-gray-100 rounded-full px-3 py-1">
-        <i data-feather="user" class="w-3 h-3 text-gray-500"></i>
-        <span id="user-display-name" class="text-sm font-semibold text-gray-700"></span>
-    </div>
-
-    <button id="logout-btn" class="text-sm font-medium text-gray-400 hover:text-red-500 transition-colors">Logout</button>
-</div>
+                <a href="admin.html" id="admin-link" class="hidden text-sm font-bold text-pink-600 hover:text-pink-800 transition-colors">Admin</a>
+                <a href="account.html" class="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">My Account</a>
+                <div class="flex items-center space-x-2 bg-gray-100 rounded-full px-3 py-1">
+                    <i data-feather="user" class="w-3 h-3 text-gray-500"></i>
+                    <span id="user-display-name" class="text-sm font-semibold text-gray-700"></span>
+                </div>
+                <button id="logout-btn" class="text-sm font-medium text-gray-400 hover:text-red-500 transition-colors">Logout</button>
+            </div>
           </div>
           <a href="https://wa.me/27828735697" target="_blank" class="ml-6 whatsapp-btn inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full text-white">
             <i data-feather="message-circle" class="mr-2"></i> WhatsApp
@@ -105,12 +102,10 @@
                     <svg class="w-5 h-5 mr-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512"><path fill="currentColor" d="M488 261.8C488 403.3 381.5 512 244 512 109.8 512 0 402.2 0 258S109.8 4 244 4a237.2 237.2 0 01166.3 64.3l-64.4 64.4a150 150 0 00-101.9-38.3c-83.3 0-151.7 67.5-151.7 150.9s68.4 150.9 151.7 150.9c90.8 0 134.4-60.5 139.5-93.7H244v-77.9h236.1c2.4 12.8 3.9 26.5 3.9 41.2z"/></svg>
                     Login with Google
                 </button>
-                <div id="user-info-mobile" class="space-y-2 hidden">
-                    <a href="admin.html" id="admin-link-mobile" class="hidden block w-full text-left px-4 py-2 border border-pink-500 text-base font-medium rounded-full text-pink-600 bg-pink-50 hover:bg-pink-100">Admin Dashboard</a>
-                    <a href="account.html" class="block w-full text-left px-4 py-2 border border-gray-300 text-base font-medium rounded-full text-gray-700 bg-white hover:bg-gray-50">My Account</a>
-                    <button id="logout-btn-mobile" class="w-full flex items-center justify-center px-4 py-2 border border-transparent text-base font-medium rounded-full text-white bg-pink-600 hover:bg-pink-700">
-                        Logout
-                    </button>
+                <div id="user-info-mobile" class="space-y-1 pt-4 hidden">
+                    <a href="admin.html" id="admin-link-mobile" class="hidden block pl-3 pr-4 py-2 border-l-4 border-pink-500 text-base font-medium text-pink-700 bg-pink-50">Admin Dashboard</a>
+                    <a href="account.html" class="block pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium text-gray-600 hover:text-gray-800 hover:bg-gray-50 hover:border-gray-300">My Account</a>
+                    <button id="logout-btn-mobile" class="w-full text-left block pl-3 pr-4 py-2 border-l-4 border-transparent text-base font-medium text-gray-500 hover:text-red-600 hover:bg-gray-50 hover:border-gray-300">Logout</button>
                 </div>
             </div>
         </div>
@@ -142,21 +137,63 @@
     <div class="scroll-down" data-aos="fade-up" data-aos-delay="500" onclick="document.getElementById('about').scrollIntoView({behavior: 'smooth'});"><i data-feather="chevron-down"></i></div>
   </section>
 
-  <section id="about" class="py-16 bg-white scroll-mt-16">
-    </section>
+  <section id="about" class="py-20 bg-white scroll-mt-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <i data-feather="heart" class="w-12 h-12 text-pink-500 mx-auto mb-6"></i>
+      <h2 class="text-3xl font-serif font-bold text-gray-900 mb-6">Handcrafted with Love</h2>
+      <p class="max-w-2xl mx-auto text-lg text-gray-600 leading-relaxed">
+        At Carries Boutique, we believe fashion is personal. Every piece is designed in South Africa with attention to detail, comfort, and timeless style. Whether you need a custom-tailored fit or a ready-to-wear staple, we have something unique just for you.
+      </p>
+    </div>
+  </section>
 
   <section class="py-16 bg-gray-50">
-    </section>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-end mb-8">
+        <h2 class="text-2xl md:text-3xl font-serif font-bold text-gray-900">New Arrivals</h2>
+        <a href="shop.html" class="text-pink-600 hover:text-pink-700 font-medium flex items-center">
+          View All <i data-feather="arrow-right" class="ml-2 w-4 h-4"></i>
+        </a>
+      </div>
+      
+      <div id="featured-carousel" class="flex overflow-x-auto gap-6 pb-8 snap-x snap-mandatory no-scrollbar">
+        <div class="w-full text-center p-10 text-gray-400">Loading recommendations...</div>
+      </div>
+    </div>
+  </section>
 
-  <section class="py-16 hero-gradient relative overflow-hidden">
-    </section>
-
-  <section id="contact" class="py-16 bg-white scroll-mt-16">
-    </section>
+  <section class="py-20 hero-gradient relative overflow-hidden">
+    <div class="max-w-4xl mx-auto px-4 relative z-10 text-center">
+      <h2 class="text-3xl font-serif font-bold text-white mb-6">Join the Family</h2>
+      <p class="text-white text-lg opacity-90 mb-8">Subscribe to get updates on new collections and exclusive offers.</p>
+      <form class="flex flex-col sm:flex-row gap-4 justify-center max-w-md mx-auto">
+        <input type="email" placeholder="Enter your email" class="px-6 py-3 rounded-full focus:outline-none focus:ring-2 focus:ring-pink-300 w-full">
+        <button type="button" class="px-8 py-3 bg-gray-900 text-white rounded-full font-medium hover:bg-gray-800 transition shadow-lg">
+          Subscribe
+        </button>
+      </form>
+    </div>
+  </section>
 
   <footer class="bg-gray-900 text-white py-12">
-    </footer>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div><a href="index.html" class="flex items-center"><img class="h-8 w-auto" src="https://i.imgur.com/KNRtw3t.png" alt="Carries Boutique"><span class="ml-2 text-xl font-semibold">Carries Boutique</span></a><p class="mt-4 text-gray-400">Premium fashion boutique offering handcrafted, sustainable clothing with timeless elegance.</p></div>
+        <div><h3 class="text-lg font-medium mb-4">Shop</h3><ul class="space-y-2"><li><a href="shop.html" class="footer-link text-gray-400 hover:text-white">New Arrivals</a></li><li><a href="shop.html" class="footer-link text-gray-400 hover:text-white">Best Sellers</a></li><li><a href="shop.html" class="footer-link text-gray-400 hover:text-white">Sale Items</a></li><li><a href="index.html#contact" class="footer-link text-gray-400 hover:text-white">Gift Cards</a></li></ul></div>
+        <div><h3 class="text-lg font-medium mb-4">Information</h3><ul class="space-y-2"><li><a href="index.html#about" class="footer-link text-gray-400 hover:text-white">About Us</a></li><li><a href="index.html#about" class="footer-link text-gray-400 hover:text-white">Sustainability</a></li><li><a href="index.html#contact" class="footer-link text-gray-400 hover:text-white">Shipping Policy</a></li><li><a href="index.html#contact" class="footer-link text-gray-400 hover:text-white">Returns & Exchanges</a></li></ul></div>
+        <div><h3 class="text-lg font-medium mb-4">Newsletter</h3><p class="text-gray-400 mb-4">Subscribe to get updates on new arrivals and special offers.</p><form id="newsletter-form" class="flex"><input type="email" placeholder="Your email" class="px-4 py-2 rounded-l-lg w-full text-gray-900 focus:outline-none"><button type="submit" class="bg-pink-600 hover:bg-pink-700 px-4 py-2 rounded-r-lg"><i data-feather="send"></i></button></form></div>
+      </div>
+      <div class="mt-12 pt-8 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center"><p class="text-gray-400 text-sm">&copy; 2023 Carries Boutique. All rights reserved.</p><div class="mt-4 md:mt-0 flex space-x-6"><a href="#" class="text-gray-400 hover:text-white"><i data-feather="credit-card"></i></a><a href="#" class="text-gray-400 hover:text-white"><i data-feather="lock"></i></a><a href="#" class="text-gray-400 hover:text-white"><i data-feather="shield"></i></a></div></div>
+    </div>
+  </footer>
   
+  <div id="toast-container" class="fixed bottom-5 right-5 z-50 hidden transform transition-all duration-300 translate-y-10 opacity-0">
+    <div class="bg-gray-900 text-white px-6 py-3 rounded-lg shadow-lg flex items-center space-x-3">
+        <i data-feather="check-circle" class="text-green-400"></i>
+        <span id="toast-message" class="font-medium">Item added to cart!</span>
+    </div>
+  </div>
+
   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script> 
   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script> 
   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
@@ -169,16 +206,13 @@
       storageBucket: "carries-boutique.firebasestorage.app",
       messagingSenderId: "512525813635",
       appId: "1:512525813635:web:afe3d28c5bd2db68ae58b6",
-      measurementId: "G-2Q2QY4HJ9Y" // Optional analytics ID
+      measurementId: "G-2Q2QY4HJ9Y" 
     };
 
     // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
-    
-    // Make auth globally available (easier for simple apps)
     const auth = firebase.auth(); 
-    const db = firebase.firestore(); // <-- Initialize Firestore
-
+    const db = firebase.firestore(); 
   </script>
 
   <script src="app.js"></script>
