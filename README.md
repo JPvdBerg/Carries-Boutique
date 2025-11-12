@@ -1,6 +1,6 @@
 # Carries Boutique - Serverless E-commerce Platform
 
-**Live Demo:** [https://carries-boutique.web.app](https://www.google.com/search?q=https://carries-boutique.web.app) *(or your custom domain)*
+**Live Demo:** [https://carries-boutique.web.app](https://www.google.com/search?q=https://carries-boutique.web.app)
 
 This project is a production-ready, full-stack e-commerce storefront built on a **Serverless Firebase Architecture**. It features a dual-product catalog (Retail vs. Custom Tailoring), a comprehensive mobile-responsive Admin Dashboard, and automated backend logic for order processing and email notifications.
 
