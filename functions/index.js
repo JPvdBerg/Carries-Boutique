@@ -8,8 +8,9 @@ admin.initializeApp();
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: "drunknine323@gmail.com", 
-    pass: "kivyiuekofbrxliw", // New password (spaces removed)
+    // Read these values from the secure server config
+    user: functions.config().email.user,
+    pass: functions.config().email.pass,
   },
 });
 
