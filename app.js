@@ -38,6 +38,28 @@ window.showToast = (message) => { // Added 'window.' to ensure global access
     }, 3000);
 };
 
+// --- NEW FUNCTION: INITIALIZE MEASUREMENT TOGGLES ---
+const initializeMeasurementToggles = () => {
+    document.querySelectorAll('.measurement-radio').forEach(radio => {
+        // Find the specific form tied to this radio button
+        const itemContainer = radio.closest('[data-cart-item-id]');
+        if (!itemContainer) return;
+        
+        const cartItemUniqueId = itemContainer.dataset.cartItemId;
+        const specificForm = document.getElementById(`specific-measurements-${cartItemUniqueId}`);
+
+        if (specificForm) {
+            // Apply the correct hidden/visible state immediately based on initial check
+            if (radio.checked && radio.value === 'specific') {
+                specificForm.classList.remove('hidden');
+            } else if (radio.value === 'default') {
+                // When 'default' is checked, ensure the form is hidden
+                 specificForm.classList.add('hidden');
+            }
+        }
+    });
+};
+
 
 document.addEventListener('DOMContentLoaded', () => {
     let isMeasurementsLoaded = false;
@@ -356,7 +378,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
             if (isRetail) {
-                 // --- RETAIL SIZE SELECTOR ---
+                 // --- RETAIL SIZE SELECTOR (New Layout) ---
                  // Assumption: All retail products have these base sizes.
                  const allRetailSizes = ['S', 'M', 'L', 'XL'];
                  const productData = `'${item.id}', '${item.name.replace(/'/g, "\\'")}', ${item.price}, '${item.image}'`;
@@ -366,7 +388,7 @@ document.addEventListener('DOMContentLoaded', () => {
                      return `
                         <button 
                             onclick="updateCartVariant('${cartItemUniqueId}', '${size}', ${productData})" 
-                            class="size-btn px-3 py-1 text-xs rounded-full border transition-colors 
+                            class="size-btn px-3 py-1 text-sm rounded-lg border transition-colors 
                             ${isSelected ? 'bg-pink-600 text-white border-pink-600' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}">
                             ${size}
                         </button>
@@ -374,8 +396,8 @@ document.addEventListener('DOMContentLoaded', () => {
                  }).join('');
 
                  itemOptionsHtml = `
-                    <div class="mt-2 text-sm">
-                        <p class="font-medium text-gray-700 mb-1">Change Size:</p>
+                    <div class="mt-3 pt-3 border-t border-gray-100">
+                        <p class="font-medium text-sm text-gray-700 mb-2">Change Size:</p>
                         <div class="flex space-x-2">
                            ${sizeOptionsHtml}
                         </div>
@@ -425,20 +447,21 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             
             const itemHtml = `
-              <div class="py-4 border-b" data-cart-item-id="${cartItemUniqueId}">
-                <div class="flex justify-between items-center">
-                  <div class="flex items-start space-x-3">
-                    <img src="${item.image}" alt="${item.name}" class="w-12 h-12 md:w-16 md:h-16 object-cover rounded-lg">
+              <div class="py-4 ${index < cart.length - 1 ? 'border-b' : ''}" data-cart-item-id="${cartItemUniqueId}">
+                <div class="flex justify-between items-start">
+                  <div class="flex items-start space-x-3 w-4/5">
+                    <img src="${item.image}" alt="${item.name}" class="w-12 h-12 object-cover rounded-lg flex-shrink-0">
                     <div>
-                      <div class="flex items-center space-x-2">
+                      <div class="flex flex-col items-start space-y-1">
                         <h4 class="font-medium text-sm md:text-base">${item.name}</h4>
                         ${itemTypeBadge}
                       </div>
-                      <p class="text-sm text-gray-600 font-medium mt-1">Size: ${itemSize} &bull; Qty: ${item.quantity}</p>
+                      <p class="text-xs text-gray-600 mt-1">Qty: ${item.quantity} &bull; Current Size: <span class="font-semibold">${itemSize}</span></p>
                     </div>
                   </div>
-                  <p class="font-medium text-sm md:text-base">R${(item.price * item.quantity).toFixed(2)}</p>
+                  <p class="font-bold text-sm md:text-base whitespace-nowrap">R${(item.price * item.quantity).toFixed(2)}</p>
                 </div>
+                
                 ${itemOptionsHtml}
               </div>
             `;
@@ -465,6 +488,9 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
         `;
         summaryContainer.innerHTML += summaryTotalHtml;
+        
+        // --- NEW: Initialize measurement toggles after rendering HTML ---
+        initializeMeasurementToggles();
         
         // Enable/Disable Place Order Button
         const placeOrderBtn = document.querySelector('#checkout-form button[type="submit"]');
@@ -960,7 +986,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const safeName = product.name.replace(/'/g, "\\'");
                     buttonHtml = `<button onclick="addToCart('${doc.id}', '${safeName}', ${product.price}, '${product.image_url}', 'M')" class="px-3 py-1 bg-pink-100 text-pink-700 rounded-full text-sm font-medium hover:bg-pink-200">Add to Cart</button>`;
                 } else {
-                    buttonHtml = `<a href="${productUrl}" class="px-3 py-1 bg-pink-100 text-pink-700 rounded-full text-sm font-medium hover:bg-pink-200">Learn More</a>`;
+                    buttonHtml = `<a href="€{productUrl}" class="px-3 py-1 bg-pink-100 text-pink-700 rounded-full text-sm font-medium hover:bg-pink-200">Learn More</a>`;
                 }
 
                 html += `
