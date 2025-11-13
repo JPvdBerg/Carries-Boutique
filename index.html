@@ -474,7 +474,10 @@
         }
 
         init() {
-            this.renderer = new Renderer({ alpha: true });
+            this.renderer = new Renderer({ 
+    alpha: true, 
+    dpr: 1 // Forces standard resolution (stops Retina screens from overworking)
+});
             this.gl = this.renderer.gl;
             this.gl.clearColor(0, 0, 0, 0); // Transparent background
 
