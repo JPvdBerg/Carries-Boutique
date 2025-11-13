@@ -205,4 +205,83 @@ body {
     50% { background-position: 100% 50%; } 
     100% { background-position: 0% 50%; } 
 }
+
+/* --- STEPPER ANIMATION STYLES --- */
+
+/* The container for the form */
+.stepper-container {
+    transition: height 0.3s ease;
+}
+
+/* The Circles (1, 2, 3) */
+.step-indicator {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    background-color: #e5e7eb; /* Gray-200 */
+    color: #9ca3af;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    z-index: 10;
+    transition: all 0.3s ease;
+    cursor: default;
+}
+
+.step-indicator.active {
+    background-color: #db2777; /* Pink-600 */
+    color: white;
+    transform: scale(1.1);
+    box-shadow: 0 0 0 4px rgba(219, 39, 119, 0.2);
+}
+
+.step-indicator.completed {
+    background-color: #db2777;
+    color: white;
+}
+
+/* The Lines connecting the circles */
+.step-line {
+    flex: 1;
+    height: 2px;
+    background-color: #e5e7eb;
+    margin: 0 10px;
+    transition: background-color 0.4s ease;
+}
+
+.step-line.active {
+    background-color: #db2777;
+}
+
+/* --- CRITICAL: HIDE/SHOW LOGIC --- */
+
+/* By default, hide everything and push it off-screen */
+.step-slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    opacity: 0;
+    transform: translateX(100%); /* Start to the right */
+    transition: all 0.4s ease-in-out;
+    pointer-events: none;
+    visibility: hidden;
+}
+
+/* When active, show it and give it space */
+.step-slide.active {
+    position: relative; /* Allows it to take up height */
+    opacity: 1;
+    transform: translateX(0);
+    pointer-events: auto;
+    visibility: visible;
+}
+
+/* When done, slide it to the left */
+.step-slide.slide-out-left {
+    transform: translateX(-100%);
+    opacity: 0;
+    position: absolute;
+}
 }
