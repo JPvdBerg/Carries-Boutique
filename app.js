@@ -1,14 +1,14 @@
 // --- TOAST NOTIFICATION HELPER ---
-window.showToast = (message) => { // Added 'window.' to ensure global access
+window.showToast = (message) => { 
     const container = document.getElementById('toast-container');
     const msgEl = document.getElementById('toast-message');
     
     if (!container || !msgEl) {
-        console.error("Toast container missing!"); // This will show in your console if HTML is wrong
+        console.error("Toast container missing!"); 
         return;
     }
 
-    console.log("Showing toast:", message); // Debug log
+    console.log("Showing toast:", message); 
 
     // 1. Set Content
     msgEl.textContent = message;
@@ -192,7 +192,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
         saveCart(cart);
-        // --- FIXED: Replaced ugly alert() with sleek toast ---
         showToast(`${productName} (Size: ${size}) added to cart!`);
     };
 
@@ -371,11 +370,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         cart.forEach((item) => {
             const isRetail = item.size !== 'Custom';
+            // FIXED: Defined itemSize HERE so it is available in both if and else blocks
+            const itemSize = item.size || 'undefined'; 
             
             // 1. RETAIL ITEM RENDERING (Aggregated + Size Selector)
             if (isRetail) {
                 const cartItemUniqueId = item.cartItemId; 
-                const itemSize = item.size || 'undefined';
                 subtotal += item.price * item.quantity;
                 
                 const allRetailSizes = ['S', 'M', 'L', 'XL'];
@@ -512,9 +512,9 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // --- EVENT HANDLER FOR CHECKOUT MEASUREMENT TOGGLES ---
-    const summaryContainer = document.getElementById('checkout-summary');
-    if (summaryContainer) {
-        summaryContainer.addEventListener('change', (e) => {
+    const summaryContainerEl = document.getElementById('checkout-summary');
+    if (summaryContainerEl) {
+        summaryContainerEl.addEventListener('change', (e) => {
             if (e.target.classList.contains('measurement-radio')) {
                 const selectedValue = e.target.value;
                 const itemContainer = e.target.closest('[data-cart-item-id]');
@@ -855,6 +855,10 @@ document.addEventListener('DOMContentLoaded', () => {
                         loadMeasurements(user.uid, currentPage).then(() => {
                             isMeasurementsLoaded = true; 
                             renderCheckoutSummary();
+                        }).catch((err) => {
+                             console.log("Measurements not found or error, unlocking button anyway.", err);
+                             isMeasurementsLoaded = true; // Force unlock on error
+                             renderCheckoutSummary();
                         });
                     } else {
                         // It's a guest or anonymous user, ensure fields are editable
@@ -870,7 +874,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 if (currentPage === 'account.html' && !user.isAnonymous) {
                     loadMeasurements(user.uid, currentPage);
-                    loadOrderHistory(user.uid); 
+                    // loadOrderHistory(user.uid); // Ensure this function exists if you call it, else comment out
                 }
 
             } else {
@@ -980,7 +984,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     const safeName = product.name.replace(/'/g, "\\'");
                     buttonHtml = `<button onclick="addToCart('${doc.id}', '${safeName}', ${product.price}, '${product.image_url}', 'M')" class="px-3 py-1 bg-pink-100 text-pink-700 rounded-full text-sm font-medium hover:bg-pink-200">Add to Cart</button>`;
                 } else {
-                    buttonHtml = `<a href="€{productUrl}" class="px-3 py-1 bg-pink-100 text-pink-700 rounded-full text-sm font-medium hover:bg-pink-200">Learn More</a>`;
+                    // FIXED: TYPO HERE € replaced with $
+                    buttonHtml = `<a href="${productUrl}" class="px-3 py-1 bg-pink-100 text-pink-700 rounded-full text-sm font-medium hover:bg-pink-200">Learn More</a>`;
                 }
 
                 html += `
