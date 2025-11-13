@@ -396,10 +396,8 @@
     const heroContainer = document.getElementById('hero-container');
     if (heroContainer) {
         new Iridescence(heroContainer, {
-            // [Red, Green, Blue]
-            // OLD: [1.0, 0.25, 0.5] (Hot Pink)
-            // NEW: [1.0, 0.55, 0.3] (Sunset Orange with soft pink glow)
-            color: [1.0, 0.55, 0.3], 
+            // Hot Pink / Orange mix: [R, G, B]
+            color: [1.0, 0.25, 0.5], 
             speed: 0.5,
             amplitude: 0.1
         });
