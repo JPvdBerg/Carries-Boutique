@@ -179,4 +179,18 @@ body {
     opacity: 0;
     position: absolute;
 }
+
+/* --- Hero Fade Effect (Removes the hard line) --- */
+#hero-container::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 150px; /* Height of the fade */
+    /* Fade from Transparent -> White */
+    background: linear-gradient(to bottom, rgba(255,255,255,0), #ffffff);
+    z-index: 5; /* Sits on top of the liquid, below the text */
+    pointer-events: none; /* Allows you to click through it */
+}
 }
