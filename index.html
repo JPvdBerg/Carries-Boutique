@@ -437,7 +437,9 @@
     const heroContainer = document.getElementById('hero-container');
     if (heroContainer) {
         new Aurora(heroContainer, {
-            colorStops: ['#ff6f91', '#ff9671', '#ffc75f']
+            // Vibrant Pink -> Bright Orange -> Deep Rose
+            colorStops: ['#FF1493', '#FF4500', '#C71585'], 
+            speed: 0.5 // You can also speed it up slightly if you want more energy
         });
     }
   </script>
