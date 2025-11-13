@@ -62,6 +62,115 @@ const initializeMeasurementToggles = () => {
 
 
 document.addEventListener('DOMContentLoaded', () => {
+	
+	// --- STEPPER LOGIC ---
+    const initStepper = () => {
+        const nextBtn = document.getElementById('nextBtn');
+        const prevBtn = document.getElementById('prevBtn');
+        const form = document.getElementById('checkout-form');
+        let currentStep = 1;
+        const totalSteps = 3;
+
+        if (!nextBtn || !form) return;
+
+        const updateUI = () => {
+            // 1. Update Slides
+            document.querySelectorAll('.step-slide').forEach((slide, index) => {
+                const stepNum = index + 1;
+                slide.classList.remove('active', 'slide-out-left');
+                
+                if (stepNum === currentStep) {
+                    slide.classList.add('active');
+                } else if (stepNum < currentStep) {
+                    slide.classList.add('slide-out-left');
+                }
+            });
+
+            // 2. Update Header (Circles & Lines)
+            document.querySelectorAll('.step-indicator').forEach(ind => {
+                const step = parseInt(ind.dataset.step);
+                ind.classList.remove('active', 'completed');
+                if (step === currentStep) ind.classList.add('active');
+                if (step < currentStep) ind.classList.add('completed');
+                
+                // Update inner text
+                const circle = ind.querySelector('.circle');
+                if (step < currentStep) {
+                    circle.innerHTML = '✓'; // Checkmark
+                } else {
+                    circle.textContent = step;
+                }
+            });
+
+            document.querySelectorAll('.step-line').forEach(line => {
+                const lineNum = parseInt(line.dataset.line);
+                if (lineNum < currentStep) {
+                    line.classList.add('active');
+                } else {
+                    line.classList.remove('active');
+                }
+            });
+
+            // 3. Update Buttons
+            if (currentStep === 1) {
+                prevBtn.classList.add('hidden');
+            } else {
+                prevBtn.classList.remove('hidden');
+            }
+
+            if (currentStep === totalSteps) {
+                nextBtn.textContent = 'Place Order';
+                nextBtn.classList.replace('bg-pink-600', 'bg-green-600');
+                nextBtn.classList.replace('hover:bg-pink-700', 'hover:bg-green-700');
+            } else {
+                nextBtn.textContent = 'Continue';
+                nextBtn.classList.replace('bg-green-600', 'bg-pink-600');
+                nextBtn.classList.replace('hover:bg-green-700', 'hover:bg-pink-700');
+            }
+        };
+
+        nextBtn.addEventListener('click', () => {
+            // Validation Logic
+            const currentSlide = document.getElementById(`slide-${currentStep}`);
+            const inputs = currentSlide.querySelectorAll('input[required]');
+            let valid = true;
+            inputs.forEach(input => {
+                if (!input.value) {
+                    valid = false;
+                    input.classList.add('border-red-500');
+                    setTimeout(() => input.classList.remove('border-red-500'), 2000);
+                }
+            });
+
+            if (!valid) {
+                showToast("Please fill in all required fields.");
+                return;
+            }
+
+            if (currentStep < totalSteps) {
+                currentStep++;
+                updateUI();
+            } else {
+                // SUBMIT FORM (Trigger the existing logic)
+                // We create a fake 'submit' event to reuse your existing code
+                const event = new Event('submit', { cancelable: true });
+                form.dispatchEvent(event);
+            }
+        });
+
+        prevBtn.addEventListener('click', () => {
+            if (currentStep > 1) {
+                currentStep--;
+                updateUI();
+            }
+        });
+    };
+
+    // Run it
+    if (document.getElementById('checkout-form')) {
+        initStepper();
+    }
+	
     let isMeasurementsLoaded = false;
     console.log("DOM Content Loaded.");
 

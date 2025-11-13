@@ -108,100 +108,113 @@
         <h1 class="text-4xl font-serif font-bold text-gray-900">Checkout</h1>
       </div>
 
-      <form id="checkout-form" class="lg:grid lg:grid-cols-3 lg:gap-12">
-        <div class="lg:col-span-2 bg-white p-6 md:p-8 rounded-lg shadow-md">
-          <div>
-            <h2 class="text-2xl font-semibold text-gray-900 mb-6">Shipping Information</h2>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <section class="py-16 bg-gray-50 min-h-screen">
+  <div class="max-w-3xl mx-auto px-4">
+    
+    <div class="stepper-container bg-white rounded-3xl shadow-xl border border-gray-200 overflow-hidden relative">
+      
+      <div class="stepper-header px-8 py-8 border-b border-gray-100 flex items-center justify-between relative">
+        <div class="step-indicator active" data-step="1">
+          <div class="circle">1</div>
+          <span class="label absolute -bottom-6 text-xs font-medium text-gray-500 w-20 text-center -ml-2">Shipping</span>
+        </div>
+        <div class="step-line" data-line="1"></div>
+        
+        <div class="step-indicator" data-step="2">
+          <div class="circle">2</div>
+          <span class="label absolute -bottom-6 text-xs font-medium text-gray-500 w-20 text-center -ml-2">Measurements</span>
+        </div>
+        <div class="step-line" data-line="2"></div>
+
+        <div class="step-indicator" data-step="3">
+          <div class="circle">3</div>
+          <span class="label absolute -bottom-6 text-xs font-medium text-gray-500 w-20 text-center -ml-2">Payment</span>
+        </div>
+      </div>
+
+      <form id="checkout-form" class="relative overflow-hidden" style="min-height: 400px;">
+        
+        <div class="step-slide active" id="slide-1">
+          <div class="p-8">
+            <h2 class="text-2xl font-serif font-bold text-gray-900 mb-6">Shipping Details</h2>
+            <div class="grid grid-cols-1 gap-4">
               <div>
-                <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
                 <input type="text" id="name" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-pink-500 focus:border-pink-500 bg-gray-100" required>
               </div>
               <div>
-                <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
                 <input type="email" id="email" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-pink-500 focus:border-pink-500 bg-gray-100" required readonly>
               </div>
-              <div class="sm:col-span-2">
-                <label for="address" class="block text-sm font-medium text-gray-700 mb-1">Street Address</label>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Street Address</label>
                 <input type="text" id="address" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-pink-500 focus:border-pink-500" required>
-              </div>
-              <div>
-                <label for="city" class="block text-sm font-medium text-gray-700 mb-1">City</label>
-                <input type="text" id="city" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-pink-500 focus:border-pink-500" required>
-              </div>
-              <div>
-                <label for="postal-code" class="block text-sm font-medium text-gray-700 mb-1">Postal Code</label>
-                <input type="text" id="postal-code" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-pink-500 focus:border-pink-500" required>
-              </div>
-            </div>
-          </div>
-
-          <div id="default-measurements-section" class="mt-12" style="display: none;">
-            <h2 class="text-2xl font-semibold text-gray-900 mb-6">Your Measurements</h2>
-            <p class="text-sm text-gray-600 mb-4">Please provide your default measurements. You can adjust these for individual custom items in the order summary.</p>
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div>
-                <label for="bust" class="block text-sm font-medium text-gray-700 mb-1">Bust (cm)</label>
-                <input type="number" id="bust" placeholder="e.g., 88" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-pink-500 focus:border-pink-500">
-              </div>
-              <div>
-                <label for="waist" class="block text-sm font-medium text-gray-700 mb-1">Waist (cm)</label>
-                <input type="number" id="waist" placeholder="e.g., 70" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-pink-500 focus:border-pink-500">
-              </div>
-              <div>
-                <label for="hips" class="block text-sm font-medium text-gray-700 mb-1">Hips (cm)</label>
-                <input type="number" id="hips" placeholder="e.g., 94" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-pink-500 focus:border-pink-500">
-              </div>
-              <div class="sm:col-span-2">
-                <label for="height" class="block text-sm font-medium text-gray-700 mb-1">Height (cm)</label>
-                <input type="number" id="height" placeholder="e.g., 165" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-pink-500 focus:border-pink-500">
-              </div>
-              <div>
-                <label for="fit" class="block text-sm font-medium text-gray-700 mb-1">Fit Preference</label>
-                <select id="fit" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-pink-500 focus:border-pink-500">
-                  <option>Snug</option>
-                  <option selected>Comfortable</option>
-                  <option>Loose</option>
-                </select>
-              </div>
-            </div>
-          </div>
-          <div class="mt-12">
-            <h2 class="text-2xl font-semibold text-gray-900 mb-6">Payment Details</h2>
-            <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-md mb-6">
-              <p class="text-yellow-800">This is a demo store. Do not enter real credit card information.</p>
-            </div>
-            <div class="grid grid-cols-1 gap-4">
-              <div>
-                <label for="card-number" class="block text-sm font-medium text-gray-700 mb-1">Card Number</label>
-                <input type="text" id="card-number" placeholder="XXXX XXXX XXXX XXXX" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-pink-500 focus:border-pink-500">
               </div>
               <div class="grid grid-cols-2 gap-4">
                 <div>
-                  <label for="expiry" class="block text-sm font-medium text-gray-700 mb-1">Expiry (MM/YY)</label>
-                  <input type="text" id="expiry" placeholder="MM/YY" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-pink-500 focus:border-pink-500">
+                  <label class="block text-sm font-medium text-gray-700 mb-1">City</label>
+                  <input type="text" id="city" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-pink-500 focus:border-pink-500" required>
                 </div>
                 <div>
-                  <label for="cvc" class="block text-sm font-medium text-gray-700 mb-1">CVC</label>
-                  <input type="text" id="cvc" placeholder="XXX" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-pink-500 focus:border-pink-500">
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Postal Code</label>
+                  <input type="text" id="postal-code" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-pink-500 focus:border-pink-500" required>
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        <div class="lg:col-span-1 mt-12 lg:mt-0">
-          <div class="bg-white p-6 md:p-8 rounded-lg shadow-md sticky top-24">
-            <h2 class="text-2xl font-semibold text-gray-900 mb-6">Your Order</h2>
-            <div id="checkout-summary" class="max-h-64 overflow-y-auto">
+        <div class="step-slide" id="slide-2">
+          <div class="p-8">
+            <h2 class="text-2xl font-serif font-bold text-gray-900 mb-6">Your Measurements</h2>
+            <p class="text-sm text-gray-600 mb-4">These will be applied as defaults for custom items.</p>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div><label class="block text-sm font-medium text-gray-700 mb-1">Bust (cm)</label><input type="number" id="bust" class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
+              <div><label class="block text-sm font-medium text-gray-700 mb-1">Waist (cm)</label><input type="number" id="waist" class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
+              <div><label class="block text-sm font-medium text-gray-700 mb-1">Hips (cm)</label><input type="number" id="hips" class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
+              <div class="sm:col-span-3 grid grid-cols-2 gap-4">
+                  <div><label class="block text-sm font-medium text-gray-700 mb-1">Height (cm)</label><input type="number" id="height" class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Fit Preference</label>
+                    <select id="fit" class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+                      <option>Snug</option><option selected>Comfortable</option><option>Loose</option>
+                    </select>
+                  </div>
               </div>
-
-            <button type="submit" class="mt-8 w-full inline-flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-full text-white bg-pink-600 hover:bg-pink-700">
-              Place Order
-            </button>
+            </div>
           </div>
         </div>
+
+        <div class="step-slide" id="slide-3">
+          <div class="p-8">
+            <h2 class="text-2xl font-serif font-bold text-gray-900 mb-4">Review & Pay</h2>
+            
+            <div id="checkout-summary" class="bg-gray-50 p-4 rounded-lg mb-6 max-h-48 overflow-y-auto border border-gray-200">
+                </div>
+
+            <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-md mb-6">
+              <p class="text-yellow-800 text-sm">Demo Store: No real payment required.</p>
+            </div>
+            <div class="grid grid-cols-1 gap-4 opacity-50 pointer-events-none select-none">
+               <input type="text" placeholder="Card Number (Disabled)" class="w-full px-4 py-2 border rounded-lg bg-gray-100">
+            </div>
+          </div>
+        </div>
+
       </form>
+
+      <div class="stepper-footer px-8 py-6 bg-gray-50 border-t border-gray-100 flex justify-between items-center">
+        <button type="button" id="prevBtn" class="text-gray-400 hover:text-gray-600 font-medium transition hidden">
+          Back
+        </button>
+        <button type="button" id="nextBtn" class="bg-pink-600 text-white px-8 py-3 rounded-full font-medium hover:bg-pink-700 transition shadow-lg shadow-pink-200">
+          Continue
+        </button>
+      </div>
+
+    </div>
+  </div>
+</section>
     </div>
   </section>
 

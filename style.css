@@ -106,4 +106,77 @@ body {
     display: block;
     vertical-align: bottom;
     pointer-events: none; /* Allows clicking text sitting on top */
+	
+	
+
+/* --- STEPPER CSS --- */
+.stepper-container {
+    transition: height 0.3s ease;
+}
+
+.step-indicator {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    background-color: #e5e7eb; /* Gray-200 */
+    color: #9ca3af;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    z-index: 10;
+    transition: all 0.3s ease;
+}
+
+.step-indicator.active {
+    background-color: #db2777; /* Pink-600 */
+    color: white;
+    transform: scale(1.1);
+    box-shadow: 0 0 0 4px rgba(219, 39, 119, 0.2);
+}
+
+.step-indicator.completed {
+    background-color: #db2777;
+    color: white;
+}
+
+.step-line {
+    flex: 1;
+    height: 2px;
+    background-color: #e5e7eb;
+    margin: 0 10px;
+    transition: background-color 0.4s ease;
+}
+
+.step-line.active {
+    background-color: #db2777;
+}
+
+/* Sliding Logic */
+.step-slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    opacity: 0;
+    transform: translateX(100%);
+    transition: all 0.4s ease-in-out;
+    pointer-events: none;
+    visibility: hidden;
+}
+
+.step-slide.active {
+    position: relative;
+    opacity: 1;
+    transform: translateX(0);
+    pointer-events: auto;
+    visibility: visible;
+}
+
+/* Slide out to left */
+.step-slide.slide-out-left {
+    transform: translateX(-100%);
+    opacity: 0;
+    position: absolute;
+}
 }
