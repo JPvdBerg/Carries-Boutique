@@ -418,7 +418,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 <h4 class="font-medium text-sm md:text-base">${item.name}</h4>
                                 ${itemTypeBadge}
                               </div>
-                              <p class="text-xs text-gray-600 mt-1">Size: <span class="font-semibold">${itemSize}</span> &bull; Qty: ${item.quantity}</p>
+                              <p class="text-xs text-gray-600 mt-1">Current Size: <span class="font-semibold">${itemSize}</span></p>
                             </div>
                           </div>
                           <p class="font-bold text-sm md:text-base whitespace-nowrap">R${(item.price * item.quantity).toFixed(2)}</p>
