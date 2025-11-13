@@ -1,13 +1,35 @@
-/* =========================================
-   CUSTOM STYLES (Paste at the bottom)
-   ========================================= */
+/* --------------------------------------------------------------------------
+   1. TAILWIND CSS (DO NOT DELETE THE CODE ALREADY IN YOUR FILE)
+   It looks like: /*! tailwindcss v3.0.0 | MIT License ...
+   -------------------------------------------------------------------------- */
+
+/* ... (Keep your existing minified Tailwind code here) ... */
+
+
+
+/* ==========================================================================
+   2. CUSTOM STYLES (PASTE THIS AT THE VERY BOTTOM)
+   ========================================================================== */
 
 /* --- Global Settings --- */
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: 'Inter', sans-serif; color: #333; background-color: #faf9f7; overflow-x: hidden; }
+* { 
+    box-sizing: border-box; 
+    margin: 0; 
+    padding: 0; 
+}
+
+body { 
+    font-family: 'Inter', sans-serif; 
+    color: #333; 
+    background-color: #faf9f7; 
+    overflow-x: hidden; 
+}
 
 /* --- Navigation Links (Underline Animation) --- */
-.nav-link { position: relative; }
+.nav-link { 
+    position: relative; 
+}
+
 .nav-link::after { 
     content: ''; 
     position: absolute; 
@@ -18,18 +40,36 @@ body { font-family: 'Inter', sans-serif; color: #333; background-color: #faf9f7;
     background-color: #b93e65; 
     transition: width 0.3s ease; 
 }
-.nav-link:hover::after { width: 100%; }
 
-/* --- Product Cards (Hover Lift) --- */
-.product-card { transition: transform 0.3s ease, box-shadow 0.3s ease; }
-.product-card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.1); }
+.nav-link:hover::after { 
+    width: 100%; 
+}
 
-/* --- WhatsApp Button --- */
-.whatsapp-btn { background: linear-gradient(135deg, #25D366, #1ebe5a); transition: all 0.3s ease; }
-.whatsapp-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(37, 211, 102, 0.3); }
+/* --- Product Cards (Hover Lift Effect) --- */
+.product-card { 
+    transition: transform 0.3s ease, box-shadow 0.3s ease; 
+}
 
-/* --- Footer Links --- */
-.footer-link:hover { color: #b93e65; }
+.product-card:hover { 
+    transform: translateY(-5px); 
+    box-shadow: 0 15px 30px rgba(0,0,0,0.1); 
+}
+
+/* --- WhatsApp Button Gradient --- */
+.whatsapp-btn { 
+    background: linear-gradient(135deg, #25D366, #1ebe5a); 
+    transition: all 0.3s ease; 
+}
+
+.whatsapp-btn:hover { 
+    transform: translateY(-2px); 
+    box-shadow: 0 10px 20px rgba(37, 211, 102, 0.3); 
+}
+
+/* --- Footer Links Hover Color --- */
+.footer-link:hover { 
+    color: #b93e65; 
+}
 
 /* --- Scroll Down Arrow Animation --- */
 .scroll-down { 
@@ -41,21 +81,29 @@ body { font-family: 'Inter', sans-serif; color: #333; background-color: #faf9f7;
     font-size: 1.5rem; 
     animation: bounce 2s infinite; 
     cursor: pointer; 
-    z-index: 20;
+    z-index: 20; /* Ensures it sits above the Aurora background */
 }
 
 @keyframes bounce { 
-    0%, 20%, 50%, 80%, 100% {transform: translateX(-50%) translateY(0);} 
-    40% {transform: translateX(-50%) translateY(-20px);} 
-    60% {transform: translateX(-50%) translateY(-10px);} 
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateX(-50%) translateY(0);
+    } 
+    40% {
+        transform: translateX(-50%) translateY(-20px);
+    } 
+    60% {
+        transform: translateX(-50%) translateY(-10px);
+    } 
 }
 
 /* --- Aurora Background Container --- */
 #hero-container {
-    position: relative;
-    background-color: #111827; /* Fallback dark color */
+    position: relative; /* Critical for containing the absolute canvas */
+    background-color: #111827; /* Fallback dark color if JS fails */
 }
+
 #hero-container canvas {
     display: block;
     vertical-align: bottom;
+    pointer-events: none; /* Allows clicking text sitting on top */
 }
