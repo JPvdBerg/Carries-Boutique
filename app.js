@@ -64,68 +64,60 @@ const initializeMeasurementToggles = () => {
 document.addEventListener('DOMContentLoaded', () => {
 	
 	// --- STEPPER LOGIC ---
+    // --- STEPPER LOGIC (FIXED) ---
     const initStepper = () => {
         const nextBtn = document.getElementById('nextBtn');
         const prevBtn = document.getElementById('prevBtn');
         const form = document.getElementById('checkout-form');
+        
+        // 1. Count steps dynamically based on HTML
+        const slides = document.querySelectorAll('.step-slide');
+        const totalSteps = slides.length; 
         let currentStep = 1;
-        const totalSteps = 3;
 
         if (!nextBtn || !form) return;
 
         const updateUI = () => {
-            // 1. Update Slides
-            document.querySelectorAll('.step-slide').forEach((slide, index) => {
+            // Update Slides
+            slides.forEach((slide, index) => {
                 const stepNum = index + 1;
                 slide.classList.remove('active', 'slide-out-left');
-                
-                if (stepNum === currentStep) {
-                    slide.classList.add('active');
-                } else if (stepNum < currentStep) {
-                    slide.classList.add('slide-out-left');
-                }
+                if (stepNum === currentStep) slide.classList.add('active');
+                else if (stepNum < currentStep) slide.classList.add('slide-out-left');
             });
 
-            // 2. Update Header (Circles & Lines)
+            // Update Circles
             document.querySelectorAll('.step-indicator').forEach(ind => {
                 const step = parseInt(ind.dataset.step);
                 ind.classList.remove('active', 'completed');
                 if (step === currentStep) ind.classList.add('active');
                 if (step < currentStep) ind.classList.add('completed');
                 
-                // Update inner text
                 const circle = ind.querySelector('.circle');
-                if (step < currentStep) {
-                    circle.innerHTML = '✓'; // Checkmark
-                } else {
-                    circle.textContent = step;
-                }
+                if (step < currentStep) circle.innerHTML = '✓';
+                else circle.textContent = step;
             });
 
+            // Update Lines
             document.querySelectorAll('.step-line').forEach(line => {
                 const lineNum = parseInt(line.dataset.line);
-                if (lineNum < currentStep) {
-                    line.classList.add('active');
-                } else {
-                    line.classList.remove('active');
-                }
+                if (lineNum < currentStep) line.classList.add('active');
+                else line.classList.remove('active');
             });
 
-            // 3. Update Buttons
-            if (currentStep === 1) {
-                prevBtn.classList.add('hidden');
-            } else {
-                prevBtn.classList.remove('hidden');
-            }
+            // Update Buttons
+            if (currentStep === 1) prevBtn.classList.add('hidden');
+            else prevBtn.classList.remove('hidden');
 
+            // 2. FORCE Button Text & Color
             if (currentStep === totalSteps) {
                 nextBtn.textContent = 'Place Order';
-                nextBtn.classList.replace('bg-pink-600', 'bg-green-600');
-                nextBtn.classList.replace('hover:bg-pink-700', 'hover:bg-green-700');
+                nextBtn.classList.remove('bg-pink-600', 'hover:bg-pink-700');
+                nextBtn.classList.add('bg-green-600', 'hover:bg-green-700');
             } else {
                 nextBtn.textContent = 'Continue';
-                nextBtn.classList.replace('bg-green-600', 'bg-pink-600');
-                nextBtn.classList.replace('hover:bg-green-700', 'hover:bg-pink-700');
+                nextBtn.classList.remove('bg-green-600', 'hover:bg-green-700');
+                nextBtn.classList.add('bg-pink-600', 'hover:bg-pink-700');
             }
         };
 
@@ -151,10 +143,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 currentStep++;
                 updateUI();
             } else {
-                // SUBMIT FORM (Trigger the existing logic)
-                // We create a fake 'submit' event to reuse your existing code
-                const event = new Event('submit', { cancelable: true });
-                form.dispatchEvent(event);
+                // 3. Submit Form
+                form.dispatchEvent(new Event('submit', { cancelable: true }));
             }
         });
 
@@ -164,6 +154,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 updateUI();
             }
         });
+        
+        // Run once on load
+        updateUI();
     };
 
     // Run it
@@ -671,7 +664,8 @@ document.addEventListener('DOMContentLoaded', () => {
         checkoutForm.addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            const submitButton = checkoutForm.querySelector('button[type="submit"]');
+            // Look for the submit button OR the stepper next button
+const submitButton = checkoutForm.querySelector('button[type="submit"]') || document.getElementById('nextBtn');
             if (submitButton) {
                 submitButton.disabled = true;
                 submitButton.textContent = 'Processing...';

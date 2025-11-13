@@ -294,7 +294,7 @@
         constructor(container, options = {}) {
             this.container = container;
             // Using your Hot Pink / Orange vibe: [R, G, B]
-            this.color = options.color || [1.0, 0.2, 0.6]; 
+            this.color = options.color || [1.0, 0.55, 0.3]; 
             this.speed = options.speed || 1.0;
             this.amplitude = options.amplitude || 0.1;
             this.mouseReact = options.mouseReact !== undefined ? options.mouseReact : true;
@@ -344,7 +344,7 @@
 
             this.mesh = new Mesh(this.gl, { geometry, program: this.program });
             
-            // Call resize after program is created
+            // IMPORTANT: Call resize AFTER program is created to avoid the crash
             this.resize();
 
             if (this.mouseReact) {
@@ -377,18 +377,16 @@
         }
 
         resize() {
-            if (!this.container) return;
+            if (!this.container || !this.program) return;
             const width = this.container.offsetWidth;
             const height = this.container.offsetHeight;
             this.renderer.setSize(width, height);
             
-            if (this.program) {
-                this.program.uniforms.uResolution.value = new Color(
-                    this.gl.canvas.width,
-                    this.gl.canvas.height,
-                    this.gl.canvas.width / this.gl.canvas.height
-                );
-            }
+            this.program.uniforms.uResolution.value = new Color(
+                this.gl.canvas.width,
+                this.gl.canvas.height,
+                this.gl.canvas.width / this.gl.canvas.height
+            );
         }
     }
 
@@ -396,8 +394,8 @@
     const heroContainer = document.getElementById('hero-container');
     if (heroContainer) {
         new Iridescence(heroContainer, {
-            // Hot Pink / Orange mix: [R, G, B]
-            color: [1.0, 0.25, 0.5], 
+            // WARM ORANGE/PINK MIX
+            color: [1.0, 0.55, 0.3], 
             speed: 0.5,
             amplitude: 0.1
         });

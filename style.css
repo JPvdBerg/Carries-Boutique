@@ -179,4 +179,17 @@ body {
     opacity: 0;
     position: absolute;
 }
+
+/* Paste this at the bottom of style.css */
+#hero-container::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 150px; /* The height of the fade */
+    background: linear-gradient(to bottom, rgba(255,255,255,0), #ffffff); /* Transparent to White */
+    z-index: 5;
+    pointer-events: none;
+}
 }
