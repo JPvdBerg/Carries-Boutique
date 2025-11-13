@@ -349,6 +349,7 @@
     
     void main() {
       vec2 uv = gl_FragCoord.xy / uResolution;
+      
       vec3 c1 = uColorStops[0];
       vec3 c2 = uColorStops[1];
       vec3 c3 = uColorStops[2];
@@ -358,10 +359,17 @@
 
       float height = snoise(vec2(uv.x * 2.0 + uTime * 0.1, uTime * 0.25)) * 0.5 * uAmplitude;
       height = exp(height);
-      height = (uv.y * 2.0 - height + 0.2);
-      float intensity = 0.6 * height;
+      
+      // --- CHANGED THIS LINE BELOW ---
+      // Changed multiplier from 2.0 to 1.1 (Stretches vertically)
+      // Changed offset from +0.2 to -0.1 (Moves the bulk higher up)
+      height = (uv.y * 1.1 - height - 0.1); 
+      
+      float intensity = 0.8 * height; // Increased brightness
+      
       float midPoint = 0.20;
       float auroraAlpha = smoothstep(midPoint - uBlend * 0.5, midPoint + uBlend * 0.5, intensity);
+      
       vec3 auroraColor = intensity * rampColor;
       fragColor = vec4(auroraColor * auroraAlpha, auroraAlpha);
     }
