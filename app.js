@@ -1289,4 +1289,112 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (typeof feather !== 'undefined') feather.replace();
 
+
+	// --- LOAD ORDER HISTORY FUNCTION ---
+    async function loadOrderHistory(userId) {
+        const container = document.getElementById('order-history-list');
+        if (!container) return;
+
+        const db = firebase.firestore();
+        // Show a loading spinner initially
+        container.innerHTML = '<div class="text-center py-8"><p class="mt-2 text-gray-500">Loading your orders...</p></div>';
+
+        try {
+            // NOTE: This specific query (where + orderBy) requires a Firestore Index.
+            // If this fails, open your browser console (F12) and click the link in the error message!
+            const snapshot = await db.collection('orders')
+                .where('userId', '==', userId)
+                .orderBy('order_date', 'desc')
+                .get();
+
+            if (snapshot.empty) {
+                container.innerHTML = `
+                    <div class="text-center py-8 border-2 border-dashed border-gray-200 rounded-lg">
+                        <i data-feather="shopping-bag" class="mx-auto h-12 w-12 text-gray-400"></i>
+                        <h3 class="mt-2 text-sm font-medium text-gray-900">No orders yet</h3>
+                        <p class="mt-1 text-sm text-gray-500">Start shopping to see your orders here.</p>
+                        <div class="mt-6">
+                            <a href="shop.html" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-pink-600 hover:bg-pink-700">
+                                Start Shopping
+                            </a>
+                        </div>
+                    </div>`;
+                if (typeof feather !== 'undefined') feather.replace();
+                return;
+            }
+
+            let html = '';
+            snapshot.forEach(doc => {
+                const order = doc.data();
+                // Handle date conversion safely
+                const date = order.order_date && order.order_date.toDate ? 
+                             order.order_date.toDate().toLocaleDateString() : 'Processing Date';
+                
+                // Calculate total safely
+                const cartTotal = order.cart ? order.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0) : 0;
+                const total = cartTotal + 50; // Adding standard shipping
+                
+                // Determine status badge color
+                let statusColor = 'bg-gray-100 text-gray-800'; // Default/Pending
+                if (order.status === 'Completed') statusColor = 'bg-green-100 text-green-800';
+                if (order.status === 'Shipped') statusColor = 'bg-blue-100 text-blue-800';
+                if (order.status === 'Cancelled') statusColor = 'bg-red-100 text-red-800';
+
+                html += `
+                <div class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden mb-6 transition hover:shadow-md">
+                    <div class="bg-gray-50 px-4 py-3 border-b border-gray-200 flex flex-wrap items-center justify-between sm:px-6">
+                        <div class="flex space-x-4">
+                            <div>
+                                <p class="text-xs font-medium text-gray-500 uppercase">Placed</p>
+                                <p class="text-sm font-bold text-gray-900">${date}</p>
+                            </div>
+                            <div>
+                                <p class="text-xs font-medium text-gray-500 uppercase">Order ID</p>
+                                <p class="text-sm font-bold text-gray-900">#${doc.id.slice(0, 8)}...</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-4 mt-2 sm:mt-0">
+                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusColor}">
+                                ${order.status || 'Pending'}
+                            </span>
+                             <a href="confirmation.html?orderId=${doc.id}" class="text-pink-600 hover:text-pink-800 text-sm font-medium hover:underline">View Details</a>
+                        </div>
+                    </div>
+                    <div class="px-4 py-4 sm:px-6">
+                        <ul class="-my-4 divide-y divide-gray-200">
+                            ${order.cart.map(item => `
+                                <li class="flex py-4">
+                                    <div class="h-12 w-12 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
+                                        <img src="${item.image}" alt="${item.name}" class="h-full w-full object-cover object-center">
+                                    </div>
+                                    <div class="ml-4 flex-1">
+                                        <div class="flex justify-between text-sm font-medium text-gray-900">
+                                            <h3>${item.name}</h3>
+                                            <p>R${(item.price * item.quantity).toFixed(2)}</p>
+                                        </div>
+                                        <p class="text-xs text-gray-500">Size: ${item.size} | Qty: ${item.quantity}</p>
+                                    </div>
+                                </li>
+                            `).join('')}
+                        </ul>
+                    </div>
+                    <div class="bg-gray-50 px-4 py-3 sm:px-6 flex justify-between items-center border-t border-gray-200">
+                         <p class="text-sm font-medium text-gray-500">Shipping: R50.00</p>
+                         <p class="text-base font-bold text-gray-900">Total: R${total.toFixed(2)}</p>
+                    </div>
+                </div>
+                `;
+            });
+            container.innerHTML = html;
+        } catch (error) {
+            console.error("Error loading order history:", error);
+            // Special handling for the common "Missing Index" error
+            if (error.code === 'failed-precondition') {
+                 container.innerHTML = '<p class="text-red-500 p-4 border border-red-200 rounded bg-red-50">Admin Action Required: Database Index Missing. Check browser console for the creation link.</p>';
+            } else {
+                 container.innerHTML = '<p class="text-red-500">Could not load order history. Please try again later.</p>';
+            }
+        }
+    }
+	
 });
