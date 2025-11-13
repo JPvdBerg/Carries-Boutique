@@ -192,4 +192,17 @@ body {
     z-index: 5;
     pointer-events: none;
 }
+
+/* Re-add this to style.css if missing */
+.hero-gradient {
+    background: linear-gradient(135deg, #ff6f91, #ff9671, #ffc75f);
+    background-size: 200% 200%;
+    animation: gradientShift 10s ease infinite;
+}
+
+@keyframes gradientShift { 
+    0% { background-position: 0% 50%; } 
+    50% { background-position: 100% 50%; } 
+    100% { background-position: 0% 50%; } 
+}
 }
