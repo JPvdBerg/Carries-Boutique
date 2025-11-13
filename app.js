@@ -219,7 +219,7 @@ document.addEventListener('DOMContentLoaded', () => {
         cartItemsContainer.innerHTML = '';
 
         if (cart.length === 0) {
-            cartItemsContainer.innerHTML = '<p class="text-gray-500">Your cart is empty. <a href="shop.html" class="text-pink-600 hover:underline">Start shopping!</a></p>';
+            cartItemsContainer.innerHTML = '<div class="text-center py-10"><div class="bg-gray-50 rounded-full h-20 w-20 flex items-center justify-center mx-auto mb-4"><i data-feather="shopping-cart" class="text-gray-400 w-10 h-10"></i></div><p class="text-gray-500 mb-4">Your cart is empty.</p><a href="shop.html" class="inline-block bg-pink-600 text-white px-6 py-2 rounded-full hover:bg-pink-700 transition">Start Shopping</a></div>';
             if (cartSummaryContainer) cartSummaryContainer.classList.add('hidden');
             return;
         }
@@ -233,29 +233,40 @@ document.addEventListener('DOMContentLoaded', () => {
             const uniqueItemId = item.cartItemId || item.id; 
             const itemSize = item.size || 'undefined'; 
 
+            // --- NEW MOBILE-FRIENDLY LAYOUT ---
             const itemHtml = `
-              <div class="flex items-center justify-between py-4 border-b">
-                <div class="flex items-center space-x-4">
-                  <img src="${item.image}" alt="${item.name}" class="w-16 h-16 md:w-20 md:h-20 object-cover rounded-lg">
-                  <div>
-                    <h3 class="text-base md:text-lg font-medium text-gray-900">${item.name}</h3>
-                    <p class="text-sm text-gray-600 font-medium">Size: ${itemSize}</p>
-                    <p class="text-sm text-gray-500">R${item.price.toFixed(2)}</p>
-                  </div>
+              <div class="py-6 border-b border-gray-100 flex gap-4 animate-fade-in">
+                <img src="${item.image}" alt="${item.name}" class="w-24 h-32 object-cover rounded-md shadow-sm flex-shrink-0">
+                
+                <div class="flex-1 flex flex-col justify-between">
+                    
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h3 class="font-serif font-bold text-gray-900 text-lg leading-tight">${item.name}</h3>
+                            <p class="text-sm text-gray-500 mt-1">Size: <span class="font-medium text-gray-700">${itemSize}</span></p>
+                        </div>
+                        <button class="text-gray-400 hover:text-red-500 p-2 -mr-2 transition-colors" onclick="removeFromCart('${uniqueItemId}')" title="Remove Item">
+                            <i data-feather="trash-2" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+
+                    <div class="flex justify-between items-end mt-2">
+                        <div class="flex items-center bg-gray-50 border border-gray-200 rounded-full">
+                            <button class="px-3 py-1 text-gray-600 hover:bg-gray-200 hover:text-pink-600 rounded-l-full transition" onclick="updateCartQuantity('${uniqueItemId}', ${item.quantity - 1})">
+                                <i data-feather="minus" class="w-3 h-3"></i>
+                            </button>
+                            <span class="w-8 text-center text-sm font-semibold text-gray-900">${item.quantity}</span>
+                            <button class="px-3 py-1 text-gray-600 hover:bg-gray-200 hover:text-pink-600 rounded-r-full transition" onclick="updateCartQuantity('${uniqueItemId}', ${item.quantity + 1})">
+                                <i data-feather="plus" class="w-3 h-3"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="text-right">
+                             <p class="text-xs text-gray-400 mb-0.5">R${item.price.toFixed(0)} each</p>
+                             <p class="font-bold text-gray-900 text-lg">R${(item.price * item.quantity).toFixed(2)}</p>
+                        </div>
+                    </div>
                 </div>
-                <div class="flex items-center space-x-1 md:space-x-3">
-                  <button class="p-1 rounded-full text-gray-500 hover:bg-gray-200" onclick="updateCartQuantity('${uniqueItemId}', ${item.quantity - 1})">
-                    <i data-feather="minus" class="w-4 h-4"></i>
-                  </button>
-                  <span class="w-8 text-center text-sm md:text-base">${item.quantity}</span>
-                  <button class="p-1 rounded-full text-gray-500 hover:bg-gray-200" onclick="updateCartQuantity('${uniqueItemId}', ${item.quantity + 1})">
-                    <i data-feather="plus" class="w-4 h-4"></i>
-                  </button>
-                </div>
-                <p class="text-base md:text-lg font-semibold text-gray-900">R${(item.price * item.quantity).toFixed(2)}</p>
-                <button class="text-red-500 hover:text-red-700" onclick="removeFromCart('${uniqueItemId}')">
-                  <i data-feather="trash-2" class="w-4 h-4 md:w-5 md:h-5"></i>
-                </button>
               </div>
             `;
             cartItemsContainer.innerHTML += itemHtml;
