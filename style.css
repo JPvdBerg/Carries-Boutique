@@ -1,15 +1,6 @@
-/* --------------------------------------------------------------------------
-   1. TAILWIND CSS (DO NOT DELETE THE CODE ALREADY IN YOUR FILE)
-   It looks like: /*! tailwindcss v3.0.0 | MIT License ...
-   -------------------------------------------------------------------------- */
-
-/* ... (Keep your existing minified Tailwind code here) ... */
-
-
-
-/* ==========================================================================
-   2. CUSTOM STYLES (PASTE THIS AT THE VERY BOTTOM)
-   ========================================================================== */
+/* =========================================
+   CARRIES BOUTIQUE - CUSTOM STYLES
+   ========================================= */
 
 /* --- Global Settings --- */
 * { 
@@ -81,119 +72,41 @@ body {
     font-size: 1.5rem; 
     animation: bounce 2s infinite; 
     cursor: pointer; 
-    z-index: 20; /* Ensures it sits above the Aurora background */
+    z-index: 20; 
 }
 
 @keyframes bounce { 
-    0%, 20%, 50%, 80%, 100% {
-        transform: translateX(-50%) translateY(0);
-    } 
-    40% {
-        transform: translateX(-50%) translateY(-20px);
-    } 
-    60% {
-        transform: translateX(-50%) translateY(-10px);
-    } 
+    0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); } 
+    40% { transform: translateX(-50%) translateY(-20px); } 
+    60% { transform: translateX(-50%) translateY(-10px); } 
 }
 
-/* --- Aurora Background Container --- */
+/* --- Aurora/Liquid Hero Container --- */
 #hero-container {
-    position: relative; /* Critical for containing the absolute canvas */
-    background-color: #111827; /* Fallback dark color if JS fails */
+    position: relative; 
+    background-color: #111827; /* Fallback color */
 }
 
 #hero-container canvas {
     display: block;
     vertical-align: bottom;
-    pointer-events: none; /* Allows clicking text sitting on top */
-	
-	
-
-/* --- STEPPER CSS --- */
-.stepper-container {
-    transition: height 0.3s ease;
+    pointer-events: none; 
 }
 
-.step-indicator {
-    width: 2.5rem;
-    height: 2.5rem;
-    border-radius: 50%;
-    background-color: #e5e7eb; /* Gray-200 */
-    color: #9ca3af;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 600;
-    z-index: 10;
-    transition: all 0.3s ease;
-}
-
-.step-indicator.active {
-    background-color: #db2777; /* Pink-600 */
-    color: white;
-    transform: scale(1.1);
-    box-shadow: 0 0 0 4px rgba(219, 39, 119, 0.2);
-}
-
-.step-indicator.completed {
-    background-color: #db2777;
-    color: white;
-}
-
-.step-line {
-    flex: 1;
-    height: 2px;
-    background-color: #e5e7eb;
-    margin: 0 10px;
-    transition: background-color 0.4s ease;
-}
-
-.step-line.active {
-    background-color: #db2777;
-}
-
-/* Sliding Logic */
-.step-slide {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    opacity: 0;
-    transform: translateX(100%);
-    transition: all 0.4s ease-in-out;
-    pointer-events: none;
-    visibility: hidden;
-}
-
-.step-slide.active {
-    position: relative;
-    opacity: 1;
-    transform: translateX(0);
-    pointer-events: auto;
-    visibility: visible;
-}
-
-/* Slide out to left */
-.step-slide.slide-out-left {
-    transform: translateX(-100%);
-    opacity: 0;
-    position: absolute;
-}
-
-/* Paste this at the bottom of style.css */
+/* --- Hero Fade Effect (Smooth blend at bottom) --- */
 #hero-container::after {
     content: '';
     position: absolute;
     bottom: 0;
     left: 0;
     width: 100%;
-    height: 150px; /* The height of the fade */
-    background: linear-gradient(to bottom, rgba(255,255,255,0), #ffffff); /* Transparent to White */
+    height: 150px; 
+    background: linear-gradient(to bottom, rgba(255,255,255,0), #ffffff); 
     z-index: 5;
     pointer-events: none;
 }
 
-/* Re-add this to style.css if missing */
+/* --- Fallback Gradient (If JS Animation fails) --- */
 .hero-gradient {
     background: linear-gradient(135deg, #ff6f91, #ff9671, #ffc75f);
     background-size: 200% 200%;
@@ -206,19 +119,20 @@ body {
     100% { background-position: 0% 50%; } 
 }
 
-/* --- STEPPER ANIMATION STYLES --- */
+/* =========================================
+   STEPPER ANIMATION (CHECKOUT)
+   ========================================= */
 
-/* The container for the form */
 .stepper-container {
     transition: height 0.3s ease;
 }
 
-/* The Circles (1, 2, 3) */
+/* Step Circles */
 .step-indicator {
     width: 2.5rem;
     height: 2.5rem;
     border-radius: 50%;
-    background-color: #e5e7eb; /* Gray-200 */
+    background-color: #e5e7eb;
     color: #9ca3af;
     display: flex;
     align-items: center;
@@ -241,7 +155,7 @@ body {
     color: white;
 }
 
-/* The Lines connecting the circles */
+/* Connecting Lines */
 .step-line {
     flex: 1;
     height: 2px;
@@ -254,34 +168,29 @@ body {
     background-color: #db2777;
 }
 
-/* --- CRITICAL: HIDE/SHOW LOGIC --- */
-
-/* By default, hide everything and push it off-screen */
+/* Sliding Form Logic */
 .step-slide {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     opacity: 0;
-    transform: translateX(100%); /* Start to the right */
+    transform: translateX(100%);
     transition: all 0.4s ease-in-out;
     pointer-events: none;
     visibility: hidden;
 }
 
-/* When active, show it and give it space */
 .step-slide.active {
-    position: relative; /* Allows it to take up height */
+    position: relative;
     opacity: 1;
     transform: translateX(0);
     pointer-events: auto;
     visibility: visible;
 }
 
-/* When done, slide it to the left */
 .step-slide.slide-out-left {
     transform: translateX(-100%);
     opacity: 0;
     position: absolute;
-}
 }
