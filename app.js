@@ -163,19 +163,6 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     window.addToCart = (productId, productName, price, image, size) => {
-        /**
-     * Creates a unique ID for a cart item based on its product ID and size.
-     * e.g., 'prod_001_M'
-     */
-    const createCartItemId = (productId, size) => {
-        if (!size) {
-            console.error("Size is undefined, defaulting to 'default'");
-            size = 'default'; // Failsafe, but should be provided
-        }
-        return `${productId}_${size}`;
-    };
-
-    window.addToCart = (productId, productName, price, image, size) => {
         if (!size) {
             // This case handles the "Custom" styles which don't have S,M,L
             if (productName.toLowerCase().includes('custom')) {
@@ -189,9 +176,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const cart = getCart();
         const cartItemId = createCartItemId(productId, size);
         
-        // --- FIX 1: Correctly find existing item and remove misplaced line ---
-        const existingItem = cart.find(item => item.cartItemId === cartItemId); 
-        // const summaryItems = document.querySelectorAll('#checkout-summary div[data-cart-item-id]'); // REMOVED
+        const existingItem = cart.find(item => item.cartItemId === cartItemId);
 
         if (existingItem) {
             existingItem.quantity += 1;
@@ -352,7 +337,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- =================================== ---
     // --- CHECKOUT SUMMARY RENDERER (UPDATED) ---
     // --- =================================== ---
-
     const renderCheckoutSummary = () => {
         const summaryContainer = document.getElementById('checkout-summary');
         if (!summaryContainer) return; 
@@ -383,126 +367,148 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // --- Hybrid Logic: Break Cart into individual item units for rendering ---
-        let allItemUnits = [];
-        cart.forEach(item => {
-            for (let i = 0; i < item.quantity; i++) {
-                // Generate a unique ID for this specific UNIT
-                const unitId = `${item.cartItemId}_unit_${i}`; 
-                // Retain baseCartItemId for quantity changes (retail) or submission grouping
-                allItemUnits.push({ 
-                    ...item, 
-                    unitId: unitId, 
-                    basePrice: item.price,
-                    // Use the original cartItemId as the base reference for retail logic
-                    baseCartItemId: item.cartItemId 
-                });
-            }
-        });
+        // --- PHASE 1 & 2: Render Hybrid Items ---
 
-        allItemUnits.forEach((item, unitIndex) => {
-            const cartItemUniqueId = item.unitId; 
-            const itemSize = item.size || 'undefined';
-            subtotal += item.basePrice; 
-            
+        cart.forEach((item) => {
             const isRetail = item.size !== 'Custom';
-            let itemOptionsHtml = '';
-            let itemTypeBadge = '';
             
-            // --- Retail vs. Custom Logic Starts Here ---
-            
+            // 1. RETAIL ITEM RENDERING (Aggregated + Size Selector)
             if (isRetail) {
-                 // --- RETAIL SIZE SELECTOR (Rendered on each unit) ---
-                 const allRetailSizes = ['S', 'M', 'L', 'XL'];
-                 // Use the base ID for updating the aggregated cart item
-                 const baseCartItemId = item.baseCartItemId;
-                 const productData = `'${item.id}', '${item.name.replace(/'/g, "\\'")}', ${item.price}, '${item.image}'`;
+                const cartItemUniqueId = item.cartItemId; 
+                const itemSize = item.size || 'undefined';
+                subtotal += item.price * item.quantity;
+                
+                const allRetailSizes = ['S', 'M', 'L', 'XL'];
+                const productData = `'${item.id}', '${item.name.replace(/'/g, "\\'")}', ${item.price}, '${item.image}'`;
 
-                 const sizeOptionsHtml = allRetailSizes.map(size => {
-                     const isSelected = size === itemSize;
-                     return `
+                const sizeOptionsHtml = allRetailSizes.map(size => {
+                    const isSelected = size === itemSize;
+                    return `
                         <button 
-                            onclick="updateCartVariant('${baseCartItemId}', '${size}', ${productData})" 
+                            onclick="updateCartVariant('${cartItemUniqueId}', '${size}', ${productData})" 
                             class="size-btn px-3 py-1 text-sm rounded-lg border transition-colors 
                             ${isSelected ? 'bg-pink-600 text-white border-pink-600' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}">
                             ${size}
                         </button>
-                     `;
-                 }).join('');
+                    `;
+                }).join('');
+                
+                const itemTypeBadge = `<span class="px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">Retail</span>`;
 
-                 itemOptionsHtml = `
-                    <div class="mt-3 pt-3 border-t border-gray-100">
-                        <p class="font-medium text-sm text-gray-700 mb-2">Change Size:</p>
-                        <div class="flex space-x-2">
-                           ${sizeOptionsHtml}
+                const retailHtml = `
+                    <div class="py-4 border-b" data-cart-item-id="${cartItemUniqueId}" data-base-cart-id="${cartItemUniqueId}">
+                        <div class="flex justify-between items-start">
+                            <div class="flex items-start space-x-3 w-4/5">
+                                <img src="${item.image}" alt="${item.name}" class="w-12 h-12 object-cover rounded-lg flex-shrink-0">
+                                <div>
+                                    <h4 class="font-medium text-sm md:text-base">${item.name}</h4>
+                                    ${itemTypeBadge}
+                                    <p class="text-xs text-gray-600 mt-1">Qty: ${item.quantity} &bull; Current Size: <span class="font-semibold">${itemSize}</span></p>
+                                </div>
+                            </div>
+                            <p class="font-bold text-sm md:text-base whitespace-nowrap">R${(item.price * item.quantity).toFixed(2)}</p>
+                        </div>
+                        <div class="mt-3 pt-3 border-t border-gray-100">
+                            <p class="font-medium text-sm text-gray-700 mb-2">Change Size (For All ${item.quantity} Units):</p>
+                            <div class="flex space-x-2">${sizeOptionsHtml}</div>
                         </div>
                     </div>
-                 `;
-                 itemTypeBadge = `<span class="px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">Retail</span>`;
-            
-            } else {
-                // --- CUSTOM MEASUREMENT TOGGLE (For each custom unit) ---
-                itemOptionsHtml = `
-                <div class="mt-3 pt-2 border-t border-gray-100" data-measurement-toggle>
-                  <h5 class="text-xs font-semibold text-gray-800 mb-2">Unit ${unitIndex + 1} Measurements</h5>
-                  <div class="flex flex-col space-y-2">
-                    <label class="flex items-center text-sm">
-                      <input type="radio" name="measurements-option-${cartItemUniqueId}" value="default" class="mr-2 focus:ring-pink-500 text-pink-600 measurement-radio" checked>
-                      Use Default Account Sizes
-                    </label>
-                    <label class="flex items-center text-sm">
-                      <input type="radio" name="measurements-option-${cartItemUniqueId}" value="specific" class="mr-2 focus:ring-pink-500 text-pink-600 measurement-radio">
-                      Specify for This Unit
-                    </label>
-                  </div>
-                  
-                  <div id="specific-measurements-${cartItemUniqueId}" class="hidden mt-3 p-3 bg-gray-50 rounded-md">
-                    <div class="grid grid-cols-2 gap-2">
-                      <div>
-                        <label for="bust-${cartItemUniqueId}" class="block text-xs font-medium text-gray-600">Bust (cm)</label>
-                        <input type="number" id="bust-${cartItemUniqueId}" placeholder="cm" class="w-full text-sm mt-1 px-2 py-1 border border-gray-300 rounded-md specific-bust">
-                      </div>
-                      <div>
-                        <label for="waist-${cartItemUniqueId}" class="block text-xs font-medium text-gray-600">Waist (cm)</label>
-                        <input type="number" id="waist-${cartItemUniqueId}" placeholder="cm" class="w-full text-sm mt-1 px-2 py-1 border border-gray-300 rounded-md specific-waist">
-                      </div>
-                      <div>
-                        <label for="hips-${cartItemUniqueId}" class="block text-xs font-medium text-gray-600">Hips (cm)</label>
-                        <input type="number" id="hips-${cartItemUniqueId}" placeholder="cm" class="w-full text-sm mt-1 px-2 py-1 border border-gray-300 rounded-md specific-hips">
-                      </div>
-                      <div>
-                        <label for="height-${cartItemUniqueId}" class="block text-xs font-medium text-gray-600">Height (cm)</label>
-                        <input type="number" id="height-${cartItemUniqueId}" placeholder="cm" class="w-full text-sm mt-1 px-2 py-1 border border-gray-300 rounded-md specific-height">
-                      </div>
-                    </div>
-                  </div>
-                </div>
                 `;
-                itemTypeBadge = `<span class="px-2 py-0.5 rounded-full text-xs font-medium bg-pink-100 text-pink-800">Custom Style</span>`;
-            }
+                summaryContainer.innerHTML += retailHtml;
+            } 
             
-            // --- FINAL RENDER HTML ---
-            const itemHtml = `
-              <div class="py-4 ${unitIndex < allItemUnits.length - 1 ? 'border-b' : ''}" data-cart-item-id="${cartItemUniqueId}" data-base-cart-id="${item.baseCartItemId}">
-                <div class="flex justify-between items-start">
-                  <div class="flex items-start space-x-3 w-4/5">
-                    <img src="${item.image}" alt="${item.name}" class="w-12 h-12 object-cover rounded-lg flex-shrink-0">
-                    <div>
-                      <div class="flex flex-col items-start space-y-1">
-                        <h4 class="font-medium text-sm md:text-base">${item.name}</h4>
-                        ${itemTypeBadge}
-                      </div>
-                      <p class="text-xs text-gray-600 mt-1">Current Size: <span class="font-semibold">${itemSize}</span></p>
-                    </div>
-                  </div>
-                  <p class="font-bold text-sm md:text-base whitespace-nowrap">R${item.basePrice.toFixed(2)}</p>
-                </div>
-                
-                ${itemOptionsHtml}
-              </div>
-            `;
-            summaryContainer.innerHTML += itemHtml;
-        }); // --- END allItemUnits.forEach ---
+            // 2. CUSTOM ITEM RENDERING (Individual Units + Measurement Toggles)
+            else {
+                // Custom items must be broken down by quantity
+                for (let unitIndex = 0; unitIndex < item.quantity; unitIndex++) {
+                    const unitId = `${item.cartItemId}_unit_${unitIndex}`; // Unique ID for EACH unit
+                    subtotal += item.price; // Add unit price
+                    
+                    const itemTypeBadge = `<span class="px-2 py-0.5 rounded-full text-xs font-medium bg-pink-100 text-pink-800">Custom Style</span>`;
+                    
+                    const customUnitHtml = `
+                        <div class="py-4 border-b" data-cart-item-id="${unitId}" data-base-cart-id="${item.cartItemId}">
+                            <div class="flex justify-between items-start">
+                                <div class="flex items-start space-x-3 w-4/5">
+                                    <img src="${item.image}" alt="${item.name}" class="w-12 h-12 object-cover rounded-lg flex-shrink-0">
+                                    <div>
+                                        <h4 class="font-medium text-sm md:text-base">${item.name}</h4>
+                                        ${itemTypeBadge}
+                                        <p class="text-xs text-gray-600 mt-1">Unit ${unitIndex + 1} &bull; Current Size: <span class="font-semibold">${itemSize}</span></p>
+                                    </div>
+                                </div>
+                                <p class="font-bold text-sm md:text-base whitespace-nowrap">R${item.price.toFixed(2)}</p>
+                            </div>
+                            <div class="mt-3 pt-2 border-t border-gray-100" data-measurement-toggle>
+                                <h5 class="text-xs font-semibold text-gray-800 mb-2">Unit ${unitIndex + 1} Measurements</h5>
+                                <div class="flex flex-col space-y-2">
+                                    <label class="flex items-center text-sm">
+                                        <input type="radio" name="measurements-option-${unitId}" value="default" class="mr-2 focus:ring-pink-500 text-pink-600 measurement-radio" checked>
+                                        Use Default Account Sizes
+                                    </label>
+                                    <label class="flex items-center text-sm">
+                                        <input type="radio" name="measurements-option-${unitId}" value="specific" class="mr-2 focus:ring-pink-500 text-pink-600 measurement-radio">
+                                        Specify for This Unit
+                                    </label>
+                                </div>
+                                
+                                <div id="specific-measurements-${unitId}" class="hidden mt-3 p-3 bg-gray-50 rounded-md">
+                                    <div class="grid grid-cols-2 gap-2">
+                                        <div><label for="bust-${unitId}" class="block text-xs font-medium text-gray-600">Bust (cm)</label><input type="number" id="bust-${unitId}" placeholder="cm" class="w-full text-sm mt-1 px-2 py-1 border border-gray-300 rounded-md specific-bust"></div>
+                                        <div><label for="waist-${unitId}" class="block text-xs font-medium text-gray-600">Waist (cm)</label><input type="number" id="waist-${unitId}" placeholder="cm" class="w-full text-sm mt-1 px-2 py-1 border border-gray-300 rounded-md specific-waist"></div>
+                                        <div><label for="hips-${unitId}" class="block text-xs font-medium text-gray-600">Hips (cm)</label><input type="number" id="hips-${unitId}" placeholder="cm" class="w-full text-sm mt-1 px-2 py-1 border border-gray-300 rounded-md specific-hips"></div>
+                                        <div><label for="height-${unitId}" class="block text-xs font-medium text-gray-600">Height (cm)</label><input type="number" id="height-${unitId}" placeholder="cm" class="w-full text-sm mt-1 px-2 py-1 border border-gray-300 rounded-md specific-height"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    summaryContainer.innerHTML += customUnitHtml;
+                } // End Custom Unit Loop
+            }
+        }); // END Main Cart Aggregation Loop
+
+        const shipping = 50.00;
+        const total = subtotal + shipping;
+
+        const summaryTotalHtml = `
+          <div class="py-3 space-y-2 border-b">
+            <div class="flex justify-between text-sm md:text-base">
+              <p class="text-gray-600">Subtotal</p>
+              <p class="font-medium">R${subtotal.toFixed(2)}</p>
+            </div>
+            <div class="flex justify-between text-sm md:text-base">
+              <p class="text-gray-600">Shipping</p>
+              <p class="font-medium">R${shipping.toFixed(2)}</p>
+            </div>
+          </div>
+          <div class="py-4 flex justify-between text-base md:text-lg font-bold">
+            <p>Total</p>
+            <p>R${total.toFixed(2)}</p>
+          </div>
+        `;
+        summaryContainer.innerHTML += summaryTotalHtml;
+        
+        // --- NEW: Initialize measurement toggles after rendering HTML ---
+        initializeMeasurementToggles();
+        
+        // Enable/Disable Place Order Button
+        const placeOrderBtn = document.querySelector('#checkout-form button[type="submit"]');
+        if (placeOrderBtn) {
+            const user = firebase.auth().currentUser;
+            
+            if (cart.length === 0) {
+                placeOrderBtn.disabled = true;
+                placeOrderBtn.textContent = 'Place Order';
+            } else if (user && !user.isAnonymous && !isMeasurementsLoaded) {
+                // Only wait for measurements if it's a logged in user
+                placeOrderBtn.disabled = true;
+                placeOrderBtn.textContent = 'Loading Measurements...';
+            } else {
+                placeOrderBtn.disabled = false;
+                placeOrderBtn.textContent = 'Place Order';
+            }
+        }
     };
 
     // --- EVENT HANDLER FOR CHECKOUT MEASUREMENT TOGGLES ---
@@ -582,20 +588,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 fit: document.getElementById('fit')?.value,
             };
 
-            // 3. Process each rendered unit (Retail items don't need unit-level submission, Custom items do)
+            // 3. Process measurements for each rendered unit on the page
             const cart = getCart();
             const processedCartUnits = [];
-            const summaryItems = document.querySelectorAll('#checkout-summary div[data-cart-item-id]');
+            const summaryItems = document.querySelectorAll('#checkout-summary [data-cart-item-id]');
             
             let allMeasurementsValid = true;
 
             // Loop through each rendered item unit for processing
             for (let i = 0; i < summaryItems.length; i++) {
                 const itemElement = summaryItems[i];
-                const cartItemUniqueId = itemElement.dataset.cartItemId;
-                const baseCartItemId = itemElement.dataset.baseCartId;
+                const cartItemUniqueId = itemElement.dataset.cartItemId; // The unit ID (e.g., prod_001_Custom_1)
+                const baseCartItemId = itemElement.dataset.baseCartId; // The aggregated cart ID (e.g., prod_001_Custom)
                 
-                // Find the original aggregated item data from the cart using the base ID
+                // Find the original item data from the cart using the base ID
                 const originalItem = cart.find(cartItem => cartItem.cartItemId === baseCartItemId);
                 
                 if (!originalItem) {
@@ -612,7 +618,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     price: originalItem.price,
                     image: originalItem.image,
                     size: originalItem.size,
-                    quantity: 1, // Quantity is always 1 for a unit
+                    quantity: 1, // Quantity is always 1 for a unit submission
                     measurements: null
                 };
 
@@ -656,12 +662,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         processedUnit.measurements = { type: 'specific', ...specificMeasurements };
                     }
                 }
-                
-                // For Retail Items (which are still aggregated): 
-                // We submit them as individual units with the aggregated size.
-                // The item.quantity will only be > 1 for the original aggregated item.
-                // Since we broke down the Custom items, the logic works.
-                
+                // Retail items submitted here retain their original size (S/M/L)
                 processedCartUnits.push(processedUnit);
             }
 
@@ -673,7 +674,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // 4. Basic Form Validation
+            // 4. Basic Form Validation (check using processedCartUnits)
             if (!customerInfo.email || !customerInfo.name || !customerInfo.address || !customerInfo.city || !customerInfo.postalCode || processedCartUnits.length === 0) {
                 alert('Please fill out all shipping fields and ensure your cart is not empty.');
                 if (submitButton) {
@@ -683,7 +684,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
             
-            // 5. Save Final Data to Firestore
+            // 5. Save Final Data to Firestore (sending the list of individual units)
             try {
                 const db = firebase.firestore();
                 const orderData = { 
