@@ -1,52 +1,27 @@
-const functions = require("firebase-functions");
+const {onDocumentCreated} = require("firebase-functions/v2/firestore");
 const admin = require("firebase-admin");
-const nodemailer = require("nodemailer");
 
 admin.initializeApp();
 
-// 1. Configure the email transporter
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    // Read these values from the secure server config
-    user: functions.config().email.user,
-    pass: functions.config().email.pass,
-  },
-});
+// Trigger: Runs automatically when a new document is added to "orders" collection
+exports.processOrder = onDocumentCreated("orders/{orderId}", async (event) => {
+    const snapshot = event.data;
+    if (!snapshot) return;
 
-// 2. The Cloud Function: Listens for new orders
-exports.sendOrderConfirmation = functions.firestore
-  .document("orders/{orderId}")
-  .onCreate(async (snapshot, context) => {
-    const orderData = snapshot.data();
-    const customerEmail = orderData.customer.email;
-    const items = orderData.cart;
+    const order = snapshot.data();
+    const orderId = event.params.orderId;
 
-    // Build email HTML
-    const itemsHtml = items.map(item => 
-      `<li>${item.quantity}x ${item.name} (${item.size}) - R${item.price}</li>`
-    ).join("");
+    // Prevent infinite loops
+    if (order.processed) return;
 
-    const totalCost = items.reduce((sum, item) => sum + (item.price * item.quantity), 0) + 50;
+    console.log(`New order received! ID: ${orderId}, Customer: ${order.customer.name}`);
 
-    const mailOptions = {
-      // UPDATE: Use the same email here so it matches the auth user above
-      from: '"Carries Boutique" <drunknine323@gmail.com>',
-      to: customerEmail,
-      subject: `Order Confirmation: #${snapshot.id}`,
-      html: `
-        <h2>Thank you for your order!</h2>
-        <h3>Order #${snapshot.id}</h3>
-        <ul>${itemsHtml}</ul>
-        <p><strong>Total: R${totalCost.toFixed(2)}</strong></p>
-        <p>We will notify you when it ships.</p>
-      `,
-    };
-
+    // Here you could add other logic later (like inventory deduction)
+    // For now, just mark it as processed so we know the server saw it.
+    
     try {
-      await transporter.sendMail(mailOptions);
-      console.log(`Email sent to ${customerEmail}`);
+        return snapshot.ref.update({ processed: true });
     } catch (error) {
-      console.error("Error sending email:", error);
+        console.error("Error marking order as processed:", error);
     }
-  });
+});

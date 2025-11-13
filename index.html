@@ -360,13 +360,12 @@
       float height = snoise(vec2(uv.x * 2.0 + uTime * 0.1, uTime * 0.25)) * 0.5 * uAmplitude;
       height = exp(height);
       
-      // --- CHANGED THIS LINE BELOW ---
-      // Changed multiplier from 2.0 to 1.1 (Stretches vertically)
-      // Changed offset from +0.2 to -0.1 (Moves the bulk higher up)
-      height = (uv.y * 1.1 - height - 0.1); 
+      // --- FIX IS HERE ---
+      // 2.0 keeps the wave shape tight (not blurry)
+      // -0.2 moves the whole wave UP towards the logo
+      height = (uv.y * 2.0 - height - 0.2);
       
-      float intensity = 0.8 * height; // Increased brightness
-      
+      float intensity = 0.6 * height;
       float midPoint = 0.20;
       float auroraAlpha = smoothstep(midPoint - uBlend * 0.5, midPoint + uBlend * 0.5, intensity);
       
@@ -445,9 +444,9 @@
     const heroContainer = document.getElementById('hero-container');
     if (heroContainer) {
         new Aurora(heroContainer, {
-            // Vibrant Pink -> Bright Orange -> Deep Rose
-            colorStops: ['#FF1493', '#FF4500', '#C71585'], 
-            speed: 0.5 // You can also speed it up slightly if you want more energy
+            // Bright Pink -> Vibrant Orange -> Hot Pink
+            colorStops: ['#ff0080', '#ff8c00', '#ff0080'], 
+            speed: 0.5
         });
     }
   </script>

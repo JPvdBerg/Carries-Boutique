@@ -1,0 +1,395 @@
+[debug] [2025-11-13T13:07:22.855Z] ----------------------------------------------------------------------
+[debug] [2025-11-13T13:07:22.858Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\drunk\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js deploy --only functions,firestore
+[debug] [2025-11-13T13:07:22.858Z] CLI Version:   14.24.2
+[debug] [2025-11-13T13:07:22.858Z] Platform:      win32
+[debug] [2025-11-13T13:07:22.858Z] Node Version:  v22.21.0
+[debug] [2025-11-13T13:07:22.859Z] Time:          Thu Nov 13 2025 15:07:22 GMT+0200 (South Africa Standard Time)
+[debug] [2025-11-13T13:07:22.859Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2025-11-13T13:07:23.148Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2025-11-13T13:07:23.149Z] > authorizing via signed-in user (drunknine323@gmail.com)
+[debug] [2025-11-13T13:07:23.149Z] [iam] checking project carries-boutique for permissions ["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","datastore.indexes.create","datastore.indexes.delete","datastore.indexes.list","datastore.indexes.update","firebase.projects.get"]
+[debug] [2025-11-13T13:07:23.150Z] Checked if tokens are valid: true, expires at: 1763041898362
+[debug] [2025-11-13T13:07:23.151Z] Checked if tokens are valid: true, expires at: 1763041898362
+[debug] [2025-11-13T13:07:23.152Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/carries-boutique:testIamPermissions [none]
+[debug] [2025-11-13T13:07:23.152Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/carries-boutique:testIamPermissions x-goog-quota-user=projects/carries-boutique
+[debug] [2025-11-13T13:07:23.152Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/carries-boutique:testIamPermissions {"permissions":["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","datastore.indexes.create","datastore.indexes.delete","datastore.indexes.list","datastore.indexes.update","firebase.projects.get"]}
+[debug] [2025-11-13T13:07:24.960Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/carries-boutique:testIamPermissions 200
+[debug] [2025-11-13T13:07:24.960Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/carries-boutique:testIamPermissions {"permissions":["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","datastore.indexes.create","datastore.indexes.delete","datastore.indexes.list","datastore.indexes.update","firebase.projects.get"]}
+[debug] [2025-11-13T13:07:24.961Z] Checked if tokens are valid: true, expires at: 1763041898362
+[debug] [2025-11-13T13:07:24.961Z] Checked if tokens are valid: true, expires at: 1763041898362
+[debug] [2025-11-13T13:07:24.961Z] >>> [apiv2][query] POST https://iam.googleapis.com/v1/projects/carries-boutique/serviceAccounts/carries-boutique@appspot.gserviceaccount.com:testIamPermissions [none]
+[debug] [2025-11-13T13:07:24.961Z] >>> [apiv2][body] POST https://iam.googleapis.com/v1/projects/carries-boutique/serviceAccounts/carries-boutique@appspot.gserviceaccount.com:testIamPermissions {"permissions":["iam.serviceAccounts.actAs"]}
+[debug] [2025-11-13T13:07:26.743Z] <<< [apiv2][status] POST https://iam.googleapis.com/v1/projects/carries-boutique/serviceAccounts/carries-boutique@appspot.gserviceaccount.com:testIamPermissions 200
+[debug] [2025-11-13T13:07:26.744Z] <<< [apiv2][body] POST https://iam.googleapis.com/v1/projects/carries-boutique/serviceAccounts/carries-boutique@appspot.gserviceaccount.com:testIamPermissions {"permissions":["iam.serviceAccounts.actAs"]}
+[info] 
+[info] === Deploying to 'carries-boutique'...
+[info] 
+[info] i  deploying firestore, functions 
+[info] i  firestore: ensuring required API firestore.googleapis.com is enabled... 
+[info] i  firestore: ensuring required API firestore.googleapis.com is enabled... 
+[debug] [2025-11-13T13:07:26.748Z] Checked if tokens are valid: true, expires at: 1763041898362
+[debug] [2025-11-13T13:07:26.748Z] Checked if tokens are valid: true, expires at: 1763041898362
+[debug] [2025-11-13T13:07:26.748Z] >>> [apiv2][query] GET https://firestore.googleapis.com/v1/projects/carries-boutique/databases/(default) [none]
+[debug] [2025-11-13T13:07:27.329Z] <<< [apiv2][status] GET https://firestore.googleapis.com/v1/projects/carries-boutique/databases/(default) 200
+[debug] [2025-11-13T13:07:27.329Z] <<< [apiv2][body] GET https://firestore.googleapis.com/v1/projects/carries-boutique/databases/(default) {"name":"projects/carries-boutique/databases/(default)","uid":"3f8d690c-b790-4ad1-af6b-90fb5f45cb50","createTime":"2025-11-08T12:57:17.146567Z","updateTime":"2025-11-08T12:57:17.146567Z","locationId":"africa-south1","type":"FIRESTORE_NATIVE","concurrencyMode":"PESSIMISTIC","versionRetentionPeriod":"3600s","earliestVersionTime":"2025-11-13T12:07:27.639107Z","appEngineIntegrationMode":"DISABLED","pointInTimeRecoveryEnablement":"POINT_IN_TIME_RECOVERY_DISABLED","deleteProtectionState":"DELETE_PROTECTION_DISABLED","databaseEdition":"STANDARD","freeTier":false,"realtimeUpdatesMode":"REALTIME_UPDATES_MODE_ENABLED","etag":"ILPB0oCZ75ADMMGx3P797JAD"}
+[info] i  firestore: reading indexes from firestore.indexes.json... 
+[info] i  cloud.firestore: checking firestore.rules for compilation errors... 
+[debug] [2025-11-13T13:07:27.331Z] Checked if tokens are valid: true, expires at: 1763041898362
+[debug] [2025-11-13T13:07:27.331Z] Checked if tokens are valid: true, expires at: 1763041898362
+[debug] [2025-11-13T13:07:27.331Z] >>> [apiv2][query] POST https://firebaserules.googleapis.com/v1/projects/carries-boutique:test [none]
+[debug] [2025-11-13T13:07:27.331Z] >>> [apiv2][body] POST https://firebaserules.googleapis.com/v1/projects/carries-boutique:test [omitted]
+[debug] [2025-11-13T13:07:28.533Z] <<< [apiv2][status] POST https://firebaserules.googleapis.com/v1/projects/carries-boutique:test 200
+[debug] [2025-11-13T13:07:28.533Z] <<< [apiv2][body] POST https://firebaserules.googleapis.com/v1/projects/carries-boutique:test {}
+[info] +  cloud.firestore: rules file firestore.rules compiled successfully 
+[debug] [2025-11-13T13:07:28.534Z] Checked if tokens are valid: true, expires at: 1763041898362
+[debug] [2025-11-13T13:07:28.535Z] Checked if tokens are valid: true, expires at: 1763041898362
+[debug] [2025-11-13T13:07:28.535Z] >>> [apiv2][query] GET https://cloudresourcemanager.googleapis.com/v1/projects/carries-boutique [none]
+[debug] [2025-11-13T13:07:28.857Z] <<< [apiv2][status] GET https://cloudresourcemanager.googleapis.com/v1/projects/carries-boutique 200
+[debug] [2025-11-13T13:07:28.857Z] <<< [apiv2][body] GET https://cloudresourcemanager.googleapis.com/v1/projects/carries-boutique {"projectNumber":"512525813635","projectId":"carries-boutique","lifecycleState":"ACTIVE","name":"Carries-Boutique","labels":{"firebase":"enabled","firebase-core":"disabled"},"createTime":"2025-10-27T13:19:12.960447Z"}
+[info] i  functions: preparing codebase default for deployment 
+[info] i  functions: ensuring required API cloudfunctions.googleapis.com is enabled... 
+[info] i  functions: ensuring required API cloudbuild.googleapis.com is enabled... 
+[info] i  artifactregistry: ensuring required API artifactregistry.googleapis.com is enabled... 
+[debug] [2025-11-13T13:07:28.860Z] Checked if tokens are valid: true, expires at: 1763041898362
+[debug] [2025-11-13T13:07:28.860Z] Checked if tokens are valid: true, expires at: 1763041898362
+[debug] [2025-11-13T13:07:28.861Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/carries-boutique/adminSdkConfig [none]
+[debug] [2025-11-13T13:07:29.701Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/carries-boutique/adminSdkConfig 200
+[debug] [2025-11-13T13:07:29.701Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/carries-boutique/adminSdkConfig {"projectId":"carries-boutique","storageBucket":"carries-boutique.firebasestorage.app"}
+[debug] [2025-11-13T13:07:29.701Z] Checked if tokens are valid: true, expires at: 1763041898362
+[debug] [2025-11-13T13:07:29.701Z] Checked if tokens are valid: true, expires at: 1763041898362
+[debug] [2025-11-13T13:07:29.701Z] >>> [apiv2][query] GET https://runtimeconfig.googleapis.com/v1beta1/projects/carries-boutique/configs [none]
+[debug] [2025-11-13T13:07:30.947Z] <<< [apiv2][status] GET https://runtimeconfig.googleapis.com/v1beta1/projects/carries-boutique/configs 200
+[debug] [2025-11-13T13:07:30.947Z] <<< [apiv2][body] GET https://runtimeconfig.googleapis.com/v1beta1/projects/carries-boutique/configs {"configs":[{"name":"projects/carries-boutique/configs/email"},{"name":"projects/carries-boutique/configs/sendgrid"}]}
+[debug] [2025-11-13T13:07:30.947Z] Checked if tokens are valid: true, expires at: 1763041898362
+[debug] [2025-11-13T13:07:30.947Z] Checked if tokens are valid: true, expires at: 1763041898362
+[debug] [2025-11-13T13:07:30.947Z] Checked if tokens are valid: true, expires at: 1763041898362
+[debug] [2025-11-13T13:07:30.947Z] Checked if tokens are valid: true, expires at: 1763041898362
+[debug] [2025-11-13T13:07:30.947Z] >>> [apiv2][query] GET https://runtimeconfig.googleapis.com/v1beta1/projects/carries-boutique/configs/email/variables [none]
+[debug] [2025-11-13T13:07:30.948Z] >>> [apiv2][query] GET https://runtimeconfig.googleapis.com/v1beta1/projects/carries-boutique/configs/sendgrid/variables [none]
+[debug] [2025-11-13T13:07:31.411Z] <<< [apiv2][status] GET https://runtimeconfig.googleapis.com/v1beta1/projects/carries-boutique/configs/email/variables 200
+[debug] [2025-11-13T13:07:31.411Z] <<< [apiv2][body] GET https://runtimeconfig.googleapis.com/v1beta1/projects/carries-boutique/configs/email/variables {"variables":[{"name":"projects/carries-boutique/configs/email/variables/pass","updateTime":"2025-11-12T17:10:53.073479630Z"},{"name":"projects/carries-boutique/configs/email/variables/user","updateTime":"2025-11-12T17:10:53.089497721Z"}]}
+[debug] [2025-11-13T13:07:31.412Z] Checked if tokens are valid: true, expires at: 1763041898362
+[debug] [2025-11-13T13:07:31.412Z] Checked if tokens are valid: true, expires at: 1763041898362
+[debug] [2025-11-13T13:07:31.412Z] Checked if tokens are valid: true, expires at: 1763041898362
+[debug] [2025-11-13T13:07:31.412Z] Checked if tokens are valid: true, expires at: 1763041898362
+[debug] [2025-11-13T13:07:31.412Z] >>> [apiv2][query] GET https://runtimeconfig.googleapis.com/v1beta1/projects/carries-boutique/configs/email/variables/pass [none]
+[debug] [2025-11-13T13:07:31.412Z] >>> [apiv2][query] GET https://runtimeconfig.googleapis.com/v1beta1/projects/carries-boutique/configs/email/variables/user [none]
+[debug] [2025-11-13T13:07:31.464Z] <<< [apiv2][status] GET https://runtimeconfig.googleapis.com/v1beta1/projects/carries-boutique/configs/sendgrid/variables 200
+[debug] [2025-11-13T13:07:31.465Z] <<< [apiv2][body] GET https://runtimeconfig.googleapis.com/v1beta1/projects/carries-boutique/configs/sendgrid/variables {"variables":[{"name":"projects/carries-boutique/configs/sendgrid/variables/key","updateTime":"2025-11-05T09:32:25.056190313Z"}]}
+[debug] [2025-11-13T13:07:31.465Z] Checked if tokens are valid: true, expires at: 1763041898362
+[debug] [2025-11-13T13:07:31.465Z] Checked if tokens are valid: true, expires at: 1763041898362
+[debug] [2025-11-13T13:07:31.465Z] >>> [apiv2][query] GET https://runtimeconfig.googleapis.com/v1beta1/projects/carries-boutique/configs/sendgrid/variables/key [none]
+[debug] [2025-11-13T13:07:31.806Z] <<< [apiv2][status] GET https://runtimeconfig.googleapis.com/v1beta1/projects/carries-boutique/configs/sendgrid/variables/key 200
+[debug] [2025-11-13T13:07:31.806Z] <<< [apiv2][body] GET https://runtimeconfig.googleapis.com/v1beta1/projects/carries-boutique/configs/sendgrid/variables/key {"name":"projects/carries-boutique/configs/sendgrid/variables/key","updateTime":"2025-11-05T09:32:25.056190313Z","text":"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"}
+[debug] [2025-11-13T13:07:32.255Z] <<< [apiv2][status] GET https://runtimeconfig.googleapis.com/v1beta1/projects/carries-boutique/configs/email/variables/pass 200
+[debug] [2025-11-13T13:07:32.255Z] <<< [apiv2][body] GET https://runtimeconfig.googleapis.com/v1beta1/projects/carries-boutique/configs/email/variables/pass {"name":"projects/carries-boutique/configs/email/variables/pass","updateTime":"2025-11-12T17:10:53.073479630Z","text":"rfzbznxqevwfktwo"}
+[debug] [2025-11-13T13:07:32.479Z] <<< [apiv2][status] GET https://runtimeconfig.googleapis.com/v1beta1/projects/carries-boutique/configs/email/variables/user 200
+[debug] [2025-11-13T13:07:32.480Z] <<< [apiv2][body] GET https://runtimeconfig.googleapis.com/v1beta1/projects/carries-boutique/configs/email/variables/user {"name":"projects/carries-boutique/configs/email/variables/user","updateTime":"2025-11-12T17:10:53.089497721Z","text":"drunknine323@gmail.com"}
+[debug] [2025-11-13T13:07:32.481Z] Validating nodejs source
+[warn] !  functions: package.json indicates an outdated version of firebase-functions. Please upgrade using npm install --save firebase-functions@latest in your functions directory. 
+[warn] !  functions: Please note that there will be breaking changes when you upgrade. 
+[debug] [2025-11-13T13:07:33.354Z] > [functions] package.json contents: {
+  "name": "functions",
+  "description": "Cloud Functions for Firebase",
+  "scripts": {
+    "serve": "firebase emulators:start --only functions",
+    "shell": "firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "22"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "firebase-admin": "^12.6.0",
+    "firebase-functions": "^4.9.0",
+    "nodemailer": "^7.0.10"
+  },
+  "devDependencies": {
+    "firebase-functions-test": "^3.1.0"
+  },
+  "private": true
+}
+[debug] [2025-11-13T13:07:33.354Z] Building nodejs source
+[info] i  functions: Loading and analyzing source code for codebase default to determine what to deploy 
+[info] i  functions: You are using a version of firebase-functions SDK (4.9.0) that does not have support for the newest Firebase Extensions features. Please update firebase-functions SDK to >=5.1.0 to use them correctly 
+[debug] [2025-11-13T13:07:33.355Z] Could not find functions.yaml. Must use http discovery
+[debug] [2025-11-13T13:07:33.364Z] Found firebase-functions binary at 'C:\Users\drunk\Documents\GitHub\Carries-Boutique\functions\node_modules\.bin\firebase-functions'
+[info] Serving at port 8563
+
+[debug] [2025-11-13T13:07:34.002Z] Got response from /__/functions.yaml {"endpoints":{"processOrder":{"availableMemoryMb":null,"timeoutSeconds":null,"minInstances":null,"maxInstances":null,"ingressSettings":null,"concurrency":null,"serviceAccountEmail":null,"vpc":null,"platform":"gcfv2","labels":{},"eventTrigger":{"eventType":"google.cloud.firestore.document.v1.created","eventFilters":{"database":"(default)","namespace":"(default)"},"eventFilterPathPatterns":{"document":"orders/{orderId}"},"retry":false},"entryPoint":"processOrder"}},"specVersion":"v1alpha1","requiredAPIs":[]}
+[info] i  functions: preparing functions directory for uploading... 
+[info] i  functions: packaged C:\Users\drunk\Documents\GitHub\Carries-Boutique\functions (68.65 KB) for uploading 
+[debug] [2025-11-13T13:07:38.081Z] Checked if tokens are valid: true, expires at: 1763041898362
+[debug] [2025-11-13T13:07:38.081Z] Checked if tokens are valid: true, expires at: 1763041898362
+[debug] [2025-11-13T13:07:38.081Z] >>> [apiv2][query] GET https://cloudfunctions.googleapis.com/v1/projects/carries-boutique/locations/-/functions [none]
+[debug] [2025-11-13T13:07:39.120Z] <<< [apiv2][status] GET https://cloudfunctions.googleapis.com/v1/projects/carries-boutique/locations/-/functions 200
+[debug] [2025-11-13T13:07:39.120Z] <<< [apiv2][body] GET https://cloudfunctions.googleapis.com/v1/projects/carries-boutique/locations/-/functions {"functions":[{"name":"projects/carries-boutique/locations/us-central1/functions/sendOrderConfirmation","eventTrigger":{"eventType":"providers/cloud.firestore/eventTypes/document.create","resource":"projects/carries-boutique/databases/(default)/documents/orders/{orderId}","service":"firestore.googleapis.com","failurePolicy":{}},"status":"ACTIVE","entryPoint":"sendOrderConfirmation","timeout":"60s","availableMemoryMb":256,"serviceAccountEmail":"carries-boutique@appspot.gserviceaccount.com","updateTime":"2025-11-12T17:12:40.303Z","versionId":"6","labels":{"deployment-tool":"cli-firebase","firebase-functions-hash":"c49efb82eb2ed0cb51d1d44798b9a642a598dfc2"},"sourceUploadUrl":"https://storage.googleapis.com/uploads-1055721223383.us-central1.cloudfunctions.appspot.com/211939d0-e868-4ed4-9306-9d6a6308ca8a.zip","environmentVariables":{"FIREBASE_CONFIG":"{\"projectId\":\"carries-boutique\",\"storageBucket\":\"carries-boutique.firebasestorage.app\"}","GCLOUD_PROJECT":"carries-boutique","EVENTARC_CLOUD_EVENT_SOURCE":"projects/carries-boutique/locations/us-central1/functions/sendOrderConfirmation"},"runtime":"nodejs22","maxInstances":3000,"ingressSettings":"ALLOW_ALL","buildId":"57026f74-3832-4fb1-ab0d-685504b594a4","buildEnvironmentVariables":{"GOOGLE_NODE_RUN_SCRIPTS":""},"buildName":"projects/512525813635/locations/us-central1/builds/57026f74-3832-4fb1-ab0d-685504b594a4","dockerRegistry":"ARTIFACT_REGISTRY","automaticUpdatePolicy":{},"buildServiceAccount":"projects/carries-boutique/serviceAccounts/512525813635-compute@developer.gserviceaccount.com","satisfiesPzi":true}]}
+[debug] [2025-11-13T13:07:39.121Z] Checked if tokens are valid: true, expires at: 1763041898362
+[debug] [2025-11-13T13:07:39.121Z] Checked if tokens are valid: true, expires at: 1763041898362
+[debug] [2025-11-13T13:07:39.121Z] >>> [apiv2][query] GET https://cloudfunctions.googleapis.com/v2/projects/carries-boutique/locations/-/functions filter=environment%3D%22GEN_2%22
+[debug] [2025-11-13T13:07:40.298Z] <<< [apiv2][status] GET https://cloudfunctions.googleapis.com/v2/projects/carries-boutique/locations/-/functions 200
+[debug] [2025-11-13T13:07:40.298Z] <<< [apiv2][body] GET https://cloudfunctions.googleapis.com/v2/projects/carries-boutique/locations/-/functions {}
+[debug] [2025-11-13T13:07:40.299Z] Checked if tokens are valid: true, expires at: 1763041898362
+[debug] [2025-11-13T13:07:40.299Z] Checked if tokens are valid: true, expires at: 1763041898362
+[debug] [2025-11-13T13:07:40.299Z] >>> [apiv2][query] GET https://firestore.googleapis.com/v1/projects/carries-boutique/databases/(default) [none]
+[debug] [2025-11-13T13:07:40.536Z] <<< [apiv2][status] GET https://firestore.googleapis.com/v1/projects/carries-boutique/databases/(default) 200
+[debug] [2025-11-13T13:07:40.537Z] <<< [apiv2][body] GET https://firestore.googleapis.com/v1/projects/carries-boutique/databases/(default) {"name":"projects/carries-boutique/databases/(default)","uid":"3f8d690c-b790-4ad1-af6b-90fb5f45cb50","createTime":"2025-11-08T12:57:17.146567Z","updateTime":"2025-11-08T12:57:17.146567Z","locationId":"africa-south1","type":"FIRESTORE_NATIVE","concurrencyMode":"PESSIMISTIC","versionRetentionPeriod":"3600s","earliestVersionTime":"2025-11-13T12:07:40.847148Z","appEngineIntegrationMode":"DISABLED","pointInTimeRecoveryEnablement":"POINT_IN_TIME_RECOVERY_DISABLED","deleteProtectionState":"DELETE_PROTECTION_DISABLED","databaseEdition":"STANDARD","freeTier":false,"realtimeUpdatesMode":"REALTIME_UPDATES_MODE_ENABLED","etag":"IM/T+IaZ75ADMMGx3P797JAD"}
+[info] i  functions: ensuring required API run.googleapis.com is enabled... 
+[debug] [2025-11-13T13:07:40.539Z] Checked if tokens are valid: true, expires at: 1763041898362
+[debug] [2025-11-13T13:07:40.539Z] Checked if tokens are valid: true, expires at: 1763041898362
+[info] i  functions: ensuring required API eventarc.googleapis.com is enabled... 
+[debug] [2025-11-13T13:07:40.540Z] Checked if tokens are valid: true, expires at: 1763041898362
+[debug] [2025-11-13T13:07:40.540Z] Checked if tokens are valid: true, expires at: 1763041898362
+[info] i  functions: ensuring required API pubsub.googleapis.com is enabled... 
+[debug] [2025-11-13T13:07:40.540Z] Checked if tokens are valid: true, expires at: 1763041898362
+[debug] [2025-11-13T13:07:40.540Z] Checked if tokens are valid: true, expires at: 1763041898362
+[info] i  functions: ensuring required API storage.googleapis.com is enabled... 
+[debug] [2025-11-13T13:07:40.541Z] Checked if tokens are valid: true, expires at: 1763041898362
+[debug] [2025-11-13T13:07:40.541Z] Checked if tokens are valid: true, expires at: 1763041898362
+[debug] [2025-11-13T13:07:40.541Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/512525813635/services/run.googleapis.com [none]
+[debug] [2025-11-13T13:07:40.541Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/512525813635/services/run.googleapis.com x-goog-quota-user=projects/512525813635
+[debug] [2025-11-13T13:07:40.542Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/512525813635/services/eventarc.googleapis.com [none]
+[debug] [2025-11-13T13:07:40.542Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/512525813635/services/eventarc.googleapis.com x-goog-quota-user=projects/512525813635
+[debug] [2025-11-13T13:07:40.544Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/512525813635/services/pubsub.googleapis.com [none]
+[debug] [2025-11-13T13:07:40.544Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/512525813635/services/pubsub.googleapis.com x-goog-quota-user=projects/512525813635
+[debug] [2025-11-13T13:07:40.545Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/512525813635/services/storage.googleapis.com [none]
+[debug] [2025-11-13T13:07:40.545Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/512525813635/services/storage.googleapis.com x-goog-quota-user=projects/512525813635
+[debug] [2025-11-13T13:07:42.768Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/512525813635/services/pubsub.googleapis.com 200
+[debug] [2025-11-13T13:07:42.769Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/512525813635/services/pubsub.googleapis.com [omitted]
+[info] +  functions: required API pubsub.googleapis.com is enabled 
+[debug] [2025-11-13T13:07:42.828Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/512525813635/services/run.googleapis.com 200
+[debug] [2025-11-13T13:07:42.828Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/512525813635/services/run.googleapis.com [omitted]
+[warn] !  functions: missing required API run.googleapis.com. Enabling now... 
+[debug] [2025-11-13T13:07:42.829Z] Checked if tokens are valid: true, expires at: 1763041898362
+[debug] [2025-11-13T13:07:42.829Z] Checked if tokens are valid: true, expires at: 1763041898362
+[debug] [2025-11-13T13:07:42.829Z] >>> [apiv2][query] POST https://serviceusage.googleapis.com/v1/projects/512525813635/services/run.googleapis.com:enable [none]
+[debug] [2025-11-13T13:07:42.829Z] >>> [apiv2][(partial)header] POST https://serviceusage.googleapis.com/v1/projects/512525813635/services/run.googleapis.com:enable x-goog-quota-user=projects/512525813635
+[debug] [2025-11-13T13:07:42.831Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/512525813635/services/eventarc.googleapis.com 200
+[debug] [2025-11-13T13:07:42.831Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/512525813635/services/eventarc.googleapis.com [omitted]
+[warn] !  functions: missing required API eventarc.googleapis.com. Enabling now... 
+[debug] [2025-11-13T13:07:42.832Z] Checked if tokens are valid: true, expires at: 1763041898362
+[debug] [2025-11-13T13:07:42.832Z] Checked if tokens are valid: true, expires at: 1763041898362
+[debug] [2025-11-13T13:07:42.832Z] >>> [apiv2][query] POST https://serviceusage.googleapis.com/v1/projects/512525813635/services/eventarc.googleapis.com:enable [none]
+[debug] [2025-11-13T13:07:42.832Z] >>> [apiv2][(partial)header] POST https://serviceusage.googleapis.com/v1/projects/512525813635/services/eventarc.googleapis.com:enable x-goog-quota-user=projects/512525813635
+[debug] [2025-11-13T13:07:42.833Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/512525813635/services/storage.googleapis.com 200
+[debug] [2025-11-13T13:07:42.833Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/512525813635/services/storage.googleapis.com [omitted]
+[info] +  functions: required API storage.googleapis.com is enabled 
+[debug] [2025-11-13T13:07:43.717Z] <<< [apiv2][status] POST https://serviceusage.googleapis.com/v1/projects/512525813635/services/run.googleapis.com:enable 200
+[debug] [2025-11-13T13:07:43.717Z] <<< [apiv2][body] POST https://serviceusage.googleapis.com/v1/projects/512525813635/services/run.googleapis.com:enable [omitted]
+[debug] [2025-11-13T13:07:44.760Z] <<< [apiv2][status] POST https://serviceusage.googleapis.com/v1/projects/512525813635/services/eventarc.googleapis.com:enable 200
+[debug] [2025-11-13T13:07:44.760Z] <<< [apiv2][body] POST https://serviceusage.googleapis.com/v1/projects/512525813635/services/eventarc.googleapis.com:enable [omitted]
+[info] i  functions: generating the service identity for pubsub.googleapis.com... 
+[debug] [2025-11-13T13:07:54.862Z] Checked if tokens are valid: true, expires at: 1763041898362
+[debug] [2025-11-13T13:07:54.862Z] Checked if tokens are valid: true, expires at: 1763041898362
+[info] i  functions: generating the service identity for eventarc.googleapis.com... 
+[debug] [2025-11-13T13:07:54.866Z] Checked if tokens are valid: true, expires at: 1763041898362
+[debug] [2025-11-13T13:07:54.866Z] Checked if tokens are valid: true, expires at: 1763041898362
+[debug] [2025-11-13T13:07:54.866Z] >>> [apiv2][query] POST https://serviceusage.googleapis.com/v1beta1/projects/512525813635/services/pubsub.googleapis.com:generateServiceIdentity [none]
+[debug] [2025-11-13T13:07:54.866Z] >>> [apiv2][(partial)header] POST https://serviceusage.googleapis.com/v1beta1/projects/512525813635/services/pubsub.googleapis.com:generateServiceIdentity x-goog-quota-user=projects/512525813635
+[debug] [2025-11-13T13:07:54.866Z] >>> [apiv2][body] POST https://serviceusage.googleapis.com/v1beta1/projects/512525813635/services/pubsub.googleapis.com:generateServiceIdentity {}
+[debug] [2025-11-13T13:07:54.868Z] >>> [apiv2][query] POST https://serviceusage.googleapis.com/v1beta1/projects/512525813635/services/eventarc.googleapis.com:generateServiceIdentity [none]
+[debug] [2025-11-13T13:07:54.868Z] >>> [apiv2][(partial)header] POST https://serviceusage.googleapis.com/v1beta1/projects/512525813635/services/eventarc.googleapis.com:generateServiceIdentity x-goog-quota-user=projects/512525813635
+[debug] [2025-11-13T13:07:54.868Z] >>> [apiv2][body] POST https://serviceusage.googleapis.com/v1beta1/projects/512525813635/services/eventarc.googleapis.com:generateServiceIdentity {}
+[debug] [2025-11-13T13:07:56.962Z] <<< [apiv2][status] POST https://serviceusage.googleapis.com/v1beta1/projects/512525813635/services/eventarc.googleapis.com:generateServiceIdentity 200
+[debug] [2025-11-13T13:07:56.962Z] <<< [apiv2][body] POST https://serviceusage.googleapis.com/v1beta1/projects/512525813635/services/eventarc.googleapis.com:generateServiceIdentity {"name":"operations/finished.DONE_OPERATION","done":true,"response":{"@type":"type.googleapis.com/google.api.serviceusage.v1beta1.ServiceIdentity","email":"service-512525813635@gcp-sa-eventarc.iam.gserviceaccount.com","uniqueId":"103795894792671045716"}}
+[debug] [2025-11-13T13:07:56.969Z] <<< [apiv2][status] POST https://serviceusage.googleapis.com/v1beta1/projects/512525813635/services/pubsub.googleapis.com:generateServiceIdentity 200
+[debug] [2025-11-13T13:07:56.969Z] <<< [apiv2][body] POST https://serviceusage.googleapis.com/v1beta1/projects/512525813635/services/pubsub.googleapis.com:generateServiceIdentity {"name":"operations/finished.DONE_OPERATION","done":true,"response":{"@type":"type.googleapis.com/google.api.serviceusage.v1beta1.ServiceIdentity","email":"service-512525813635@gcp-sa-pubsub.iam.gserviceaccount.com","uniqueId":"110014709948203648211"}}
+[debug] [2025-11-13T13:07:56.972Z] Checked if tokens are valid: true, expires at: 1763041898362
+[debug] [2025-11-13T13:07:56.972Z] Checked if tokens are valid: true, expires at: 1763041898362
+[debug] [2025-11-13T13:07:56.972Z] >>> [apiv2][query] GET https://compute.googleapis.com/compute/v1/projects/512525813635 [none]
+[debug] [2025-11-13T13:07:57.785Z] <<< [apiv2][status] GET https://compute.googleapis.com/compute/v1/projects/512525813635 403
+[debug] [2025-11-13T13:07:57.786Z] <<< [apiv2][body] GET https://compute.googleapis.com/compute/v1/projects/512525813635 {"error":{"code":403,"message":"Compute Engine API has not been used in project 512525813635 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=512525813635 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.","errors":[{"message":"Compute Engine API has not been used in project 512525813635 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=512525813635 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.","domain":"usageLimits","reason":"accessNotConfigured","extendedHelp":"https://console.developers.google.com"}],"status":"PERMISSION_DENIED","details":[{"@type":"type.googleapis.com/google.rpc.ErrorInfo","reason":"SERVICE_DISABLED","domain":"googleapis.com","metadata":{"serviceTitle":"Compute Engine API","activationUrl":"https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=512525813635","containerInfo":"512525813635","service":"compute.googleapis.com","consumer":"projects/512525813635"}},{"@type":"type.googleapis.com/google.rpc.LocalizedMessage","locale":"en-US","message":"Compute Engine API has not been used in project 512525813635 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=512525813635 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry."},{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Google developers console API activation","url":"https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=512525813635"}]}]}}
+[debug] [2025-11-13T13:07:57.786Z] unable to look up default compute service account. Falling back to 512525813635-compute@developer.gserviceaccount.com. Error: {"name":"FirebaseError","children":[],"context":{"body":{"error":{"code":403,"message":"Compute Engine API has not been used in project 512525813635 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=512525813635 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.","errors":[{"message":"Compute Engine API has not been used in project 512525813635 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=512525813635 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.","domain":"usageLimits","reason":"accessNotConfigured","extendedHelp":"https://console.developers.google.com"}],"status":"PERMISSION_DENIED","details":[{"@type":"type.googleapis.com/google.rpc.ErrorInfo","reason":"SERVICE_DISABLED","domain":"googleapis.com","metadata":{"serviceTitle":"Compute Engine API","activationUrl":"https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=512525813635","containerInfo":"512525813635","service":"compute.googleapis.com","consumer":"projects/512525813635"}},{"@type":"type.googleapis.com/google.rpc.LocalizedMessage","locale":"en-US","message":"Compute Engine API has not been used in project 512525813635 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=512525813635 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry."},{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Google developers console API activation","url":"https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=512525813635"}]}]}},"response":{"statusCode":403}},"exit":1,"message":"Request to https://compute.googleapis.com/compute/v1/projects/512525813635 had HTTP Error: 403, Compute Engine API has not been used in project 512525813635 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=512525813635 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.","status":403}
+[debug] [2025-11-13T13:07:57.786Z] Checked if tokens are valid: true, expires at: 1763041898362
+[debug] [2025-11-13T13:07:57.786Z] Checked if tokens are valid: true, expires at: 1763041898362
+[debug] [2025-11-13T13:07:57.786Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/512525813635:getIamPolicy [none]
+[debug] [2025-11-13T13:07:59.527Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/512525813635:getIamPolicy 200
+[debug] [2025-11-13T13:07:59.527Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/512525813635:getIamPolicy {"version":1,"etag":"BwZDeZEgQ3Q=","bindings":[{"role":"roles/artifactregistry.serviceAgent","members":["serviceAccount:service-512525813635@gcp-sa-artifactregistry.iam.gserviceaccount.com"]},{"role":"roles/cloudaicompanion.serviceAgent","members":["serviceAccount:service-512525813635@gcp-sa-cloudaicompanion.iam.gserviceaccount.com"]},{"role":"roles/cloudbuild.builds.builder","members":["serviceAccount:512525813635@cloudbuild.gserviceaccount.com"]},{"role":"roles/cloudbuild.serviceAgent","members":["serviceAccount:service-512525813635@gcp-sa-cloudbuild.iam.gserviceaccount.com"]},{"role":"roles/cloudfunctions.developer","members":["serviceAccount:github-action-1084201029@carries-boutique.iam.gserviceaccount.com"]},{"role":"roles/cloudfunctions.serviceAgent","members":["serviceAccount:service-512525813635@gcf-admin-robot.iam.gserviceaccount.com"]},{"role":"roles/containerregistry.ServiceAgent","members":["serviceAccount:service-512525813635@containerregistry.iam.gserviceaccount.com"]},{"role":"roles/editor","members":["serviceAccount:512525813635-compute@developer.gserviceaccount.com","serviceAccount:512525813635@cloudservices.gserviceaccount.com","serviceAccount:carries-boutique@appspot.gserviceaccount.com"]},{"role":"roles/firebase.managementServiceAgent","members":["serviceAccount:service-512525813635@gcp-sa-firebase.iam.gserviceaccount.com"]},{"role":"roles/firebase.sdkAdminServiceAgent","members":["serviceAccount:firebase-adminsdk-fbsvc@carries-boutique.iam.gserviceaccount.com"]},{"role":"roles/firebaseauth.admin","members":["serviceAccount:firebase-adminsdk-fbsvc@carries-boutique.iam.gserviceaccount.com","serviceAccount:github-action-1084201029@carries-boutique.iam.gserviceaccount.com"]},{"role":"roles/firebasehosting.admin","members":["serviceAccount:github-action-1084201029@carries-boutique.iam.gserviceaccount.com"]},{"role":"roles/firebasemods.serviceAgent","members":["serviceAccount:service-512525813635@gcp-sa-firebasemods.iam.gserviceaccount.com"]},{"role":"roles/firebaserules.system","members":["serviceAccount:service-512525813635@firebase-rules.iam.gserviceaccount.com"]},{"role":"roles/firebasestorage.serviceAgent","members":["serviceAccount:service-512525813635@gcp-sa-firebasestorage.iam.gserviceaccount.com"]},{"role":"roles/firestore.serviceAgent","members":["serviceAccount:service-512525813635@gcp-sa-firestore.iam.gserviceaccount.com"]},{"role":"roles/iam.serviceAccountTokenCreator","members":["serviceAccount:firebase-adminsdk-fbsvc@carries-boutique.iam.gserviceaccount.com"]},{"role":"roles/owner","members":["user:Drunknine323@gmail.com"]},{"role":"roles/run.serviceAgent","members":["serviceAccount:service-512525813635@serverless-robot-prod.iam.gserviceaccount.com"]},{"role":"roles/run.viewer","members":["serviceAccount:github-action-1084201029@carries-boutique.iam.gserviceaccount.com"]},{"role":"roles/serviceusage.apiKeysViewer","members":["serviceAccount:github-action-1084201029@carries-boutique.iam.gserviceaccount.com"]},{"role":"roles/serviceusage.serviceUsageConsumer","members":["serviceAccount:github-action-1084201029@carries-boutique.iam.gserviceaccount.com"]},{"role":"roles/storage.admin","members":["serviceAccount:firebase-adminsdk-fbsvc@carries-boutique.iam.gserviceaccount.com"]}]}
+[debug] [2025-11-13T13:07:59.528Z] Checked if tokens are valid: true, expires at: 1763041898362
+[debug] [2025-11-13T13:07:59.528Z] Checked if tokens are valid: true, expires at: 1763041898362
+[debug] [2025-11-13T13:07:59.528Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/512525813635:setIamPolicy [none]
+[debug] [2025-11-13T13:07:59.528Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/512525813635:setIamPolicy {"policy":{"version":1,"etag":"BwZDeZEgQ3Q=","bindings":[{"role":"roles/artifactregistry.serviceAgent","members":["serviceAccount:service-512525813635@gcp-sa-artifactregistry.iam.gserviceaccount.com"]},{"role":"roles/cloudaicompanion.serviceAgent","members":["serviceAccount:service-512525813635@gcp-sa-cloudaicompanion.iam.gserviceaccount.com"]},{"role":"roles/cloudbuild.builds.builder","members":["serviceAccount:512525813635@cloudbuild.gserviceaccount.com"]},{"role":"roles/cloudbuild.serviceAgent","members":["serviceAccount:service-512525813635@gcp-sa-cloudbuild.iam.gserviceaccount.com"]},{"role":"roles/cloudfunctions.developer","members":["serviceAccount:github-action-1084201029@carries-boutique.iam.gserviceaccount.com"]},{"role":"roles/cloudfunctions.serviceAgent","members":["serviceAccount:service-512525813635@gcf-admin-robot.iam.gserviceaccount.com"]},{"role":"roles/containerregistry.ServiceAgent","members":["serviceAccount:service-512525813635@containerregistry.iam.gserviceaccount.com"]},{"role":"roles/editor","members":["serviceAccount:512525813635-compute@developer.gserviceaccount.com","serviceAccount:512525813635@cloudservices.gserviceaccount.com","serviceAccount:carries-boutique@appspot.gserviceaccount.com"]},{"role":"roles/firebase.managementServiceAgent","members":["serviceAccount:service-512525813635@gcp-sa-firebase.iam.gserviceaccount.com"]},{"role":"roles/firebase.sdkAdminServiceAgent","members":["serviceAccount:firebase-adminsdk-fbsvc@carries-boutique.iam.gserviceaccount.com"]},{"role":"roles/firebaseauth.admin","members":["serviceAccount:firebase-adminsdk-fbsvc@carries-boutique.iam.gserviceaccount.com","serviceAccount:github-action-1084201029@carries-boutique.iam.gserviceaccount.com"]},{"role":"roles/firebasehosting.admin","members":["serviceAccount:github-action-1084201029@carries-boutique.iam.gserviceaccount.com"]},{"role":"roles/firebasemods.serviceAgent","members":["serviceAccount:service-512525813635@gcp-sa-firebasemods.iam.gserviceaccount.com"]},{"role":"roles/firebaserules.system","members":["serviceAccount:service-512525813635@firebase-rules.iam.gserviceaccount.com"]},{"role":"roles/firebasestorage.serviceAgent","members":["serviceAccount:service-512525813635@gcp-sa-firebasestorage.iam.gserviceaccount.com"]},{"role":"roles/firestore.serviceAgent","members":["serviceAccount:service-512525813635@gcp-sa-firestore.iam.gserviceaccount.com"]},{"role":"roles/iam.serviceAccountTokenCreator","members":["serviceAccount:firebase-adminsdk-fbsvc@carries-boutique.iam.gserviceaccount.com","serviceAccount:service-512525813635@gcp-sa-pubsub.iam.gserviceaccount.com"]},{"role":"roles/owner","members":["user:Drunknine323@gmail.com"]},{"role":"roles/run.serviceAgent","members":["serviceAccount:service-512525813635@serverless-robot-prod.iam.gserviceaccount.com"]},{"role":"roles/run.viewer","members":["serviceAccount:github-action-1084201029@carries-boutique.iam.gserviceaccount.com"]},{"role":"roles/serviceusage.apiKeysViewer","members":["serviceAccount:github-action-1084201029@carries-boutique.iam.gserviceaccount.com"]},{"role":"roles/serviceusage.serviceUsageConsumer","members":["serviceAccount:github-action-1084201029@carries-boutique.iam.gserviceaccount.com"]},{"role":"roles/storage.admin","members":["serviceAccount:firebase-adminsdk-fbsvc@carries-boutique.iam.gserviceaccount.com"]},{"role":"roles/run.invoker","members":["serviceAccount:512525813635-compute@developer.gserviceaccount.com"]},{"role":"roles/eventarc.eventReceiver","members":["serviceAccount:512525813635-compute@developer.gserviceaccount.com"]}]},"updateMask":"bindings"}
+[debug] [2025-11-13T13:08:00.656Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/512525813635:setIamPolicy 200
+[debug] [2025-11-13T13:08:00.656Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/512525813635:setIamPolicy {"version":1,"etag":"BwZDeZIO/rI=","bindings":[{"role":"roles/artifactregistry.serviceAgent","members":["serviceAccount:service-512525813635@gcp-sa-artifactregistry.iam.gserviceaccount.com"]},{"role":"roles/cloudaicompanion.serviceAgent","members":["serviceAccount:service-512525813635@gcp-sa-cloudaicompanion.iam.gserviceaccount.com"]},{"role":"roles/cloudbuild.builds.builder","members":["serviceAccount:512525813635@cloudbuild.gserviceaccount.com"]},{"role":"roles/cloudbuild.serviceAgent","members":["serviceAccount:service-512525813635@gcp-sa-cloudbuild.iam.gserviceaccount.com"]},{"role":"roles/cloudfunctions.developer","members":["serviceAccount:github-action-1084201029@carries-boutique.iam.gserviceaccount.com"]},{"role":"roles/cloudfunctions.serviceAgent","members":["serviceAccount:service-512525813635@gcf-admin-robot.iam.gserviceaccount.com"]},{"role":"roles/containerregistry.ServiceAgent","members":["serviceAccount:service-512525813635@containerregistry.iam.gserviceaccount.com"]},{"role":"roles/editor","members":["serviceAccount:512525813635-compute@developer.gserviceaccount.com","serviceAccount:512525813635@cloudservices.gserviceaccount.com","serviceAccount:carries-boutique@appspot.gserviceaccount.com"]},{"role":"roles/eventarc.eventReceiver","members":["serviceAccount:512525813635-compute@developer.gserviceaccount.com"]},{"role":"roles/firebase.managementServiceAgent","members":["serviceAccount:service-512525813635@gcp-sa-firebase.iam.gserviceaccount.com"]},{"role":"roles/firebase.sdkAdminServiceAgent","members":["serviceAccount:firebase-adminsdk-fbsvc@carries-boutique.iam.gserviceaccount.com"]},{"role":"roles/firebaseauth.admin","members":["serviceAccount:firebase-adminsdk-fbsvc@carries-boutique.iam.gserviceaccount.com","serviceAccount:github-action-1084201029@carries-boutique.iam.gserviceaccount.com"]},{"role":"roles/firebasehosting.admin","members":["serviceAccount:github-action-1084201029@carries-boutique.iam.gserviceaccount.com"]},{"role":"roles/firebasemods.serviceAgent","members":["serviceAccount:service-512525813635@gcp-sa-firebasemods.iam.gserviceaccount.com"]},{"role":"roles/firebaserules.system","members":["serviceAccount:service-512525813635@firebase-rules.iam.gserviceaccount.com"]},{"role":"roles/firebasestorage.serviceAgent","members":["serviceAccount:service-512525813635@gcp-sa-firebasestorage.iam.gserviceaccount.com"]},{"role":"roles/firestore.serviceAgent","members":["serviceAccount:service-512525813635@gcp-sa-firestore.iam.gserviceaccount.com"]},{"role":"roles/iam.serviceAccountTokenCreator","members":["serviceAccount:firebase-adminsdk-fbsvc@carries-boutique.iam.gserviceaccount.com","serviceAccount:service-512525813635@gcp-sa-pubsub.iam.gserviceaccount.com"]},{"role":"roles/owner","members":["user:Drunknine323@gmail.com"]},{"role":"roles/run.invoker","members":["serviceAccount:512525813635-compute@developer.gserviceaccount.com"]},{"role":"roles/run.serviceAgent","members":["serviceAccount:service-512525813635@serverless-robot-prod.iam.gserviceaccount.com"]},{"role":"roles/run.viewer","members":["serviceAccount:github-action-1084201029@carries-boutique.iam.gserviceaccount.com"]},{"role":"roles/serviceusage.apiKeysViewer","members":["serviceAccount:github-action-1084201029@carries-boutique.iam.gserviceaccount.com"]},{"role":"roles/serviceusage.serviceUsageConsumer","members":["serviceAccount:github-action-1084201029@carries-boutique.iam.gserviceaccount.com"]},{"role":"roles/storage.admin","members":["serviceAccount:firebase-adminsdk-fbsvc@carries-boutique.iam.gserviceaccount.com"]}]}
+[debug] [2025-11-13T13:08:00.657Z] Checked if tokens are valid: true, expires at: 1763041898362
+[debug] [2025-11-13T13:08:00.657Z] Checked if tokens are valid: true, expires at: 1763041898362
+[debug] [2025-11-13T13:08:00.657Z] >>> [apiv2][query] GET https://cloudresourcemanager.googleapis.com/v1/projects/carries-boutique [none]
+[debug] [2025-11-13T13:08:00.980Z] <<< [apiv2][status] GET https://cloudresourcemanager.googleapis.com/v1/projects/carries-boutique 200
+[debug] [2025-11-13T13:08:00.980Z] <<< [apiv2][body] GET https://cloudresourcemanager.googleapis.com/v1/projects/carries-boutique {"projectNumber":"512525813635","projectId":"carries-boutique","lifecycleState":"ACTIVE","name":"Carries-Boutique","labels":{"firebase":"enabled","firebase-core":"disabled"},"createTime":"2025-10-27T13:19:12.960447Z"}
+[debug] [2025-11-13T13:08:00.980Z] Checked if tokens are valid: true, expires at: 1763041898362
+[debug] [2025-11-13T13:08:00.980Z] Checked if tokens are valid: true, expires at: 1763041898362
+[debug] [2025-11-13T13:08:00.980Z] >>> [apiv2][query] GET https://compute.googleapis.com/compute/v1/projects/512525813635 [none]
+[debug] [2025-11-13T13:08:01.266Z] <<< [apiv2][status] GET https://compute.googleapis.com/compute/v1/projects/512525813635 403
+[debug] [2025-11-13T13:08:01.267Z] <<< [apiv2][body] GET https://compute.googleapis.com/compute/v1/projects/512525813635 {"error":{"code":403,"message":"Compute Engine API has not been used in project 512525813635 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=512525813635 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.","errors":[{"message":"Compute Engine API has not been used in project 512525813635 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=512525813635 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.","domain":"usageLimits","reason":"accessNotConfigured","extendedHelp":"https://console.developers.google.com"}],"status":"PERMISSION_DENIED","details":[{"@type":"type.googleapis.com/google.rpc.ErrorInfo","reason":"SERVICE_DISABLED","domain":"googleapis.com","metadata":{"service":"compute.googleapis.com","serviceTitle":"Compute Engine API","consumer":"projects/512525813635","containerInfo":"512525813635","activationUrl":"https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=512525813635"}},{"@type":"type.googleapis.com/google.rpc.LocalizedMessage","locale":"en-US","message":"Compute Engine API has not been used in project 512525813635 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=512525813635 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry."},{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Google developers console API activation","url":"https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=512525813635"}]}]}}
+[debug] [2025-11-13T13:08:01.267Z] unable to look up default compute service account. Falling back to 512525813635-compute@developer.gserviceaccount.com. Error: {"name":"FirebaseError","children":[],"context":{"body":{"error":{"code":403,"message":"Compute Engine API has not been used in project 512525813635 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=512525813635 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.","errors":[{"message":"Compute Engine API has not been used in project 512525813635 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=512525813635 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.","domain":"usageLimits","reason":"accessNotConfigured","extendedHelp":"https://console.developers.google.com"}],"status":"PERMISSION_DENIED","details":[{"@type":"type.googleapis.com/google.rpc.ErrorInfo","reason":"SERVICE_DISABLED","domain":"googleapis.com","metadata":{"service":"compute.googleapis.com","serviceTitle":"Compute Engine API","consumer":"projects/512525813635","containerInfo":"512525813635","activationUrl":"https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=512525813635"}},{"@type":"type.googleapis.com/google.rpc.LocalizedMessage","locale":"en-US","message":"Compute Engine API has not been used in project 512525813635 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=512525813635 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry."},{"@type":"type.googleapis.com/google.rpc.Help","links":[{"description":"Google developers console API activation","url":"https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=512525813635"}]}]}},"response":{"statusCode":403}},"exit":1,"message":"Request to https://compute.googleapis.com/compute/v1/projects/512525813635 had HTTP Error: 403, Compute Engine API has not been used in project 512525813635 before or it is disabled. Enable it by visiting https://console.developers.google.com/apis/api/compute.googleapis.com/overview?project=512525813635 then retry. If you enabled this API recently, wait a few minutes for the action to propagate to our systems and retry.","status":403}
+[debug] [2025-11-13T13:08:01.269Z] Checked if tokens are valid: true, expires at: 1763041898362
+[debug] [2025-11-13T13:08:01.269Z] Checked if tokens are valid: true, expires at: 1763041898362
+[debug] [2025-11-13T13:08:01.269Z] >>> [apiv2][query] GET https://firebaserules.googleapis.com/v1/projects/carries-boutique/releases pageSize=10&pageToken=
+[debug] [2025-11-13T13:08:01.814Z] <<< [apiv2][status] GET https://firebaserules.googleapis.com/v1/projects/carries-boutique/releases 200
+[debug] [2025-11-13T13:08:01.815Z] <<< [apiv2][body] GET https://firebaserules.googleapis.com/v1/projects/carries-boutique/releases {"releases":[{"name":"projects/carries-boutique/releases/cloud.firestore","rulesetName":"projects/carries-boutique/rulesets/c2057d24-8b05-4b85-9c0d-87848a7ef7be","createTime":"2025-11-08T12:57:21.991276Z","updateTime":"2025-11-13T11:43:30.036477Z"},{"name":"projects/carries-boutique/releases/firebase.storage/carries-boutique.firebasestorage.app","rulesetName":"projects/carries-boutique/rulesets/c7c8cf58-90f2-4b7c-bcdd-426cea1492cd","createTime":"2025-11-08T23:24:11.616794Z","updateTime":"2025-11-12T14:41:22.259488Z"}]}
+[debug] [2025-11-13T13:08:01.826Z] Checked if tokens are valid: true, expires at: 1763041898362
+[debug] [2025-11-13T13:08:01.826Z] Checked if tokens are valid: true, expires at: 1763041898362
+[debug] [2025-11-13T13:08:01.826Z] >>> [apiv2][query] GET https://firebaserules.googleapis.com/v1/projects/carries-boutique/rulesets/c2057d24-8b05-4b85-9c0d-87848a7ef7be [none]
+[debug] [2025-11-13T13:08:02.616Z] <<< [apiv2][status] GET https://firebaserules.googleapis.com/v1/projects/carries-boutique/rulesets/c2057d24-8b05-4b85-9c0d-87848a7ef7be 200
+[debug] [2025-11-13T13:08:02.616Z] <<< [apiv2][body] GET https://firebaserules.googleapis.com/v1/projects/carries-boutique/rulesets/c2057d24-8b05-4b85-9c0d-87848a7ef7be [omitted]
+[info] i  firestore: uploading rules firestore.rules... 
+[debug] [2025-11-13T13:08:02.617Z] Checked if tokens are valid: true, expires at: 1763041898362
+[debug] [2025-11-13T13:08:02.617Z] Checked if tokens are valid: true, expires at: 1763041898362
+[debug] [2025-11-13T13:08:02.618Z] >>> [apiv2][query] POST https://firebaserules.googleapis.com/v1/projects/carries-boutique/rulesets [none]
+[debug] [2025-11-13T13:08:02.618Z] >>> [apiv2][body] POST https://firebaserules.googleapis.com/v1/projects/carries-boutique/rulesets [omitted]
+[debug] [2025-11-13T13:08:03.552Z] <<< [apiv2][status] POST https://firebaserules.googleapis.com/v1/projects/carries-boutique/rulesets 200
+[debug] [2025-11-13T13:08:03.552Z] <<< [apiv2][body] POST https://firebaserules.googleapis.com/v1/projects/carries-boutique/rulesets {"name":"projects/carries-boutique/rulesets/260c2d66-dbe2-427c-88ee-9edf1494e943","source":{"files":[{"content":"rules_version = '2';\r\nservice cloud.firestore {\r\n  match /databases/{database}/documents {\r\n    // Anyone can read products, only authenticated Admins can write\r\n    match /products/{id} {\r\n      allow read: if true;\r\n      allow write: if request.auth != null && exists(/databases/$(database)/documents/admins/$(request.auth.uid));\r\n    }\r\n    match /custom_styles/{id} {\r\n      allow read: if true;\r\n      allow write: if request.auth != null && exists(/databases/$(database)/documents/admins/$(request.auth.uid));\r\n    }\r\n    // Customers can create orders and read ONLY their own\r\n    match /orders/{id} {\r\n      allow create: if request.auth != null;\r\n      allow read: if request.auth != null && (resource.data.userId == request.auth.uid || exists(/databases/$(database)/documents/admins/$(request.auth.uid)));\r\n      allow update: if request.auth != null && exists(/databases/$(database)/documents/admins/$(request.auth.uid));\r\n    }\r\n    // Users access their own profiles\r\n    match /users/{userId} {\r\n      allow read, write: if request.auth != null && request.auth.uid == userId;\r\n    }\r\n    // Admin table protection\r\n    match /admins/{userId} {\r\n      allow read: if request.auth != null;\r\n    }\r\n    // Allow saving subscribers\r\n    match /subscribers/{id} {\r\n      allow create: if true;\r\n    }\r\n  }\r\n}","name":"firestore.rules"}]},"createTime":"2025-11-13T13:08:03.709631Z","metadata":{"services":["cloud.firestore"]}}
+[debug] [2025-11-13T13:08:03.552Z] [rules] created ruleset projects/carries-boutique/rulesets/260c2d66-dbe2-427c-88ee-9edf1494e943
+[info] i  firestore: deploying indexes... 
+[debug] [2025-11-13T13:08:03.555Z] Checked if tokens are valid: true, expires at: 1763041898362
+[debug] [2025-11-13T13:08:03.555Z] Checked if tokens are valid: true, expires at: 1763041898362
+[debug] [2025-11-13T13:08:03.555Z] >>> [apiv2][query] GET https://firestore.googleapis.com/v1/projects/carries-boutique/databases/(default)/collectionGroups/-/indexes [none]
+[debug] [2025-11-13T13:08:04.145Z] <<< [apiv2][status] GET https://firestore.googleapis.com/v1/projects/carries-boutique/databases/(default)/collectionGroups/-/indexes 200
+[debug] [2025-11-13T13:08:04.145Z] <<< [apiv2][body] GET https://firestore.googleapis.com/v1/projects/carries-boutique/databases/(default)/collectionGroups/-/indexes {"indexes":[{"name":"projects/carries-boutique/databases/(default)/collectionGroups/orders/indexes/CICAgOjXh4EK","queryScope":"COLLECTION","fields":[{"fieldPath":"userId","order":"ASCENDING"},{"fieldPath":"order_date","order":"DESCENDING"},{"fieldPath":"__name__","order":"DESCENDING"}],"state":"READY","density":"SPARSE_ALL"}]}
+[debug] [2025-11-13T13:08:04.145Z] Checked if tokens are valid: true, expires at: 1763041898362
+[debug] [2025-11-13T13:08:04.145Z] Checked if tokens are valid: true, expires at: 1763041898362
+[debug] [2025-11-13T13:08:04.146Z] >>> [apiv2][query] GET https://firestore.googleapis.com/v1/projects/carries-boutique/databases/(default)/collectionGroups/-/fields?filter=indexConfig.usesAncestorConfig=false OR ttlConfig:* [none]
+[debug] [2025-11-13T13:08:04.183Z] <<< [apiv2][status] GET https://firestore.googleapis.com/v1/projects/carries-boutique/databases/(default)/collectionGroups/-/fields?filter=indexConfig.usesAncestorConfig=false OR ttlConfig:* 200
+[debug] [2025-11-13T13:08:04.183Z] <<< [apiv2][body] GET https://firestore.googleapis.com/v1/projects/carries-boutique/databases/(default)/collectionGroups/-/fields?filter=indexConfig.usesAncestorConfig=false OR ttlConfig:* {"fields":[{"name":"projects/carries-boutique/databases/(default)/collectionGroups/__default__/fields/*","indexConfig":{"indexes":[{"queryScope":"COLLECTION","fields":[{"fieldPath":"*","order":"ASCENDING"}],"state":"READY"},{"queryScope":"COLLECTION","fields":[{"fieldPath":"*","order":"DESCENDING"}],"state":"READY"},{"queryScope":"COLLECTION","fields":[{"fieldPath":"*","arrayConfig":"CONTAINS"}],"state":"READY"}]}}]}
+[debug] [2025-11-13T13:08:04.184Z] Checked if tokens are valid: true, expires at: 1763041898362
+[debug] [2025-11-13T13:08:04.185Z] Checked if tokens are valid: true, expires at: 1763041898362
+[debug] [2025-11-13T13:08:04.185Z] >>> [apiv2][query] GET https://firestore.googleapis.com/v1/projects/carries-boutique/databases/(default) [none]
+[debug] [2025-11-13T13:08:04.232Z] <<< [apiv2][status] GET https://firestore.googleapis.com/v1/projects/carries-boutique/databases/(default) 200
+[debug] [2025-11-13T13:08:04.233Z] <<< [apiv2][body] GET https://firestore.googleapis.com/v1/projects/carries-boutique/databases/(default) {"name":"projects/carries-boutique/databases/(default)","uid":"3f8d690c-b790-4ad1-af6b-90fb5f45cb50","createTime":"2025-11-08T12:57:17.146567Z","updateTime":"2025-11-08T12:57:17.146567Z","locationId":"africa-south1","type":"FIRESTORE_NATIVE","concurrencyMode":"PESSIMISTIC","versionRetentionPeriod":"3600s","earliestVersionTime":"2025-11-13T12:08:04.538706Z","appEngineIntegrationMode":"DISABLED","pointInTimeRecoveryEnablement":"POINT_IN_TIME_RECOVERY_DISABLED","deleteProtectionState":"DELETE_PROTECTION_DISABLED","databaseEdition":"STANDARD","freeTier":false,"realtimeUpdatesMode":"REALTIME_UPDATES_MODE_ENABLED","etag":"IK7WnpKZ75ADMMGx3P797JAD"}
+[debug] [2025-11-13T13:08:04.233Z] Skipping existing index: {"collectionGroup":"orders","queryScope":"COLLECTION","density":"SPARSE_ALL","fields":[{"fieldPath":"userId","order":"ASCENDING"},{"fieldPath":"order_date","order":"DESCENDING"},{"fieldPath":"__name__","order":"DESCENDING"}]}
+[info] +  firestore: deployed indexes in firestore.indexes.json successfully for (default) database 
+[debug] [2025-11-13T13:08:04.235Z] Checked if tokens are valid: true, expires at: 1763041898362
+[debug] [2025-11-13T13:08:04.235Z] Checked if tokens are valid: true, expires at: 1763041898362
+[debug] [2025-11-13T13:08:04.235Z] >>> [apiv2][query] POST https://cloudfunctions.googleapis.com/v2/projects/carries-boutique/locations/us-central1/functions:generateUploadUrl [none]
+[debug] [2025-11-13T13:08:06.272Z] <<< [apiv2][status] POST https://cloudfunctions.googleapis.com/v2/projects/carries-boutique/locations/us-central1/functions:generateUploadUrl 200
+[debug] [2025-11-13T13:08:06.273Z] <<< [apiv2][body] POST https://cloudfunctions.googleapis.com/v2/projects/carries-boutique/locations/us-central1/functions:generateUploadUrl {"uploadUrl":"https://storage.googleapis.com/gcf-v2-uploads-512525813635.us-central1.cloudfunctions.appspot.com/c39d40ce-0daa-4a84-b32b-d6bcfbef0906.zip?GoogleAccessId=service-512525813635@gcf-admin-robot.iam.gserviceaccount.com&Expires=1763041086&Signature=oRew%2Bu%2FBucIyK3jE6eqp6H7J794ZdbVKsdCU87x0SuxMGIscCzftlIltoSIJYAFXBmq519Hc5VILNJpkvVzW69IYmwvIDy4ZJ3RrJ%2BLqRDZTeQA%2BYuEVZqrhytlcqhmBw5h0kf9UjtK647lJmZcHpXiTdfS%2F3ymn7JuQ32fQhgKZevFAcxaAGmKtxJPurrYJC95HBEb7QKZdW7AAz5hxg0T88aAxdG4JxQ1VWVgm0PZ2trBYiycw0PhlRv%2BP%2FwZsdqZd1Zf3apX2WfYsfbgpjJE6ZjDp%2FVqoIRoWp1dX%2BQHZ5R8o39uG4gz64m2kPtdnRs7iMiPbTIg1bDR9TQuMiA%3D%3D","storageSource":{"bucket":"gcf-v2-uploads-512525813635.us-central1.cloudfunctions.appspot.com","object":"c39d40ce-0daa-4a84-b32b-d6bcfbef0906.zip"}}
+[debug] [2025-11-13T13:08:06.273Z] >>> [apiv2][query] PUT https://storage.googleapis.com/gcf-v2-uploads-512525813635.us-central1.cloudfunctions.appspot.com/c39d40ce-0daa-4a84-b32b-d6bcfbef0906.zip GoogleAccessId=service-512525813635%40gcf-admin-robot.iam.gserviceaccount.com&Expires=1763041086&Signature=oRew%2Bu%2FBucIyK3jE6eqp6H7J794ZdbVKsdCU87x0SuxMGIscCzftlIltoSIJYAFXBmq519Hc5VILNJpkvVzW69IYmwvIDy4ZJ3RrJ%2BLqRDZTeQA%2BYuEVZqrhytlcqhmBw5h0kf9UjtK647lJmZcHpXiTdfS%2F3ymn7JuQ32fQhgKZevFAcxaAGmKtxJPurrYJC95HBEb7QKZdW7AAz5hxg0T88aAxdG4JxQ1VWVgm0PZ2trBYiycw0PhlRv%2BP%2FwZsdqZd1Zf3apX2WfYsfbgpjJE6ZjDp%2FVqoIRoWp1dX%2BQHZ5R8o39uG4gz64m2kPtdnRs7iMiPbTIg1bDR9TQuMiA%3D%3D
+[debug] [2025-11-13T13:08:06.273Z] >>> [apiv2][body] PUT https://storage.googleapis.com/gcf-v2-uploads-512525813635.us-central1.cloudfunctions.appspot.com/c39d40ce-0daa-4a84-b32b-d6bcfbef0906.zip [stream]
+[debug] [2025-11-13T13:08:07.353Z] <<< [apiv2][status] PUT https://storage.googleapis.com/gcf-v2-uploads-512525813635.us-central1.cloudfunctions.appspot.com/c39d40ce-0daa-4a84-b32b-d6bcfbef0906.zip 200
+[debug] [2025-11-13T13:08:07.354Z] <<< [apiv2][body] PUT https://storage.googleapis.com/gcf-v2-uploads-512525813635.us-central1.cloudfunctions.appspot.com/c39d40ce-0daa-4a84-b32b-d6bcfbef0906.zip [omitted]
+[info] +  functions: functions source uploaded successfully 
+[debug] [2025-11-13T13:08:07.354Z] [rules] releasing cloud.firestore/(default) with ruleset projects/carries-boutique/rulesets/260c2d66-dbe2-427c-88ee-9edf1494e943
+[debug] [2025-11-13T13:08:07.354Z] Checked if tokens are valid: true, expires at: 1763041898362
+[debug] [2025-11-13T13:08:07.354Z] Checked if tokens are valid: true, expires at: 1763041898362
+[debug] [2025-11-13T13:08:07.354Z] >>> [apiv2][query] PATCH https://firebaserules.googleapis.com/v1/projects/carries-boutique/releases/cloud.firestore/(default) [none]
+[debug] [2025-11-13T13:08:07.354Z] >>> [apiv2][body] PATCH https://firebaserules.googleapis.com/v1/projects/carries-boutique/releases/cloud.firestore/(default) {"release":{"name":"projects/carries-boutique/releases/cloud.firestore/(default)","rulesetName":"projects/carries-boutique/rulesets/260c2d66-dbe2-427c-88ee-9edf1494e943"}}
+[debug] [2025-11-13T13:08:07.894Z] <<< [apiv2][status] PATCH https://firebaserules.googleapis.com/v1/projects/carries-boutique/releases/cloud.firestore/(default) 200
+[debug] [2025-11-13T13:08:07.895Z] <<< [apiv2][body] PATCH https://firebaserules.googleapis.com/v1/projects/carries-boutique/releases/cloud.firestore/(default) {"name":"projects/carries-boutique/releases/cloud.firestore","rulesetName":"projects/carries-boutique/rulesets/260c2d66-dbe2-427c-88ee-9edf1494e943","createTime":"2025-11-08T12:57:21.991276Z","updateTime":"2025-11-13T13:08:08.053381Z"}
+[debug] [2025-11-13T13:08:07.895Z] [rules] updated release projects/carries-boutique/releases/cloud.firestore
+[info] +  firestore: released rules firestore.rules to cloud.firestore 
+[info] 
+The following functions are found in your project but do not exist in your local source code:
+	sendOrderConfirmation(us-central1)
+
+If you are renaming a function or changing its region, it is recommended that you create the new function first before deleting the old one to prevent event loss. For more info, visit https://firebase.google.com/docs/functions/manage-functions#modify
+
+[info] i  functions: creating Node.js 22 (2nd Gen) function processOrder(us-central1)... 
+[debug] [2025-11-13T13:08:21.795Z] Checked if tokens are valid: true, expires at: 1763041898362
+[debug] [2025-11-13T13:08:21.795Z] Checked if tokens are valid: true, expires at: 1763041898362
+[debug] [2025-11-13T13:08:21.795Z] >>> [apiv2][query] POST https://cloudfunctions.googleapis.com/v2/projects/carries-boutique/locations/us-central1/functions functionId=processOrder
+[debug] [2025-11-13T13:08:21.795Z] >>> [apiv2][body] POST https://cloudfunctions.googleapis.com/v2/projects/carries-boutique/locations/us-central1/functions {"name":"projects/carries-boutique/locations/us-central1/functions/processOrder","buildConfig":{"runtime":"nodejs22","entryPoint":"processOrder","source":{"storageSource":{"bucket":"gcf-v2-uploads-512525813635.us-central1.cloudfunctions.appspot.com","object":"c39d40ce-0daa-4a84-b32b-d6bcfbef0906.zip"}},"environmentVariables":{"GOOGLE_NODE_RUN_SCRIPTS":""}},"serviceConfig":{"environmentVariables":{"FIREBASE_CONFIG":"{\"projectId\":\"carries-boutique\",\"storageBucket\":\"carries-boutique.firebasestorage.app\"}","GCLOUD_PROJECT":"carries-boutique","EVENTARC_CLOUD_EVENT_SOURCE":"projects/carries-boutique/locations/us-central1/services/processOrder","FUNCTION_SIGNATURE_TYPE":"cloudevent","FUNCTION_TARGET":"processOrder","LOG_EXECUTION_ID":"true"},"ingressSettings":null,"timeoutSeconds":null,"serviceAccountEmail":null,"availableMemory":"256Mi","minInstanceCount":null,"maxInstanceCount":null,"maxInstanceRequestConcurrency":80,"availableCpu":"1","vpcConnector":null,"vpcConnectorEgressSettings":null},"labels":{"deployment-tool":"cli-firebase","firebase-functions-hash":"6ecf86e02fc1b7f02d5b2fc36f86dc49868db522"},"eventTrigger":{"eventType":"google.cloud.firestore.document.v1.created","retryPolicy":"RETRY_POLICY_DO_NOT_RETRY","eventFilters":[{"attribute":"database","value":"(default)"},{"attribute":"namespace","value":"(default)"},{"attribute":"document","value":"orders/{orderId}","operator":"match-path-pattern"}],"triggerRegion":"africa-south1"}}
+[debug] [2025-11-13T13:08:40.044Z] <<< [apiv2][status] POST https://cloudfunctions.googleapis.com/v2/projects/carries-boutique/locations/us-central1/functions 400
+[debug] [2025-11-13T13:08:40.045Z] <<< [apiv2][body] POST https://cloudfunctions.googleapis.com/v2/projects/carries-boutique/locations/us-central1/functions {"error":{"code":400,"message":"Validation failed for trigger projects/carries-boutique/locations/africa-south1/triggers/processorder-251877: Invalid resource state for \"\": Permission denied while using the Eventarc Service Agent. If you recently started to use Eventarc, it may take a few minutes before all necessary permissions are propagated to the Service Agent. Otherwise, verify that it has Eventarc Service Agent role.","status":"FAILED_PRECONDITION"}}
+[warn] !  functions: Request to https://cloudfunctions.googleapis.com/v2/projects/carries-boutique/locations/us-central1/functions?functionId=processOrder had HTTP Error: 400, Validation failed for trigger projects/carries-boutique/locations/africa-south1/triggers/processorder-251877: Invalid resource state for "": Permission denied while using the Eventarc Service Agent. If you recently started to use Eventarc, it may take a few minutes before all necessary permissions are propagated to the Service Agent. Otherwise, verify that it has Eventarc Service Agent role. 
+[warn] !  functions: Since this is your first time using 2nd gen functions, we need a little bit longer to finish setting everything up. Retry the deployment in a few minutes. 
+[warn] !  functions:  failed to create function projects/carries-boutique/locations/us-central1/functions/processOrder 
+[error] Failed to create function projects/carries-boutique/locations/us-central1/functions/processOrder
+[debug] [2025-11-13T13:08:40.053Z] Total Function Deployment time: 18254
+[debug] [2025-11-13T13:08:40.054Z] 1 Functions Deployed
+[debug] [2025-11-13T13:08:40.054Z] 1 Functions Errored
+[debug] [2025-11-13T13:08:40.054Z] 0 Function Deployments Aborted
+[debug] [2025-11-13T13:08:40.054Z] Average Function Deployment time: 18253
+[info] 
+[info] Functions deploy had errors with the following functions:
+	processOrder(us-central1)
+[debug] [2025-11-13T13:08:40.490Z] Checked if tokens are valid: true, expires at: 1763041898362
+[debug] [2025-11-13T13:08:40.490Z] Checked if tokens are valid: true, expires at: 1763041898362
+[debug] [2025-11-13T13:08:40.490Z] >>> [apiv2][query] GET https://artifactregistry.googleapis.com/v1/projects/carries-boutique/locations/us-central1/repositories/gcf-artifacts [none]
+[debug] [2025-11-13T13:08:41.807Z] <<< [apiv2][status] GET https://artifactregistry.googleapis.com/v1/projects/carries-boutique/locations/us-central1/repositories/gcf-artifacts 200
+[debug] [2025-11-13T13:08:41.807Z] <<< [apiv2][body] GET https://artifactregistry.googleapis.com/v1/projects/carries-boutique/locations/us-central1/repositories/gcf-artifacts {"name":"projects/carries-boutique/locations/us-central1/repositories/gcf-artifacts","format":"DOCKER","description":"This repository is created and used by Cloud Functions for storing function docker images.","labels":{"goog-managed-by":"cloudfunctions"},"createTime":"2025-11-12T15:28:34.896582Z","updateTime":"2025-11-12T17:12:40.454082Z","mode":"STANDARD_REPOSITORY","cleanupPolicies":{"firebase-functions-cleanup":{"id":"firebase-functions-cleanup","action":"DELETE","condition":{"tagState":"ANY","olderThan":"86400s"}}},"sizeBytes":"530887258","vulnerabilityScanningConfig":{"lastEnableTime":"2025-11-12T15:28:25.964912998Z","enablementState":"SCANNING_DISABLED","enablementStateReason":"API containerscanning.googleapis.com is not enabled."},"satisfiesPzi":true,"registryUri":"us-central1-docker.pkg.dev/carries-boutique/gcf-artifacts"}
+[debug] [2025-11-13T13:08:41.808Z] Functions deploy failed.
+[debug] [2025-11-13T13:08:41.808Z] {
+  "endpoint": {
+    "id": "processOrder",
+    "project": "carries-boutique",
+    "region": "us-central1",
+    "entryPoint": "processOrder",
+    "platform": "gcfv2",
+    "runtime": "nodejs22",
+    "eventTrigger": {
+      "eventType": "google.cloud.firestore.document.v1.created",
+      "retry": false,
+      "eventFilters": {
+        "database": "(default)",
+        "namespace": "(default)"
+      },
+      "eventFilterPathPatterns": {
+        "document": "orders/{orderId}"
+      },
+      "region": "africa-south1"
+    },
+    "labels": {
+      "deployment-tool": "cli-firebase"
+    },
+    "serviceAccount": null,
+    "ingressSettings": null,
+    "availableMemoryMb": null,
+    "timeoutSeconds": null,
+    "maxInstances": null,
+    "minInstances": null,
+    "concurrency": 80,
+    "vpc": null,
+    "environmentVariables": {
+      "FIREBASE_CONFIG": "{\"projectId\":\"carries-boutique\",\"storageBucket\":\"carries-boutique.firebasestorage.app\"}",
+      "GCLOUD_PROJECT": "carries-boutique",
+      "EVENTARC_CLOUD_EVENT_SOURCE": "projects/carries-boutique/locations/us-central1/services/processOrder"
+    },
+    "codebase": "default",
+    "cpu": 1,
+    "targetedByOnly": false,
+    "hash": "6ecf86e02fc1b7f02d5b2fc36f86dc49868db522"
+  },
+  "op": "create",
+  "original": {
+    "name": "FirebaseError",
+    "children": [],
+    "context": {
+      "function": "projects/carries-boutique/locations/us-central1/functions/processOrder"
+    },
+    "exit": 1,
+    "message": "Failed to create function projects/carries-boutique/locations/us-central1/functions/processOrder",
+    "original": {
+      "name": "FirebaseError",
+      "children": [],
+      "context": {
+        "body": {
+          "error": {
+            "code": 400,
+            "message": "Validation failed for trigger projects/carries-boutique/locations/africa-south1/triggers/processorder-251877: Invalid resource state for \"\": Permission denied while using the Eventarc Service Agent. If you recently started to use Eventarc, it may take a few minutes before all necessary permissions are propagated to the Service Agent. Otherwise, verify that it has Eventarc Service Agent role.",
+            "status": "FAILED_PRECONDITION"
+          }
+        },
+        "response": {
+          "statusCode": 400
+        }
+      },
+      "exit": 1,
+      "message": "Request to https://cloudfunctions.googleapis.com/v2/projects/carries-boutique/locations/us-central1/functions?functionId=processOrder had HTTP Error: 400, Validation failed for trigger projects/carries-boutique/locations/africa-south1/triggers/processorder-251877: Invalid resource state for \"\": Permission denied while using the Eventarc Service Agent. If you recently started to use Eventarc, it may take a few minutes before all necessary permissions are propagated to the Service Agent. Otherwise, verify that it has Eventarc Service Agent role.",
+      "status": 400
+    },
+    "status": 400,
+    "code": 400
+  }
+}
+[debug] [2025-11-13T13:08:42.002Z] Error: Failed to create function processOrder in region us-central1
+    at C:\Users\drunk\AppData\Roaming\npm\node_modules\firebase-tools\lib\deploy\functions\release\fabricator.js:306:27
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async Fabricator.createV2Function (C:\Users\drunk\AppData\Roaming\npm\node_modules\firebase-tools\lib\deploy\functions\release\fabricator.js:290:30)
+    at async Fabricator.createEndpoint (C:\Users\drunk\AppData\Roaming\npm\node_modules\firebase-tools\lib\deploy\functions\release\fabricator.js:137:13)
+    at async handle (C:\Users\drunk\AppData\Roaming\npm\node_modules\firebase-tools\lib\deploy\functions\release\fabricator.js:89:17)
+[error] 
+[error] Error: There was an error deploying functions
