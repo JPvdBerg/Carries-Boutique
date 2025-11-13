@@ -5,20 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Checkout | Carries Boutique</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-  <link rel="icon" type="image/png" href="https://firebasestorage.googleapis.com/v0/b/carries-boutique.firebasestorage.app/o/Carries.webp?alt=media&token=e3e8e9eb-8db4-4eb0-bd7d-84ca34b60ba8">
+  <link rel="icon" type="image/png" href="https://i.imgur.com/KNRtw3t.png">
   <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
   <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
-<link href="/style.css" rel="stylesheet">
-  <style>
-    /* ... (Your existing styles) ... */
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Inter', sans-serif; color: #333; background-color: #faf9f7; overflow-x: hidden; }
-    .nav-link { position: relative; }
-    .nav-link::after { content: ''; position: absolute; width: 0; height: 2px; bottom: -2px; left: 0; background-color: #b93e65; transition: width 0.3s ease; }
-    .nav-link:hover::after { width: 100%; }
-  </style>
+  <link href="style.css" rel="stylesheet">
 </head>
 <body>
   <nav class="bg-white shadow-sm sticky top-0 z-50">
@@ -46,210 +38,249 @@
                   Login with Google
               </button>
               <div id="user-info" class="hidden flex items-center space-x-6">
-    <a href="admin.html" id="admin-link" class="hidden text-sm font-bold text-pink-600 hover:text-pink-800 transition-colors">Admin</a>
-    
-    <a href="account.html" class="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">My Account</a>
-    
-    <div class="flex items-center space-x-2 bg-gray-100 rounded-full px-3 py-1">
-        <i data-feather="user" class="w-3 h-3 text-gray-500"></i>
-        <span id="user-display-name" class="text-sm font-semibold text-gray-700"></span>
-    </div>
-
-    <button id="logout-btn" class="text-sm font-medium text-gray-400 hover:text-red-500 transition-colors">Logout</button>
-</div>
-          </div>
-          <a href="https://wa.me/27828735697" target="_blank" class="ml-6 whatsapp-btn inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full text-white">
-            <i data-feather="message-circle" class="mr-2"></i> WhatsApp
-          </a>
-        </div>
-         <div class="-mr-2 flex items-center md:hidden">
-          <a href="cart.html" class="relative mr-2 text-gray-500 hover:text-gray-900 p-2 rounded-full hover:bg-gray-100">
-            <i data-feather="shopping-cart"></i>
-            <span class="cart-badge hidden absolute -top-1 -right-1 bg-pink-600 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">0</span>
-          </a>
-          <button type="button" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-pink-500" aria-controls="mobile-menu" aria-expanded="false">
-            <i data-feather="menu"></i>
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <div class="hidden md:hidden" id="mobile-menu">
-      <div class="pt-2 pb-3 space-y-1">
-        <a href="index.html" class="border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">Home</a>
-        <a href="shop.html" class="border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">Shop (Retail)</a>
-        <a href="collections.html" class="border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">Custom Styles</a>
-        <a href="https://wa.me/27828735697" target="_blank" class="mt-2 mx-4 whatsapp-btn inline-flex items-center justify-center px-4 py-2 border border-transparent text-base font-medium rounded-full text-white">
-          <i data-feather="message-circle" class="mr-2"></i> WhatsApp
-        </a>
-        
-        <div class="pt-4 pb-3 border-t border-gray-200">
-            <div id="mobile-auth-container" class="px-2 space-y-2">
-                <button id="google-login-btn-mobile" class="w-full flex items-center justify-center px-4 py-2 border border-gray-300 text-base font-medium rounded-full text-gray-700 bg-white hover:bg-gray-50">
-                    <svg class="w-5 h-5 mr-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512"><path fill="currentColor" d="M488 261.8C488 403.3 381.5 512 244 512 109.8 512 0 402.2 0 258S109.8 4 244 4a237.2 237.2 0 01166.3 64.3l-64.4 64.4a150 150 0 00-101.9-38.3c-83.3 0-151.7 67.5-151.7 150.9s68.4 150.9 151.7 150.9c90.8 0 134.4-60.5 139.5-93.7H244v-77.9h236.1c2.4 12.8 3.9 26.5 3.9 41.2z"/></svg>
-                    Login with Google
-                </button>
-                <div id="user-info-mobile" class="space-y-2 hidden">
-                    <a href="admin.html" id="admin-link-mobile" class="hidden block w-full text-left px-4 py-2 border border-pink-500 text-base font-medium rounded-full text-pink-600 bg-pink-50 hover:bg-pink-100">Admin Dashboard</a>
-                    <a href="account.html" class="block w-full text-left px-4 py-2 border border-gray-300 text-base font-medium rounded-full text-gray-700 bg-white hover:bg-gray-50">My Account</a>
-                    <button id="logout-btn-mobile" class="w-full flex items-center justify-center px-4 py-2 border border-transparent text-base font-medium rounded-full text-white bg-pink-600 hover:bg-pink-700">
-                        Logout
-                    </button>
+                <a href="admin.html" id="admin-link" class="hidden text-sm font-bold text-pink-600 hover:text-pink-800 transition-colors">Admin</a>
+                <a href="account.html" class="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">My Account</a>
+                <div class="flex items-center space-x-2 bg-gray-100 rounded-full px-3 py-1">
+                    <i data-feather="user" class="w-3 h-3 text-gray-500"></i>
+                    <span id="user-display-name" class="text-sm font-semibold text-gray-700"></span>
                 </div>
+                <button id="logout-btn" class="text-sm font-medium text-gray-400 hover:text-red-500 transition-colors">Logout</button>
             </div>
+          </div>
         </div>
       </div>
     </div>
   </nav>
 
-  <section class="py-16 bg-gray-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center mb-16" data-aos="fade-up">
-        <h1 class="text-4xl font-serif font-bold text-gray-900">Checkout</h1>
-      </div>
-
-      <section class="py-16 bg-gray-50 min-h-screen">
-  <div class="max-w-3xl mx-auto px-4">
-    
-    <div class="stepper-container bg-white rounded-3xl shadow-xl border border-gray-200 overflow-hidden relative">
+  <section class="py-16 bg-gray-50 min-h-screen">
+    <div class="max-w-3xl mx-auto px-4">
+        
+        <div class="text-center mb-10" data-aos="fade-up">
+            <h1 class="text-4xl font-serif font-bold text-gray-900">Checkout</h1>
+        </div>
       
-      <div class="stepper-header px-8 py-8 border-b border-gray-100 flex items-center justify-between relative">
-        <div class="step-indicator active" data-step="1">
-          <div class="circle">1</div>
-          <span class="label absolute -bottom-6 text-xs font-medium text-gray-500 w-20 text-center -ml-2">Shipping</span>
-        </div>
-        <div class="step-line" data-line="1"></div>
-        
-        <div class="step-indicator" data-step="2">
-          <div class="circle">2</div>
-          <span class="label absolute -bottom-6 text-xs font-medium text-gray-500 w-20 text-center -ml-2">Measurements</span>
-        </div>
-        <div class="step-line" data-line="2"></div>
-
-        <div class="step-indicator" data-step="3">
-          <div class="circle">3</div>
-          <span class="label absolute -bottom-6 text-xs font-medium text-gray-500 w-20 text-center -ml-2">Payment</span>
-        </div>
-      </div>
-
-      <form id="checkout-form" class="relative overflow-hidden" style="min-height: 400px;">
-        
-        <div class="step-slide active" id="slide-1">
-          <div class="p-8">
-            <h2 class="text-2xl font-serif font-bold text-gray-900 mb-6">Shipping Details</h2>
-            <div class="grid grid-cols-1 gap-4">
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
-                <input type="text" id="name" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-pink-500 focus:border-pink-500 bg-gray-100" required>
-              </div>
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
-                <input type="email" id="email" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-pink-500 focus:border-pink-500 bg-gray-100" required readonly>
-              </div>
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Street Address</label>
-                <input type="text" id="address" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-pink-500 focus:border-pink-500" required>
-              </div>
-              <div class="grid grid-cols-2 gap-4">
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-1">City</label>
-                  <input type="text" id="city" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-pink-500 focus:border-pink-500" required>
-                </div>
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-1">Postal Code</label>
-                  <input type="text" id="postal-code" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-pink-500 focus:border-pink-500" required>
-                </div>
-              </div>
+        <div class="stepper-container bg-white rounded-3xl shadow-xl border border-gray-200 overflow-hidden relative">
+          
+          <div class="stepper-header px-8 py-8 border-b border-gray-100 flex items-center justify-between relative">
+            <div class="step-indicator active" data-step="1">
+              <div class="circle">1</div>
+              <span class="label absolute -bottom-6 text-xs font-medium text-gray-500 w-20 text-center -ml-2">Shipping</span>
             </div>
-          </div>
-        </div>
-
-        <div class="step-slide" id="slide-2">
-          <div class="p-8">
-            <h2 class="text-2xl font-serif font-bold text-gray-900 mb-6">Your Measurements</h2>
-            <p class="text-sm text-gray-600 mb-4">These will be applied as defaults for custom items.</p>
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div><label class="block text-sm font-medium text-gray-700 mb-1">Bust (cm)</label><input type="number" id="bust" class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
-              <div><label class="block text-sm font-medium text-gray-700 mb-1">Waist (cm)</label><input type="number" id="waist" class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
-              <div><label class="block text-sm font-medium text-gray-700 mb-1">Hips (cm)</label><input type="number" id="hips" class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
-              <div class="sm:col-span-3 grid grid-cols-2 gap-4">
-                  <div><label class="block text-sm font-medium text-gray-700 mb-1">Height (cm)</label><input type="number" id="height" class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
-                  <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Fit Preference</label>
-                    <select id="fit" class="w-full px-4 py-2 border border-gray-300 rounded-lg">
-                      <option>Snug</option><option selected>Comfortable</option><option>Loose</option>
-                    </select>
-                  </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="step-slide" id="slide-3">
-          <div class="p-8">
-            <h2 class="text-2xl font-serif font-bold text-gray-900 mb-4">Review & Pay</h2>
+            <div class="step-line" data-line="1"></div>
             
-            <div id="checkout-summary" class="bg-gray-50 p-4 rounded-lg mb-6 max-h-48 overflow-y-auto border border-gray-200">
-                </div>
-
-            <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-md mb-6">
-              <p class="text-yellow-800 text-sm">Demo Store: No real payment required.</p>
+            <div class="step-indicator" data-step="2">
+              <div class="circle">2</div>
+              <span class="label absolute -bottom-6 text-xs font-medium text-gray-500 w-20 text-center -ml-2">Measurements</span>
             </div>
-            <div class="grid grid-cols-1 gap-4 opacity-50 pointer-events-none select-none">
-               <input type="text" placeholder="Card Number (Disabled)" class="w-full px-4 py-2 border rounded-lg bg-gray-100">
+            <div class="step-line" data-line="2"></div>
+
+            <div class="step-indicator" data-step="3">
+              <div class="circle">3</div>
+              <span class="label absolute -bottom-6 text-xs font-medium text-gray-500 w-20 text-center -ml-2">Payment</span>
             </div>
           </div>
+
+          <form id="checkout-form" class="relative overflow-hidden" style="min-height: 400px;">
+            
+            <div class="step-slide active" id="slide-1">
+              <div class="p-8">
+                <h2 class="text-2xl font-serif font-bold text-gray-900 mb-6">Shipping Details</h2>
+                <div class="grid grid-cols-1 gap-4">
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                    <input type="text" id="name" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-pink-500 focus:border-pink-500 bg-gray-100" required>
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                    <input type="email" id="email" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-pink-500 focus:border-pink-500 bg-gray-100" required readonly>
+                  </div>
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Street Address</label>
+                    <input type="text" id="address" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-pink-500 focus:border-pink-500" required>
+                  </div>
+                  <div class="grid grid-cols-2 gap-4">
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700 mb-1">City</label>
+                      <input type="text" id="city" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-pink-500 focus:border-pink-500" required>
+                    </div>
+                    <div>
+                      <label class="block text-sm font-medium text-gray-700 mb-1">Postal Code</label>
+                      <input type="text" id="postal-code" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-pink-500 focus:border-pink-500" required>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="step-slide" id="slide-2">
+              <div class="p-8">
+                <h2 class="text-2xl font-serif font-bold text-gray-900 mb-6">Your Measurements</h2>
+                <p class="text-sm text-gray-600 mb-4">These will be applied as defaults for custom items.</p>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div><label class="block text-sm font-medium text-gray-700 mb-1">Bust (cm)</label><input type="number" id="bust" class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
+                  <div><label class="block text-sm font-medium text-gray-700 mb-1">Waist (cm)</label><input type="number" id="waist" class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
+                  <div><label class="block text-sm font-medium text-gray-700 mb-1">Hips (cm)</label><input type="number" id="hips" class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
+                  <div class="sm:col-span-3 grid grid-cols-2 gap-4">
+                      <div><label class="block text-sm font-medium text-gray-700 mb-1">Height (cm)</label><input type="number" id="height" class="w-full px-4 py-2 border border-gray-300 rounded-lg"></div>
+                      <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Fit Preference</label>
+                        <select id="fit" class="w-full px-4 py-2 border border-gray-300 rounded-lg">
+                          <option>Snug</option><option selected>Comfortable</option><option>Loose</option>
+                        </select>
+                      </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="step-slide" id="slide-3">
+              <div class="p-8">
+                <h2 class="text-2xl font-serif font-bold text-gray-900 mb-4">Review & Pay</h2>
+                
+                <div id="checkout-summary" class="bg-gray-50 p-4 rounded-lg mb-6 max-h-48 overflow-y-auto border border-gray-200">
+                    </div>
+                    
+                <div class="mb-6">
+                    <label class="flex items-center space-x-3 cursor-pointer">
+                        <input type="checkbox" id="terms-checkbox" class="w-5 h-5 text-pink-600 border-gray-300 rounded focus:ring-pink-500">
+                        <span class="text-sm text-gray-700">
+                            I agree to the <a href="policy.html" target="_blank" class="text-pink-600 underline">Terms & Conditions</a> and <a href="policy.html" target="_blank" class="text-pink-600 underline">Privacy Policy</a>.
+                        </span>
+                    </label>
+                </div>
+
+                <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-md mb-6">
+                  <p class="text-yellow-800 text-sm">Demo Store: No real payment required.</p>
+                </div>
+                <div class="grid grid-cols-1 gap-4 opacity-50 pointer-events-none select-none">
+                   <input type="text" placeholder="Card Number (Disabled)" class="w-full px-4 py-2 border rounded-lg bg-gray-100">
+                </div>
+              </div>
+            </div>
+
+          </form>
+
+          <div class="stepper-footer px-8 py-6 bg-gray-50 border-t border-gray-100 flex justify-between items-center">
+            <button type="button" id="prevBtn" class="text-gray-400 hover:text-gray-600 font-medium transition hidden">
+              Back
+            </button>
+            <button type="button" id="nextBtn" class="bg-pink-600 text-white px-8 py-3 rounded-full font-medium hover:bg-pink-700 transition shadow-lg shadow-pink-200">
+              Continue
+            </button>
+          </div>
+
         </div>
-
-      </form>
-
-      <div class="stepper-footer px-8 py-6 bg-gray-50 border-t border-gray-100 flex justify-between items-center">
-        <button type="button" id="prevBtn" class="text-gray-400 hover:text-gray-600 font-medium transition hidden">
-          Back
-        </button>
-        <button type="button" id="nextBtn" class="bg-pink-600 text-white px-8 py-3 rounded-full font-medium hover:bg-pink-700 transition shadow-lg shadow-pink-200">
-          Continue
-        </button>
-      </div>
-
-    </div>
-  </div>
-</section>
     </div>
   </section>
 
   <footer class="bg-gray-900 text-white py-12">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="text-center">
-        <p class="text-gray-400 text-sm">
-          &copy; 2023 Carries Boutique. All rights reserved.
-        </p>
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div>
+            <a href="index.html" class="flex items-center">
+                <img class="h-8 w-auto" src="https://i.imgur.com/KNRtw3t.png" alt="Carries Boutique">
+                <span class="ml-2 text-xl font-semibold">Carries Boutique</span>
+            </a>
+            <p class="mt-4 text-gray-400">Premium fashion boutique offering handcrafted clothing with timeless elegance.</p>
+        </div>
+        <div>
+            <h3 class="text-lg font-medium mb-4">Shop</h3>
+            <ul class="space-y-2">
+                <li><a href="shop.html" class="text-gray-400 hover:text-white transition">New Arrivals</a></li>
+                <li><a href="shop.html" class="text-gray-400 hover:text-white transition">Best Sellers</a></li>
+                <li><a href="shop.html" class="text-gray-400 hover:text-white transition">Sale Items</a></li>
+            </ul>
+        </div>
+        <div>
+            <h3 class="text-lg font-medium mb-4">Information</h3>
+            <ul class="space-y-2">
+                <li><a href="index.html#about" class="text-gray-400 hover:text-white transition">About Us</a></li>
+                <li><a href="policy.html#shipping" class="text-gray-400 hover:text-white transition">Shipping Policy</a></li>
+                <li><a href="policy.html#returns" class="text-gray-400 hover:text-white transition">Returns & Exchanges</a></li>
+                <li><a href="PAIA-Manual.pdf" target="_blank" class="text-gray-400 hover:text-white transition">PAIA Manual</a></li>
+            </ul>
+        </div>
+        <div>
+            <h3 class="text-lg font-medium mb-4">Stay Connected</h3>
+            <p class="text-gray-400 mb-4">Follow us for the latest updates and styles.</p>
+            <a href="https://www.facebook.com/p/Carries-100063057530393/" target="_blank" class="inline-flex items-center text-pink-400 hover:text-pink-300 font-medium transition">
+                <i data-feather="facebook" class="mr-2"></i> Visit our Facebook Page
+            </a>
+        </div>
+      </div>
+      <div class="mt-12 pt-8 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center">
+          <p class="text-gray-400 text-sm">&copy; 2023 Carries Boutique. All rights reserved.</p>
+          <div class="mt-4 md:mt-0 flex space-x-6">
+              <span class="text-gray-600"><i data-feather="credit-card"></i></span>
+              <span class="text-gray-600"><i data-feather="lock"></i></span>
+              <span class="text-gray-600"><i data-feather="shield"></i></span>
+          </div>
       </div>
     </div>
   </footer>
+
+  <div id="toast-container" class="fixed bottom-5 right-5 z-50 hidden transform transition-all duration-300 translate-y-10 opacity-0">
+    <div class="bg-gray-900 text-white px-6 py-3 rounded-lg shadow-lg flex items-center space-x-3">
+        <i data-feather="check-circle" class="text-green-400"></i>
+        <span id="toast-message" class="font-medium">Item added to cart!</span>
+    </div>
+  </div>
+
+  <div id="cookie-banner" class="fixed bottom-0 left-0 right-0 bg-gray-900 text-white p-4 z-50 hidden shadow-lg border-t border-gray-700">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between">
+        <div class="text-sm mb-4 md:mb-0 md:mr-8">
+            <p>We use cookies to personalise content and analyse our traffic. By using our website, you agree to our use of cookies in accordance with our <a href="policy.html" class="underline text-pink-400 hover:text-pink-300">Privacy Policy</a>.</p>
+        </div>
+        <div class="flex space-x-4">
+            <button id="cookie-decline" class="text-sm text-gray-400 hover:text-white px-4 py-2">Decline</button>
+            <button id="cookie-accept" class="bg-pink-600 hover:bg-pink-700 text-white text-sm font-medium py-2 px-6 rounded-full transition">Accept</button>
+        </div>
+    </div>
+  </div>
 
   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
   <script>
-    // Your web app's Firebase configuration
     const firebaseConfig = {
-      apiKey: "AIzaSyCkyMyRLCc98BifcSYbIgs3_v3u2qBvdpg", // Use your actual key
+      apiKey: "AIzaSyCkyMyRLCc98BifcSYbIgs3_v3u2qBvdpg", 
       authDomain: "carries-boutique.firebaseapp.com",
       projectId: "carries-boutique",
       storageBucket: "carries-boutique.firebasestorage.app",
       messagingSenderId: "512525813635",
       appId: "1:512525813635:web:afe3d28c5bd2db68ae58b6",
-      measurementId: "G-2Q2QY4HJ9Y" // Optional
+      measurementId: "G-2Q2QY4HJ9Y"
     };
-
-    // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth(); 
-    const db = firebase.firestore(); // <-- Initialize Firestore
-
+    const db = firebase.firestore(); 
   </script>
 
   <script src="app.js"></script>
+  
+  <script>
+    // Cookie Banner Logic
+    document.addEventListener("DOMContentLoaded", () => {
+        const banner = document.getElementById('cookie-banner');
+        const acceptBtn = document.getElementById('cookie-accept');
+        const declineBtn = document.getElementById('cookie-decline');
+
+        if (!localStorage.getItem('cookieConsent')) {
+            setTimeout(() => {
+                banner.classList.remove('hidden'); 
+            }, 1000);
+        }
+
+        acceptBtn.addEventListener('click', () => {
+            localStorage.setItem('cookieConsent', 'accepted');
+            banner.classList.add('hidden');
+        });
+
+        declineBtn.addEventListener('click', () => {
+            localStorage.setItem('cookieConsent', 'declined');
+            banner.classList.add('hidden');
+        });
+    });
+  </script>
 </body>
 </html>

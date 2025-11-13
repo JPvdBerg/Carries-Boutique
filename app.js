@@ -122,10 +122,11 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         nextBtn.addEventListener('click', () => {
-            // Validation Logic
+            // 1. Standard Input Validation (Existing logic)
             const currentSlide = document.getElementById(`slide-${currentStep}`);
             const inputs = currentSlide.querySelectorAll('input[required]');
             let valid = true;
+            
             inputs.forEach(input => {
                 if (!input.value) {
                     valid = false;
@@ -134,16 +135,29 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
 
+            // 2. NEW: Check Terms & Conditions (Only applies on the last step)
+            if (currentStep === totalSteps) { 
+                const termsBox = document.getElementById('terms-checkbox');
+                if (termsBox && !termsBox.checked) {
+                    showToast("Please agree to the Terms & Conditions.");
+                    // Flash the text red
+                    termsBox.parentElement.classList.add('text-red-600');
+                    setTimeout(() => termsBox.parentElement.classList.remove('text-red-600'), 2000);
+                    return; // STOP here, do not submit
+                }
+            }
+
             if (!valid) {
                 showToast("Please fill in all required fields.");
                 return;
             }
 
+            // 3. Proceed or Submit
             if (currentStep < totalSteps) {
                 currentStep++;
                 updateUI();
             } else {
-                // 3. Submit Form
+                // Submit Form
                 form.dispatchEvent(new Event('submit', { cancelable: true }));
             }
         });

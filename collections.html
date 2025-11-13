@@ -199,5 +199,43 @@
     </div>
   </div>
   <script src="app.js"></script>
+  <div id="cookie-banner" class="fixed bottom-0 left-0 right-0 bg-gray-900 text-white p-4 z-50 hidden shadow-lg border-t border-gray-700">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between">
+        <div class="text-sm mb-4 md:mb-0 md:mr-8">
+            <p>We use cookies to personalise content and analyse our traffic. By using our website, you agree to our use of cookies in accordance with our <a href="policy.html" class="underline text-pink-400 hover:text-pink-300">Privacy Policy</a>.</p>
+        </div>
+        <div class="flex space-x-4">
+            <button id="cookie-decline" class="text-sm text-gray-400 hover:text-white px-4 py-2">Decline</button>
+            <button id="cookie-accept" class="bg-pink-600 hover:bg-pink-700 text-white text-sm font-medium py-2 px-6 rounded-full transition">Accept</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Cookie Banner Logic
+    document.addEventListener("DOMContentLoaded", () => {
+        const banner = document.getElementById('cookie-banner');
+        const acceptBtn = document.getElementById('cookie-accept');
+        const declineBtn = document.getElementById('cookie-decline');
+
+        // Check if user has already made a choice
+        if (!localStorage.getItem('cookieConsent')) {
+            setTimeout(() => {
+                banner.classList.remove('hidden'); // Show after small delay
+            }, 1000);
+        }
+
+        acceptBtn.addEventListener('click', () => {
+            localStorage.setItem('cookieConsent', 'accepted');
+            banner.classList.add('hidden');
+            // Optional: Load Analytics script here if you want strict compliance
+        });
+
+        declineBtn.addEventListener('click', () => {
+            localStorage.setItem('cookieConsent', 'declined');
+            banner.classList.add('hidden');
+        });
+    });
+</script>
 </body>
 </html>
