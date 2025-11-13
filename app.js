@@ -176,7 +176,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const cart = getCart();
         const cartItemId = createCartItemId(productId, size);
         
-        const existingItem = cart.find(item => item.cartItemId === cartItemId);
+        const summaryItems = document.querySelectorAll('#checkout-summary div[data-cart-item-id]');
 
         if (existingItem) {
             existingItem.quantity += 1;
@@ -570,7 +570,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // 3. Process each rendered unit (Retail items don't need unit-level submission, Custom items do)
             const cart = getCart();
             const processedCartUnits = [];
-            const summaryItems = document.querySelectorAll('#checkout-summary > div[data-cart-item-id]');
+            const summaryItems = document.querySelectorAll('#checkout-summary div[data-cart-item-id]');
             
             let allMeasurementsValid = true;
 
