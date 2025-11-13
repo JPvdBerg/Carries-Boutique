@@ -1,38 +1,37 @@
 // --- TOAST NOTIFICATION HELPER ---
-const showToast = (message) => {
+window.showToast = (message) => { // Added 'window.' to ensure global access
     const container = document.getElementById('toast-container');
     const msgEl = document.getElementById('toast-message');
     
     if (!container || !msgEl) {
-        console.error("Toast container not found in DOM");
+        console.error("Toast container missing!"); // This will show in your console if HTML is wrong
         return;
     }
 
-    // 1. Set message
+    console.log("Showing toast:", message); // Debug log
+
+    // 1. Set Content
     msgEl.textContent = message;
     
-    // 2. Reset state (in case it's already showing)
-    container.classList.add('hidden', 'translate-y-10', 'opacity-0');
+    // 2. Reset Animation State (Hide it first)
+    container.classList.add('hidden');
+    container.classList.add('translate-y-10', 'opacity-0');
     
-    // 3. Make it visible (but still transparent and lower down)
+    // 3. Make it display:block (but still invisible due to opacity)
     container.classList.remove('hidden');
     
-    // 4. FORCE REFLOW (The Magic Fix)
-    // Reading this property forces the browser to paint the frame immediately
+    // 4. FORCE REFLOW (Critical for animation to trigger)
     void container.offsetWidth; 
 
-    // 5. Animate In (Remove the classes that hide it)
+    // 5. Animate In
     container.classList.remove('translate-y-10', 'opacity-0');
 
-    // Re-initialize icons if feather is loaded
+    // 6. Refresh Icons
     if (typeof feather !== 'undefined') feather.replace();
 
-    // 6. Hide after 3 seconds
+    // 7. Hide logic
     setTimeout(() => {
-        // Fade out and move down
         container.classList.add('translate-y-10', 'opacity-0');
-        
-        // Wait for transition to finish (300ms), then hide display
         setTimeout(() => {
             container.classList.add('hidden');
         }, 300);
