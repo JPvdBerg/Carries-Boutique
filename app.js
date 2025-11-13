@@ -883,7 +883,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 if (currentPage === 'account.html' && !user.isAnonymous) {
                     loadMeasurements(user.uid, currentPage);
-                    // loadOrderHistory(user.uid); // Ensure this function exists if you call it, else comment out
+                     loadOrderHistory(user.uid); // Ensure this function exists if you call it, else comment out
                 }
 
             } else {
