@@ -296,26 +296,34 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     /**
-     * NEW FUNCTION: Handles changing the size (variant) of a retail item in the cart.
+     * NEW FUNCTION: Handles changing the size of ONE unit of an item.
+     * Moves 1 unit from 'Old Size' stack to 'New Size' stack.
      */
-    window.updateCartVariant = (oldCartItemId, newSize, productId, productName, price, image) => {
+    window.updateCartUnitVariant = (oldCartItemId, newSize, productId, productName, price, image) => {
         let cart = getCart();
-        // 1. Find the old item and get its quantity
+        
+        // 1. Find the source item stack
         const oldItemIndex = cart.findIndex(item => item.cartItemId === oldCartItemId);
         if (oldItemIndex === -1) return;
 
-        const quantity = cart[oldItemIndex].quantity;
+        // 2. Decrement the source item count (or remove if it was the last one)
+        if (cart[oldItemIndex].quantity > 1) {
+            cart[oldItemIndex].quantity -= 1;
+        } else {
+            cart.splice(oldItemIndex, 1);
+        }
+
+        // 3. Create the ID for the destination item
         const newCartItemId = createCartItemId(productId, newSize);
-
-        // 2. Remove the old item (variant/size)
-        cart.splice(oldItemIndex, 1);
-
-        // 3. Add the new item (new variant/size)
+        
+        // 4. Find if the destination item already exists
         const existingNewItem = cart.find(item => item.cartItemId === newCartItemId);
         
         if (existingNewItem) {
-            existingNewItem.quantity += quantity;
+            // If it exists, just add this unit to that stack
+            existingNewItem.quantity += 1;
         } else {
+            // If not, create a new stack for this size with Qty 1
             cart.push({
                 cartItemId: newCartItemId,
                 id: productId,
@@ -323,15 +331,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 price: price,
                 image: image,
                 size: newSize,
-                quantity: quantity
+                quantity: 1
             });
         }
 
         saveCart(cart);
-        // We only call renderCheckoutSummary here as we are on the checkout page
         renderCheckoutSummary();
     };
-
 
     // --- =================================== ---
     // --- CHECKOUT SUMMARY RENDERER (UPDATED) ---
@@ -366,55 +372,58 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // --- PHASE 1 & 2: Render Hybrid Items ---
+        // --- RENDER ITEMS (Split Retail & Custom) ---
 
         cart.forEach((item) => {
             const isRetail = item.size !== 'Custom';
-            // FIXED: Defined itemSize HERE so it is available in both if and else blocks
             const itemSize = item.size || 'undefined'; 
             
-            // 1. RETAIL ITEM RENDERING (Aggregated + Size Selector)
+            // 1. RETAIL ITEM RENDERING (Split by Unit)
             if (isRetail) {
-                const cartItemUniqueId = item.cartItemId; 
-                subtotal += item.price * item.quantity;
-                
-                const allRetailSizes = ['S', 'M', 'L', 'XL'];
-                const productData = `'${item.id}', '${item.name.replace(/'/g, "\\'")}', ${item.price}, '${item.image}'`;
+                // Loop through EACH unit of this retail item to display separately
+                for (let unitIndex = 0; unitIndex < item.quantity; unitIndex++) {
+                    // Create a unique ID for the DOM element, but use item.cartItemId for data logic
+                    const cartItemUniqueId = `${item.cartItemId}_retail_${unitIndex}`; 
+                    subtotal += item.price; // Add price per unit (since we loop quantity times)
+                    
+                    const allRetailSizes = ['S', 'M', 'L', 'XL'];
+                    const productData = `'${item.id}', '${item.name.replace(/'/g, "\\'")}', ${item.price}, '${item.image}'`;
 
-                const sizeOptionsHtml = allRetailSizes.map(size => {
-                    const isSelected = size === itemSize;
-                    return `
-                        <button 
-                            onclick="updateCartVariant('${cartItemUniqueId}', '${size}', ${productData})" 
-                            class="size-btn px-3 py-1 text-sm rounded-lg border transition-colors 
-                            ${isSelected ? 'bg-pink-600 text-white border-pink-600' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}">
-                            ${size}
-                        </button>
-                    `;
-                }).join('');
-                
-                const itemTypeBadge = `<span class="px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">Retail</span>`;
+                    const sizeOptionsHtml = allRetailSizes.map(size => {
+                        const isSelected = size === itemSize;
+                        return `
+                            <button 
+                                onclick="updateCartUnitVariant('${item.cartItemId}', '${size}', ${productData})" 
+                                class="size-btn px-3 py-1 text-sm rounded-lg border transition-colors 
+                                ${isSelected ? 'bg-pink-600 text-white border-pink-600' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}">
+                                ${size}
+                            </button>
+                        `;
+                    }).join('');
+                    
+                    const itemTypeBadge = `<span class="px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">Retail</span>`;
 
-                const retailHtml = `
-                    <div class="py-4 border-b" data-cart-item-id="${cartItemUniqueId}" data-base-cart-id="${cartItemUniqueId}">
-                        <div class="flex justify-between items-start">
-                            <div class="flex items-start space-x-3 w-4/5">
-                                <img src="${item.image}" alt="${item.name}" class="w-12 h-12 object-cover rounded-lg flex-shrink-0">
-                                <div>
-                                    <h4 class="font-medium text-sm md:text-base">${item.name}</h4>
-                                    ${itemTypeBadge}
-                                    <p class="text-xs text-gray-600 mt-1">Qty: ${item.quantity} &bull; Current Size: <span class="font-semibold">${itemSize}</span></p>
+                    const retailHtml = `
+                        <div class="py-4 border-b" data-cart-item-id="${cartItemUniqueId}" data-base-cart-id="${item.cartItemId}">
+                            <div class="flex justify-between items-start">
+                                <div class="flex items-start space-x-3 w-4/5">
+                                    <img src="${item.image}" alt="${item.name}" class="w-12 h-12 object-cover rounded-lg flex-shrink-0">
+                                    <div>
+                                        <h4 class="font-medium text-sm md:text-base">${item.name}</h4>
+                                        ${itemTypeBadge}
+                                        <p class="text-xs text-gray-600 mt-1">Unit ${unitIndex + 1} &bull; Current Size: <span class="font-semibold">${itemSize}</span></p>
+                                    </div>
                                 </div>
+                                <p class="font-bold text-sm md:text-base whitespace-nowrap">R${item.price.toFixed(2)}</p>
                             </div>
-                            <p class="font-bold text-sm md:text-base whitespace-nowrap">R${(item.price * item.quantity).toFixed(2)}</p>
+                            <div class="mt-3 pt-3 border-t border-gray-100">
+                                <p class="font-medium text-sm text-gray-700 mb-2">Change Size:</p>
+                                <div class="flex space-x-2">${sizeOptionsHtml}</div>
+                            </div>
                         </div>
-                        <div class="mt-3 pt-3 border-t border-gray-100">
-                            <p class="font-medium text-sm text-gray-700 mb-2">Change Size (For All ${item.quantity} Units):</p>
-                            <div class="flex space-x-2">${sizeOptionsHtml}</div>
-                        </div>
-                    </div>
-                `;
-                summaryContainer.innerHTML += retailHtml;
+                    `;
+                    summaryContainer.innerHTML += retailHtml;
+                }
             } 
             
             // 2. CUSTOM ITEM RENDERING (Individual Units + Measurement Toggles)
@@ -984,7 +993,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     const safeName = product.name.replace(/'/g, "\\'");
                     buttonHtml = `<button onclick="addToCart('${doc.id}', '${safeName}', ${product.price}, '${product.image_url}', 'M')" class="px-3 py-1 bg-pink-100 text-pink-700 rounded-full text-sm font-medium hover:bg-pink-200">Add to Cart</button>`;
                 } else {
-                    // FIXED: TYPO HERE € replaced with $
                     buttonHtml = `<a href="${productUrl}" class="px-3 py-1 bg-pink-100 text-pink-700 rounded-full text-sm font-medium hover:bg-pink-200">Learn More</a>`;
                 }
 
