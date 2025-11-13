@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Frequently Asked Questions | Carries Boutique</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&display=swap">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+  <link href="style.css" rel="stylesheet">
+  <style>
+    /* Smooth rotation for the arrow icon */
+    details > summary { list-style: none; }
+    details > summary::-webkit-details-marker { display: none; }
+    details[open] summary ~ * { animation: sweep .3s ease-in-out; }
+    
+    @keyframes sweep {
+      0%    {opacity: 0; transform: translateY(-10px)}
+      100%  {opacity: 1; transform: translateY(0)}
+    }
+  </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+  <nav class="bg-white shadow-sm sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16">
+        <div class="flex items-center">
+          <a href="index.html" class="flex-shrink-0 flex items-center">
+            <img class="h-8 w-auto" src="https://i.imgur.com/KNRtw3t.png" alt="Carries Boutique">
+            <span class="ml-2 text-xl font-semibold text-gray-900">Carries Boutique</span>
+          </a>
+        </div>
+        <div class="flex items-center space-x-4">
+            <a href="shop.html" class="text-gray-500 hover:text-pink-600 font-medium transition">Shop</a>
+            <a href="index.html" class="text-gray-500 hover:text-pink-600 font-medium transition">Home</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main class="max-w-3xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-12">
+        <h1 class="text-4xl font-serif font-bold text-gray-900 mb-4">How can we help?</h1>
+        <p class="text-lg text-gray-600">Answers to our most common questions.</p>
+    </div>
+
+    <div class="space-y-4">
+
+        <details class="group bg-white p-6 rounded-lg shadow-sm border border-gray-100 cursor-pointer open:ring-1 open:ring-pink-100">
+            <summary class="flex justify-between items-center font-medium text-gray-900">
+                <span>How long does delivery take?</span>
+                <span class="transition group-open:rotate-180">
+                    <i data-feather="chevron-down"></i>
+                </span>
+            </summary>
+            <div class="text-gray-600 mt-4 leading-relaxed text-sm">
+                <p>We courier nationwide! For <strong>Retail items</strong> (in stock), delivery takes 3-5 working days. For <strong>Custom Styles</strong>, please allow 2-3 weeks for production before shipping, as each item is handmade to your measurements.</p>
+            </div>
+        </details>
+
+        <details class="group bg-white p-6 rounded-lg shadow-sm border border-gray-100 cursor-pointer open:ring-1 open:ring-pink-100">
+            <summary class="flex justify-between items-center font-medium text-gray-900">
+                <span>What is your return policy?</span>
+                <span class="transition group-open:rotate-180">
+                    <i data-feather="chevron-down"></i>
+                </span>
+            </summary>
+            <div class="text-gray-600 mt-4 leading-relaxed text-sm">
+                <p>We accept returns on <strong>Retail items</strong> within 7 days of delivery, provided they are unworn with tags attached. <br><br>Please note: <strong>Custom Styles are non-returnable</strong> as they are tailored specifically to your unique measurements. If there is a fit issue due to our error, please contact us immediately.</p>
+            </div>
+        </details>
+
+        <details class="group bg-white p-6 rounded-lg shadow-sm border border-gray-100 cursor-pointer open:ring-1 open:ring-pink-100">
+            <summary class="flex justify-between items-center font-medium text-gray-900">
+                <span>How do I measure myself correctly?</span>
+                <span class="transition group-open:rotate-180">
+                    <i data-feather="chevron-down"></i>
+                </span>
+            </summary>
+            <div class="text-gray-600 mt-4 leading-relaxed text-sm">
+                <p>We have a handy <strong>Size Guide</strong> on every product page! Look for the "Size Guide" button next to the size selector. For custom orders, we need your Bust, Waist, Hips, and Height in centimeters.</p>
+            </div>
+        </details>
+
+        <details class="group bg-white p-6 rounded-lg shadow-sm border border-gray-100 cursor-pointer open:ring-1 open:ring-pink-100">
+            <summary class="flex justify-between items-center font-medium text-gray-900">
+                <span>Where are you based? Can I collect?</span>
+                <span class="transition group-open:rotate-180">
+                    <i data-feather="chevron-down"></i>
+                </span>
+            </summary>
+            <div class="text-gray-600 mt-4 leading-relaxed text-sm">
+                <p>We are an online-only boutique based in South Africa. To keep our costs (and prices) low, we do not have a physical showroom for fittings or collections. We courier directly to your door!</p>
+            </div>
+        </details>
+
+        <details class="group bg-white p-6 rounded-lg shadow-sm border border-gray-100 cursor-pointer open:ring-1 open:ring-pink-100">
+            <summary class="flex justify-between items-center font-medium text-gray-900">
+                <span>What payment methods do you accept?</span>
+                <span class="transition group-open:rotate-180">
+                    <i data-feather="chevron-down"></i>
+                </span>
+            </summary>
+            <div class="text-gray-600 mt-4 leading-relaxed text-sm">
+                <p>We accept secure online payments via Credit/Debit Card and Instant EFT. We also offer Payflex if you wish to pay in 4 interest-free installments.</p>
+            </div>
+        </details>
+
+    </div>
+
+    <div class="mt-12 text-center bg-pink-50 rounded-xl p-8">
+        <h3 class="text-xl font-bold text-gray-900 mb-2">Still have questions?</h3>
+        <p class="text-gray-600 mb-6">We are just a WhatsApp message away.</p>
+        <a href="https://wa.me/27828735697" target="_blank" class="inline-flex items-center bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-full font-medium transition shadow-lg shadow-green-200">
+            <i data-feather="message-circle" class="mr-2"></i> Chat on WhatsApp
+        </a>
+    </div>
+
+  </main>
+
+  <footer class="bg-gray-900 text-white py-12 mt-12">
+      <div class="max-w-7xl mx-auto px-4 text-center">
+          <p>&copy; 2023 Carries Boutique. All rights reserved.</p>
+      </div>
+  </footer>
+
+  <script>
+      feather.replace();
+  </script>
+</body>
+</html>
