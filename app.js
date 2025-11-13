@@ -163,6 +163,19 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     window.addToCart = (productId, productName, price, image, size) => {
+        /**
+     * Creates a unique ID for a cart item based on its product ID and size.
+     * e.g., 'prod_001_M'
+     */
+    const createCartItemId = (productId, size) => {
+        if (!size) {
+            console.error("Size is undefined, defaulting to 'default'");
+            size = 'default'; // Failsafe, but should be provided
+        }
+        return `${productId}_${size}`;
+    };
+
+    window.addToCart = (productId, productName, price, image, size) => {
         if (!size) {
             // This case handles the "Custom" styles which don't have S,M,L
             if (productName.toLowerCase().includes('custom')) {
@@ -176,7 +189,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const cart = getCart();
         const cartItemId = createCartItemId(productId, size);
         
-        const summaryItems = document.querySelectorAll('#checkout-summary div[data-cart-item-id]');
+        // --- FIX 1: Correctly find existing item and remove misplaced line ---
+        const existingItem = cart.find(item => item.cartItemId === cartItemId); 
+        // const summaryItems = document.querySelectorAll('#checkout-summary div[data-cart-item-id]'); // REMOVED
 
         if (existingItem) {
             existingItem.quantity += 1;
