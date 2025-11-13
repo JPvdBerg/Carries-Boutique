@@ -357,67 +357,58 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
+        // ... (INSIDE renderCheckoutSummary function, starting around line 430) ...
+
         if (cart.length === 0) {
-            summaryContainer.innerHTML = '<p class="text-gray-500">Your cart is empty.</p>';
-            const placeOrderBtn = document.querySelector('#checkout-form button[type="submit"]');
-            if (placeOrderBtn) {
-                placeOrderBtn.disabled = true;
-                placeOrderBtn.textContent = 'Place Order';
-            }
+            // ... (rest of the empty cart handling logic) ...
             return;
         }
 
-        cart.forEach((item, index) => {
-            const cartItemUniqueId = item.cartItemId || item.id; 
+        // --- NEW: Process and Render EACH individual item unit ---
+        let allItemUnits = [];
+        cart.forEach(item => {
+            for (let i = 0; i < item.quantity; i++) {
+                // Generate a unique ID for this specific UNIT (e.g., prod_001_Custom_1, prod_001_Custom_2)
+                const unitId = `${item.cartItemId}_unit_${i}`;
+                allItemUnits.push({ ...item, unitId: unitId, basePrice: item.price });
+            }
+        });
+
+        allItemUnits.forEach((item, unitIndex) => {
+            const cartItemUniqueId = item.unitId; 
             const itemSize = item.size || 'undefined';
-            subtotal += item.price * item.quantity;
+            subtotal += item.basePrice; // Use basePrice here
             
             const isRetail = item.size !== 'Custom';
             let itemOptionsHtml = '';
             let itemTypeBadge = '';
-
-
+            
+            // --- Retail vs. Custom Logic Starts Here ---
+            
             if (isRetail) {
-                 // --- RETAIL SIZE SELECTOR (New Layout) ---
-                 // Assumption: All retail products have these base sizes.
-                 const allRetailSizes = ['S', 'M', 'L', 'XL'];
-                 const productData = `'${item.id}', '${item.name.replace(/'/g, "\\'")}', ${item.price}, '${item.image}'`;
-
-                 const sizeOptionsHtml = allRetailSizes.map(size => {
-                     const isSelected = size === itemSize;
-                     return `
-                        <button 
-                            onclick="updateCartVariant('${cartItemUniqueId}', '${size}', ${productData})" 
-                            class="size-btn px-3 py-1 text-sm rounded-lg border transition-colors 
-                            ${isSelected ? 'bg-pink-600 text-white border-pink-600' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}">
-                            ${size}
-                        </button>
-                     `;
-                 }).join('');
-
-                 itemOptionsHtml = `
-                    <div class="mt-3 pt-3 border-t border-gray-100">
-                        <p class="font-medium text-sm text-gray-700 mb-2">Change Size:</p>
-                        <div class="flex space-x-2">
-                           ${sizeOptionsHtml}
-                        </div>
-                    </div>
-                 `;
+                 // --- RETAIL SIZE SELECTOR (Unit-based size changer) ---
+                 // This ensures the size buttons are rendered but REMOVE them,
+                 // as changing size on the checkout screen should still change the aggregated variant.
+                 
+                 // Since we don't need unit-level size control here, we simplify the retail display.
+                 // We only show the current size badge and remove the cramped size buttons.
+                 
+                 itemOptionsHtml = ''; // Remove the size change buttons from the unit view
                  itemTypeBadge = `<span class="px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">Retail</span>`;
-
+            
             } else {
-                // --- CUSTOM MEASUREMENT TOGGLE ---
+                // --- CUSTOM MEASUREMENT TOGGLE (For each custom unit) ---
                 itemOptionsHtml = `
-                <div class="mt-4" data-measurement-toggle>
-                  <h5 class="text-sm font-medium text-gray-800 mb-2">Measurements</h5>
-                  <div class="flex space-x-4">
+                <div class="mt-3 pt-2 border-t border-gray-100" data-measurement-toggle>
+                  <h5 class="text-xs font-semibold text-gray-800 mb-2">Unit ${unitIndex + 1} Measurements</h5>
+                  <div class="flex flex-col space-y-2">
                     <label class="flex items-center text-sm">
                       <input type="radio" name="measurements-option-${cartItemUniqueId}" value="default" class="mr-2 focus:ring-pink-500 text-pink-600 measurement-radio" checked>
                       Use Default Account Sizes
                     </label>
                     <label class="flex items-center text-sm">
                       <input type="radio" name="measurements-option-${cartItemUniqueId}" value="specific" class="mr-2 focus:ring-pink-500 text-pink-600 measurement-radio">
-                      Specify for This Item
+                      Specify for This Unit
                     </label>
                   </div>
                   
@@ -447,7 +438,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             
             const itemHtml = `
-              <div class="py-4 ${index < cart.length - 1 ? 'border-b' : ''}" data-cart-item-id="${cartItemUniqueId}">
+              <div class="py-4 ${unitIndex < allItemUnits.length - 1 ? 'border-b' : ''}" data-cart-item-id="${cartItemUniqueId}" data-base-cart-id="${item.cartItemId}">
                 <div class="flex justify-between items-start">
                   <div class="flex items-start space-x-3 w-4/5">
                     <img src="${item.image}" alt="${item.name}" class="w-12 h-12 object-cover rounded-lg flex-shrink-0">
@@ -456,17 +447,19 @@ document.addEventListener('DOMContentLoaded', () => {
                         <h4 class="font-medium text-sm md:text-base">${item.name}</h4>
                         ${itemTypeBadge}
                       </div>
-                      <p class="text-xs text-gray-600 mt-1">Qty: ${item.quantity} &bull; Current Size: <span class="font-semibold">${itemSize}</span></p>
+                      <p class="text-xs text-gray-600 mt-1">Current Size: <span class="font-semibold">${itemSize}</span></p>
                     </div>
                   </div>
-                  <p class="font-bold text-sm md:text-base whitespace-nowrap">R${(item.price * item.quantity).toFixed(2)}</p>
+                  <p class="font-bold text-sm md:text-base whitespace-nowrap">R${item.basePrice.toFixed(2)}</p>
                 </div>
                 
                 ${itemOptionsHtml}
               </div>
             `;
             summaryContainer.innerHTML += itemHtml;
-        });
+        }); // --- END allItemUnits.forEach ---
+
+        // ... (The rest of the rendering logic remains the same, calculating totals, adding summaryTotalHtml, and running initializeMeasurementToggles) ...
 
         const shipping = 50.00;
         const total = subtotal + shipping;
