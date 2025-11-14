@@ -80,6 +80,7 @@ exports.convertImageToWebP = onObjectFinalized({
         await bucket.upload(tempWebpPath, {
             destination: path.join(path.dirname(filePath), webpFileName),
             metadata: { contentType: 'image/webp' },
+			public: true,
         });
         console.log("WebP image uploaded.");
         
