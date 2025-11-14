@@ -1,16 +1,16 @@
-// This file uses the V1 syntax for stable deployment.
-
-const functions = require('firebase-functions');
-const admin = require('firebase-admin');
-const { Storage } = require('@google-cloud/storage');
+// This file uses the V2 syntax
+const { onObjectFinalized } = require("firebase-functions/v2/storage");
+const { onCall, HttpsError } = require("firebase-functions/v2/https");
+const { initializeApp, cert } = require("firebase-admin/app");
+const { getFirestore, FieldValue } = require("firebase-admin/firestore");
+const { getStorage } = require("firebase-admin/storage");
 const sharp = require('sharp'); 
 const os = require('os');
 const path = require('path');
 const fs = require('fs');
 
-admin.initializeApp();
-const db = admin.firestore();
-const storage = new Storage();
+initializeApp();
+const db = getFirestore();
 
 // --- Helper function for Email Content ---
 function generateReceiptHtml(name, address, cart, total, orderId) {
@@ -47,16 +47,19 @@ function generateReceiptHtml(name, address, cart, total, orderId) {
     `;
 }
 
-// --- 1. IMAGE CONVERSION FUNCTION (V1 Storage Trigger) ---
-exports.convertImageToWebP = functions.storage.object().onFinalize(async (object) => {
-    const fileBucket = object.bucket;
-    const filePath = object.name;
-    const contentType = object.contentType;
+// --- 1. IMAGE CONVERSION FUNCTION (V2 Storage Trigger) ---
+exports.convertImageToWebP = onObjectFinalized(async (event) => {
+    const fileBucket = event.data.bucket;
+    const filePath = event.data.name;
+    const contentType = event.data.contentType;
 
     // Exit if not an image or if already WebP
-    if (!contentType || !contentType.startsWith('image/') || contentType === 'image/webp') return null;
+    if (!contentType || !contentType.startsWith('image/') || contentType === 'image/webp') {
+        console.log("Exiting: Not a convertible image.");
+        return null;
+    }
 
-    const bucket = storage.bucket(fileBucket);
+    const bucket = getStorage().bucket(fileBucket);
     const originalFile = bucket.file(filePath);
     const fileName = path.basename(filePath);
     const tempFilePath = path.join(os.tmpdir(), fileName);
@@ -65,14 +68,20 @@ exports.convertImageToWebP = functions.storage.object().onFinalize(async (object
     
     try {
         await originalFile.download({ destination: tempFilePath });
+        console.log("Image downloaded to temp path:", tempFilePath);
+
         await sharp(tempFilePath).webp({ quality: 80 }).toFile(tempWebpPath);
+        console.log("Image converted to WebP at:", tempWebpPath);
         
         await bucket.upload(tempWebpPath, {
             destination: path.join(path.dirname(filePath), webpFileName),
             metadata: { contentType: 'image/webp' },
         });
+        console.log("WebP image uploaded.");
         
         await originalFile.delete(); 
+        console.log("Original image deleted.");
+
     } catch (error) {
         console.error('Failed to convert or upload WebP image:', error);
     } finally {
@@ -83,19 +92,19 @@ exports.convertImageToWebP = functions.storage.object().onFinalize(async (object
 });
 
 
-// --- 2. ORDER PLACEMENT & EMAIL TRIGGER FUNCTION (V1 HTTPS Callable) ---
-exports.placeOrder = functions.https.onCall(async (data, context) => {
+// --- 2. ORDER PLACEMENT & EMAIL TRIGGER FUNCTION (V2 HTTPS Callable) ---
+exports.placeOrder = onCall(async (request) => {
     // NOTE: This function relies on the Firebase Extension writing to the 'mail' collection.
   
-    if (!context.auth) {
-        throw new functions.https.HttpsError("unauthenticated", "Must be logged in to place an order.");
+    if (!request.auth) {
+        throw new HttpsError("unauthenticated", "Must be logged in to place an order.");
     }
 
-    const {userInfo, shippingAddress, cart} = data;
-    const uid = context.auth.uid;
+    const {userInfo, shippingAddress, cart} = request.data;
+    const uid = request.auth.uid;
 
     if (!userInfo || !shippingAddress || !cart || cart.length === 0) {
-        throw new functions.https.HttpsError("invalid-argument", "Missing required order data.");
+        throw new HttpsError("invalid-argument", "Missing required order data.");
     }
 
     try {
@@ -107,7 +116,7 @@ exports.placeOrder = functions.https.onCall(async (data, context) => {
         const orderData = {
             customer_id: uid,
             customer_email: userInfo.email,
-            order_date: admin.firestore.FieldValue.serverTimestamp(),
+            order_date: FieldValue.serverTimestamp(),
             total_amount: totalAmount,
             status: "Pending",
             shipping_address: shippingAddress,
@@ -130,6 +139,6 @@ exports.placeOrder = functions.https.onCall(async (data, context) => {
         return {success: true, orderId: orderId};
     } catch (error) {
         console.error("Error placing order:", error);
-        throw new functions.https.HttpsError("internal", "An error occurred while placing your order.", error.message);
+        throw new HttpsError("internal", "An error occurred while placing your order.", error.message);
     }
 });
