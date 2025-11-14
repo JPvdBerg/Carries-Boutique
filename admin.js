@@ -25,8 +25,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 previewContainer.classList.remove('hidden');
             }
 
-            // 2. Create Ref & Start Upload
-            const storageRef = firebase.storage().ref('products/' + Date.now() + '_' + file.name);
+            // --- NEW: Generate a unique name without the file extension ---
+            const baseName = file.name.split('.').slice(0, -1).join('.');
+            const uniqueID = Date.now() + '_' + baseName;
+            const storageRef = firebase.storage().ref('products/' + uniqueID);
+            
             const uploadTask = storageRef.put(file);
 
             // 3. UI Updates
@@ -47,18 +50,24 @@ document.addEventListener('DOMContentLoaded', () => {
                     alert("Upload failed: " + error.message);
                     if (submitBtn) submitBtn.disabled = false;
                 }, 
+                // --- SUCCESS: Save the new .webp URL ---
                 () => {
-                    uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
-                        if (urlInput) urlInput.value = downloadURL;
-                        if (submitBtn) {
-                            submitBtn.disabled = false;
-                            // Check if we are in edit mode
-                            const params = new URLSearchParams(window.location.search);
-                            const isEdit = params.get('id') && params.get('collection');
-                            submitBtn.textContent = isEdit ? 'Save Changes' : 'Add Product';
-                        }
-                        if (progressBar) progressBar.classList.add('bg-green-500');
-                    });
+                    // 1. Construct the FINAL path, assuming Cloud Function succeeded
+                    const finalWebpPath = 'products/' + uniqueID + '.webp';
+                    
+                    // 2. Construct the full Download URL
+                    const bucketName = uploadTask.snapshot.ref.bucket;
+                    const encodedPath = encodeURIComponent(finalWebpPath);
+                    const finalURL = `https://firebasestorage.googleapis.com/v0/b/${bucketName}/o/${encodedPath}?alt=media`;
+
+                    if (urlInput) urlInput.value = finalURL;
+                    if (submitBtn) {
+                        const params = new URLSearchParams(window.location.search);
+                        const isEdit = params.get('id') && params.get('collection');
+                        submitBtn.textContent = isEdit ? 'Save Changes' : 'Add Product';
+                        submitBtn.disabled = false;
+                    }
+                    if (progressBar) progressBar.classList.add('bg-green-500');
                 }
             );
         });
@@ -364,8 +373,8 @@ function setupAddProductForm(db) {
                     if (!isNaN(num) && num > maxId) {
                         maxId = num;
                     }
-                }
-            };
+                };
+            }
 
             productsSnap.forEach(doc => checkMax(doc.id));
             stylesSnap.forEach(doc => checkMax(doc.id));
