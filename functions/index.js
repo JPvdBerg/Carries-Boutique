@@ -50,7 +50,7 @@ function generateReceiptHtml(name, address, cart, total, orderId) {
 // --- 1. IMAGE CONVERSION FUNCTION (V2 Storage Trigger) ---
 exports.convertImageToWebP = onObjectFinalized({
     region: "africa-south1",
-    memory: "512MiB", // <-- Added memory
+    memory: "512MiB", 
 }, async (event) => {
     const fileBucket = event.data.bucket;
     const filePath = event.data.name;
@@ -66,8 +66,10 @@ exports.convertImageToWebP = onObjectFinalized({
     const originalFile = bucket.file(filePath);
     const fileName = path.basename(filePath);
     const tempFilePath = path.join(os.tmpdir(), fileName);
+    
     const webpFileName = fileName.replace(/\.[^/.]+$/, "") + '.webp';
     const tempWebpPath = path.join(os.tmpdir(), webpFileName);
+    const destinationPath = path.join(path.dirname(filePath), webpFileName);
     
     try {
         await originalFile.download({ destination: tempFilePath });
@@ -76,12 +78,19 @@ exports.convertImageToWebP = onObjectFinalized({
         await sharp(tempFilePath).webp({ quality: 80 }).toFile(tempWebpPath);
         console.log("Image converted to WebP at:", tempWebpPath);
         
+        // Upload the new .webp file (it will be private by default)
         await bucket.upload(tempWebpPath, {
-            destination: path.join(path.dirname(filePath), webpFileName),
+            destination: destinationPath,
             metadata: { contentType: 'image/webp' },
-            public: true, // <-- Added public permission
         });
         console.log("WebP image uploaded.");
+
+        // *** THIS IS THE NEW FIX ***
+        // Get a reference to the file we just uploaded and make it public
+        const newFile = bucket.file(destinationPath);
+        await newFile.makePublic();
+        console.log("Successfully made .webp file public.");
+        // *** END OF FIX ***
         
         await originalFile.delete(); 
         console.log("Original image deleted.");
