@@ -1,14 +1,13 @@
-// This file uses the V1 (1st Gen) syntax for maximum stability.
+// This file uses the V1 syntax for stable deployment.
 
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 const { Storage } = require('@google-cloud/storage');
-const sharp = require('sharp');
+const sharp = require('sharp'); 
 const os = require('os');
 const path = require('path');
 const fs = require('fs');
 
-// Initialize Firebase Admin SDK
 admin.initializeApp();
 const db = admin.firestore();
 const storage = new Storage();
@@ -48,7 +47,7 @@ function generateReceiptHtml(name, address, cart, total, orderId) {
     `;
 }
 
-// --- 1. IMAGE CONVERSION FUNCTION (WebP) ---
+// --- 1. IMAGE CONVERSION FUNCTION (V1 Storage Trigger) ---
 exports.convertImageToWebP = functions.storage.object().onFinalize(async (object) => {
     const fileBucket = object.bucket;
     const filePath = object.name;
@@ -63,18 +62,17 @@ exports.convertImageToWebP = functions.storage.object().onFinalize(async (object
     const tempFilePath = path.join(os.tmpdir(), fileName);
     const webpFileName = fileName.replace(/\.[^/.]+$/, "") + '.webp';
     const tempWebpPath = path.join(os.tmpdir(), webpFileName);
-    const webpFilePath = path.join(path.dirname(filePath), webpFileName);
-
+    
     try {
         await originalFile.download({ destination: tempFilePath });
         await sharp(tempFilePath).webp({ quality: 80 }).toFile(tempWebpPath);
         
         await bucket.upload(tempWebpPath, {
-            destination: webpFilePath,
+            destination: path.join(path.dirname(filePath), webpFileName),
             metadata: { contentType: 'image/webp' },
         });
         
-        await originalFile.delete(); // Delete original JPG/PNG
+        await originalFile.delete(); 
     } catch (error) {
         console.error('Failed to convert or upload WebP image:', error);
     } finally {
@@ -87,56 +85,51 @@ exports.convertImageToWebP = functions.storage.object().onFinalize(async (object
 
 // --- 2. ORDER PLACEMENT & EMAIL TRIGGER FUNCTION (V1 HTTPS Callable) ---
 exports.placeOrder = functions.https.onCall(async (data, context) => {
-  // NOTE: This function now relies on the Firebase Extension to send the email.
+    // NOTE: This function relies on the Firebase Extension writing to the 'mail' collection.
   
-  if (!context.auth) {
-    throw new functions.https.HttpsError(
-        "unauthenticated",
-        "Must be logged in to place an order.",
-    );
-  }
+    if (!context.auth) {
+        throw new functions.https.HttpsError("unauthenticated", "Must be logged in to place an order.");
+    }
 
-  const {userInfo, shippingAddress, cart} = data;
-  const uid = context.auth.uid;
+    const {userInfo, shippingAddress, cart} = data;
+    const uid = context.auth.uid;
 
-  if (!userInfo || !shippingAddress || !cart || cart.length === 0) {
-    throw new functions.https.HttpsError("invalid-argument", "Missing required order data.");
-  }
+    if (!userInfo || !shippingAddress || !cart || cart.length === 0) {
+        throw new functions.https.HttpsError("invalid-argument", "Missing required order data.");
+    }
 
-  try {
-    // --- Order Logic (Save to Database) ---
-    let subtotal = 0;
-    cart.forEach((item) => subtotal += item.price * item.quantity);
-    const shipping = 50.00;
-    const totalAmount = subtotal + shipping;
+    try {
+        let subtotal = 0;
+        cart.forEach((item) => subtotal += item.price * item.quantity);
+        const shipping = 50.00;
+        const totalAmount = subtotal + shipping;
 
-    const orderData = {
-      customer_id: uid,
-      customer_email: userInfo.email,
-      order_date: admin.firestore.FieldValue.serverTimestamp(),
-      total_amount: totalAmount,
-      status: "Pending",
-      shipping_address: shippingAddress,
-      items: cart,
-    };
-    const orderRef = await db.collection("orders").add(orderData);
-    const orderId = orderRef.id;
+        const orderData = {
+            customer_id: uid,
+            customer_email: userInfo.email,
+            order_date: admin.firestore.FieldValue.serverTimestamp(),
+            total_amount: totalAmount,
+            status: "Pending",
+            shipping_address: shippingAddress,
+            items: cart,
+        };
+        const orderRef = await db.collection("orders").add(orderData);
+        const orderId = orderRef.id;
 
-    // --- Email Logic (Trigger the Extension) ---
-    // The email body is built, then written to the 'mail' collection
-    const receiptHtml = generateReceiptHtml(userInfo.name, shippingAddress, cart, totalAmount, orderId);
-    
-    await db.collection("mail").add({
-        to: [userInfo.email],
-        message: {
-            subject: `Order Confirmation #${orderId.slice(0, 8)}`,
-            html: receiptHtml,
-        },
-    });
+        // Trigger the Email Extension by writing to the 'mail' collection
+        const receiptHtml = generateReceiptHtml(userInfo.name, shippingAddress, cart, totalAmount, orderId);
+        
+        await db.collection("mail").add({
+            to: [userInfo.email],
+            message: {
+                subject: `Order Confirmation #${orderId.slice(0, 8)}`,
+                html: receiptHtml,
+            },
+        });
 
-    return {success: true, orderId: orderId};
-  } catch (error) {
-    console.error("Error placing order:", error);
-    throw new functions.https.HttpsError("internal", "An error occurred while placing your order.", error.message);
-  }
+        return {success: true, orderId: orderId};
+    } catch (error) {
+        console.error("Error placing order:", error);
+        throw new functions.https.HttpsError("internal", "An error occurred while placing your order.", error.message);
+    }
 });
