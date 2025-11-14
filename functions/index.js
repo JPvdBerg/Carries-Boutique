@@ -98,6 +98,7 @@ exports.convertImageToWebP = onObjectFinalized({
 // --- 2. ORDER PLACEMENT & EMAIL TRIGGER FUNCTION (V2 HTTPS Callable) ---
 // **HERE IS THE FIX:**
 exports.placeOrder = onCall({
+	// Forcing re-deploy
     region: "africa-south1" // <-- Added this line
 }, async (request) => {
     // NOTE: This function relies on the Firebase Extension writing to the 'mail' collection.
