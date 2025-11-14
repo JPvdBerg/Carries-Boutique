@@ -50,7 +50,8 @@ function generateReceiptHtml(name, address, cart, total, orderId) {
 // --- 1. IMAGE CONVERSION FUNCTION (V2 Storage Trigger) ---
 // **HERE IS THE FIX:**
 exports.convertImageToWebP = onObjectFinalized({
-    region: "africa-south1" // <-- Added this line
+    region: "africa-south1" 
+	memory: "512MiB"// <-- Added this line
 }, async (event) => {
     const fileBucket = event.data.bucket;
     const filePath = event.data.name;
