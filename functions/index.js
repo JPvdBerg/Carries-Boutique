@@ -1,7 +1,7 @@
 // This file uses the V2 syntax
 const { onObjectFinalized } = require("firebase-functions/v2/storage");
 const { onCall, HttpsError } = require("firebase-functions/v2/https");
-const { initializeApp, cert } = require("firebase-admin/app");
+const { initializeApp } = require("firebase-admin/app");
 const { getFirestore, FieldValue } = require("firebase-admin/firestore");
 const { getStorage } = require("firebase-admin/storage");
 const sharp = require('sharp'); 
@@ -48,10 +48,9 @@ function generateReceiptHtml(name, address, cart, total, orderId) {
 }
 
 // --- 1. IMAGE CONVERSION FUNCTION (V2 Storage Trigger) ---
-// **HERE IS THE FIX:**
 exports.convertImageToWebP = onObjectFinalized({
-    region: "africa-south1" 
-	memory: "512MiB"// <-- Added this line
+    region: "africa-south1",
+    memory: "512MiB", // <-- Added memory
 }, async (event) => {
     const fileBucket = event.data.bucket;
     const filePath = event.data.name;
@@ -80,7 +79,7 @@ exports.convertImageToWebP = onObjectFinalized({
         await bucket.upload(tempWebpPath, {
             destination: path.join(path.dirname(filePath), webpFileName),
             metadata: { contentType: 'image/webp' },
-			public: true,
+            public: true, // <-- Added public permission
         });
         console.log("WebP image uploaded.");
         
@@ -98,10 +97,9 @@ exports.convertImageToWebP = onObjectFinalized({
 
 
 // --- 2. ORDER PLACEMENT & EMAIL TRIGGER FUNCTION (V2 HTTPS Callable) ---
-// **HERE IS THE FIX:**
 exports.placeOrder = onCall({
-	// Forcing re-deploy
-    region: "africa-south1" // <-- Added this line
+    region: "africa-south1",
+    // Added comment to force re-deploy
 }, async (request) => {
     // NOTE: This function relies on the Firebase Extension writing to the 'mail' collection.
   
