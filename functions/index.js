@@ -48,7 +48,10 @@ function generateReceiptHtml(name, address, cart, total, orderId) {
 }
 
 // --- 1. IMAGE CONVERSION FUNCTION (V2 Storage Trigger) ---
-exports.convertImageToWebP = onObjectFinalized(async (event) => {
+// **HERE IS THE FIX:**
+exports.convertImageToWebP = onObjectFinalized({
+    region: "africa-south1" // <-- Added this line
+}, async (event) => {
     const fileBucket = event.data.bucket;
     const filePath = event.data.name;
     const contentType = event.data.contentType;
@@ -93,7 +96,10 @@ exports.convertImageToWebP = onObjectFinalized(async (event) => {
 
 
 // --- 2. ORDER PLACEMENT & EMAIL TRIGGER FUNCTION (V2 HTTPS Callable) ---
-exports.placeOrder = onCall(async (request) => {
+// **HERE IS THE FIX:**
+exports.placeOrder = onCall({
+    region: "africa-south1" // <-- Added this line
+}, async (request) => {
     // NOTE: This function relies on the Firebase Extension writing to the 'mail' collection.
   
     if (!request.auth) {
