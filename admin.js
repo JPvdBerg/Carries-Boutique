@@ -42,32 +42,38 @@ document.addEventListener('DOMContentLoaded', () => {
 
             uploadTask.on('state_changed', 
                 (snapshot) => {
+                    // Show progress
                     const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
                     if (progressBar) progressBar.style.width = progress + '%';
                 }, 
                 (error) => {
+                    // Handle failure
                     console.error("Upload failed:", error);
                     alert("Upload failed: " + error.message);
                     if (submitBtn) submitBtn.disabled = false;
                 }, 
-                // --- SUCCESS: Save the new .webp URL ---
+                // --- SUCCESS: Get the REAL URL of the file we just uploaded ---
                 () => {
-                    // 1. Construct the FINAL path, assuming Cloud Function succeeded
-                    const finalWebpPath = 'products/' + uniqueID + '.webp';
-                    
-                    // 2. Construct the full Download URL
-                    const bucketName = uploadTask.snapshot.ref.bucket;
-                    const encodedPath = encodeURIComponent(finalWebpPath);
-                    const finalURL = `https://firebasestorage.googleapis.com/v0/b/${bucketName}/o/${encodedPath}?alt=media`;
+                    // Get the real download URL for the original file (e.g., the .jpg)
+                    uploadTask.snapshot.ref.getDownloadURL().then(downloadURL => {
+                        
+                        // Set the input value to this working URL
+                        if (urlInput) urlInput.value = downloadURL;
+                        
+                        // Re-enable the submit button
+                        if (submitBtn) {
+                            const params = new URLSearchParams(window.location.search);
+                            const isEdit = params.get('id') && params.get('collection');
+                            submitBtn.textContent = isEdit ? 'Save Changes' : 'Add Product';
+                            submitBtn.disabled = false;
+                        }
+                        if (progressBar) progressBar.classList.add('bg-green-500');
 
-                    if (urlInput) urlInput.value = finalURL;
-                    if (submitBtn) {
-                        const params = new URLSearchParams(window.location.search);
-                        const isEdit = params.get('id') && params.get('collection');
-                        submitBtn.textContent = isEdit ? 'Save Changes' : 'Add Product';
-                        submitBtn.disabled = false;
-                    }
-                    if (progressBar) progressBar.classList.add('bg-green-500');
+                    }).catch(error => {
+                        console.error("Error getting download URL:", error);
+                        alert("Upload succeeded, but couldn't get the URL.");
+                        if (submitBtn) submitBtn.disabled = false;
+                    });
                 }
             );
         });
