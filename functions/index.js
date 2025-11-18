@@ -250,7 +250,7 @@ exports.placeOrder = onCall({
         if (error instanceof HttpsError) throw error;
         throw new HttpsError("internal", "Order failed.", error.message);
     }
-});- THIS IS THE CORRECT ENDING for placeOrder
+});
 
 
 // --- 3. SITEMAP GENERATION FUNCTION (Scheduled) ---
