@@ -673,50 +673,49 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- =================================== ---
     // --- UPDATED CHECKOUT FORM SUBMISSION ---
     // --- =================================== ---
+    // -----------------
+// --- NEW SECURE CODE (USE THIS) ---
+// -----------------
     const checkoutForm = document.getElementById('checkout-form');
     if (checkoutForm) {
         checkoutForm.addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            // Look for the submit button OR the stepper next button
-const submitButton = checkoutForm.querySelector('button[type="submit"]') || document.getElementById('nextBtn');
+            // 1. Get the submit button
+            const submitButton = checkoutForm.querySelector('button[type="submit"]') || document.getElementById('nextBtn');
             if (submitButton) {
                 submitButton.disabled = true;
                 submitButton.textContent = 'Processing...';
             }
 
-            // --- GUEST CHECKOUT LOGIC ---
+            // 2. Ensure user is authenticated (even as guest)
             let user = firebase.auth().currentUser;
-            
             try {
                 if (!user) {
                     console.log("User not logged in. Creating Guest Session...");
-                    // Sign in anonymously to satisfy Security Rules
                     const authResult = await firebase.auth().signInAnonymously();
                     user = authResult.user;
-                    console.log("Guest signed in:", user.uid);
                 }
             } catch (authError) {
                 console.error("Guest login failed:", authError);
-                alert("Could not initialize guest checkout. Please refresh and try again.");
+                alert("Could not initialize checkout. Please refresh and try again.");
                 if (submitButton) {
                     submitButton.disabled = false;
                     submitButton.textContent = 'Place Order';
                 }
                 return;
             }
-            // --- END GUEST LOGIC ---
 
-            // 1. Get Customer Shipping Info
-            const customerInfo = {
+            // 3. Gather Shipping Info
+            const shippingAddress = {
                 name: document.getElementById('name')?.value,
                 email: document.getElementById('email')?.value,
                 address: document.getElementById('address')?.value,
                 city: document.getElementById('city')?.value,
                 postalCode: document.getElementById('postal-code')?.value,
             };
-            
-            // 2. Get Default Measurements
+
+            // 4. Gather Default Measurements
             const defaultMeasurements = {
                 bust: document.getElementById('bust')?.value,
                 waist: document.getElementById('waist')?.value,
@@ -725,20 +724,18 @@ const submitButton = checkoutForm.querySelector('button[type="submit"]') || docu
                 fit: document.getElementById('fit')?.value,
             };
 
-            // 3. Process measurements for each rendered unit on the page
-            const cart = getCart();
-            const processedCartUnits = [];
+            // 5. Gather all cart units from the DOM
+            // This builds the list of items the user wants to buy
+            const cartUnits = [];
             const summaryItems = document.querySelectorAll('#checkout-summary [data-cart-item-id]');
-            
+            const cart = getCart(); // Get original cart to find collection/ID
             let allMeasurementsValid = true;
 
-            // Loop through each rendered item unit for processing
             for (let i = 0; i < summaryItems.length; i++) {
                 const itemElement = summaryItems[i];
-                const cartItemUniqueId = itemElement.dataset.cartItemId; // The unit ID (e.g., prod_001_Custom_1)
-                const baseCartItemId = itemElement.dataset.baseCartId; // The aggregated cart ID (e.g., prod_001_Custom)
+                const cartItemUniqueId = itemElement.dataset.cartItemId;
+                const baseCartItemId = itemElement.dataset.baseCartId;
                 
-                // Find the original item data from the cart using the base ID
                 const originalItem = cart.find(cartItem => cartItem.cartItemId === baseCartItemId);
                 
                 if (!originalItem) {
@@ -747,40 +744,28 @@ const submitButton = checkoutForm.querySelector('button[type="submit"]') || docu
                     alert("An error occurred processing item data.");
                     break;
                 }
-                
-                // Create the final unit object for submission
+
                 const processedUnit = { 
-                    id: originalItem.id,
-                    name: originalItem.name,
-                    price: originalItem.price,
-                    image: originalItem.image,
+                    id: originalItem.id, // e.g., 'prod_001'
+                    collection: originalItem.size === 'Custom' ? 'custom_styles' : 'products', // Which collection to look in
                     size: originalItem.size,
-                    quantity: 1, // Quantity is always 1 for a unit submission
-                    measurements: null
+                    quantity: 1, // We submit one by one
+                    measurements: null // We fill this in next
                 };
 
                 // --- LOGIC: Only process measurements for CUSTOM items ---
                 if (processedUnit.size === 'Custom') {
                     const checkedRadio = itemElement.querySelector(`input[name="measurements-option-${cartItemUniqueId}"]:checked`);
-                    
-                    if (!checkedRadio) {
-                         allMeasurementsValid = false;
-                         alert(`Please select a measurement option for Custom item.`);
-                         break;
-                    }
-                    
-                    const measurementOption = checkedRadio.value;
+                    const measurementOption = checkedRadio ? checkedRadio.value : 'default'; // Default to 'default'
                     
                     if (measurementOption === 'default') {
-                        // Check if default measurements are filled
                         if (!defaultMeasurements.bust || !defaultMeasurements.waist || !defaultMeasurements.hips) {
                             allMeasurementsValid = false;
-                            alert(`Please fill in at least Bust, Waist, and Hips in the 'Your Measurements' section, or specify measurements.`);
+                            alert(`Please fill in at least Bust, Waist, and Hips in the 'Your Measurements' section, or specify measurements for each custom item.`);
                             break; 
                         }
                         processedUnit.measurements = { type: 'default', ...defaultMeasurements };
                     } else {
-                        // Get specific measurements
                         const specificMeasurements = {
                             bust: itemElement.querySelector(`.specific-bust`)?.value,
                             waist: itemElement.querySelector(`.specific-waist`)?.value,
@@ -789,19 +774,16 @@ const submitButton = checkoutForm.querySelector('button[type="submit"]') || docu
                             fit: 'custom'
                         };
                         
-                        // Check if specific measurements are filled
                         if (!specificMeasurements.bust || !specificMeasurements.waist || !specificMeasurements.hips) {
                             allMeasurementsValid = false;
                             alert(`You selected 'Specify for item' but did not fill in all required measurements.`);
                             break; 
                         }
-                        
                         processedUnit.measurements = { type: 'specific', ...specificMeasurements };
                     }
                 }
-                // Retail items submitted here retain their original size (S/M/L)
-                processedCartUnits.push(processedUnit);
-            }
+                cartUnits.push(processedUnit);
+            } // End of cart loop
 
             if (!allMeasurementsValid) {
                 if (submitButton) {
@@ -811,42 +793,28 @@ const submitButton = checkoutForm.querySelector('button[type="submit"]') || docu
                 return;
             }
 
-            // 4. Basic Form Validation (check using processedCartUnits)
-            if (!customerInfo.email || !customerInfo.name || !customerInfo.address || !customerInfo.city || !customerInfo.postalCode || processedCartUnits.length === 0) {
-                alert('Please fill out all shipping fields and ensure your cart is not empty.');
-                if (submitButton) {
-                    submitButton.disabled = false;
-                    submitButton.textContent = 'Place Order';
-                }
-                return;
-            }
-            
-            // 5. Save Final Data to Firestore (sending the list of individual units)
+            // 6. CALL THE CLOUD FUNCTION
+            // We are no longer writing to Firestore from the client.
             try {
-                const db = firebase.firestore();
-                const orderData = { 
-                    userId: user.uid,
-                    customer: customerInfo, 
-                    cart: processedCartUnits, // Submitting the unit list
-                    order_date: new Date(),
-                    status: 'Pending' 
-                };
-
-                console.log("Saving order directly to Firestore...");
+                console.log("Calling 'placeOrder' Cloud Function...");
+                const placeOrderFunction = firebase.functions().httpsCallable('placeOrder');
                 
-                const docRef = await db.collection('orders').add(orderData);
+                const result = await placeOrderFunction({
+                    shippingAddress: shippingAddress,
+                    cartUnits: cartUnits // Send the list of units
+                });
 
-                console.log("Order saved! ID:", docRef.id);
-
-                // Clear cart and Redirect
-                localStorage.removeItem('carriesBoutiqueCart');
+                // 7. Success! Redirect to confirmation page.
+                const orderId = result.data.orderId;
+                console.log("Order placed! Server responded with ID:", orderId);
+                
+                localStorage.removeItem('carriesBoutiqueCart'); // Clear the cart
                 updateCartIcon();
                 
-                // Redirect to confirmation page with the REAL ID
-                window.location.href = `confirmation.html?orderId=${docRef.id}`;
+                window.location.href = `confirmation.html?orderId=${orderId}`;
 
             } catch (error) {
-                console.error('Failed to save order:', error);
+                console.error('Failed to place order:', error);
                 alert(`Error placing order: ${error.message}`);
                 if (submitButton) {
                     submitButton.disabled = false;
