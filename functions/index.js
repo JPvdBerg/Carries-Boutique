@@ -281,7 +281,7 @@ exports.generateSitemap = onSchedule("every 24 hours", async (event) => {
 
 // --- 4. SITEMAP SERVING FUNCTION (HTTPS) ---
 // This function serves the generated sitemap
-exports.serveSitemap = onRequest({ region: "africa-south1" }, async (request, response) => {
+exports.serveSitemap = onRequest({ region: "us-central1" }, async (request, response) => {
     try {
         const sitemapDoc = await db.collection('_config').doc('sitemap').get();
         
