@@ -12,21 +12,26 @@ const fs = require('fs');
 initializeApp();
 const db = getFirestore();
 
-// --- Helper function for Email Content ---
+// --- Helper function for Email Content (UPDATED) ---
 function generateReceiptHtml(name, address, cart, total, orderId) {
     let subtotal = 0;
     let itemsHtml = "";
+
+    // This cart is now the SECURE cart, so we can trust its prices
     cart.forEach((item) => {
         const itemTotal = item.price * item.quantity;
         subtotal += itemTotal;
         itemsHtml += `<li>${item.name} (Qty: ${item.quantity}) - R${itemTotal.toFixed(2)}</li>`;
-        if (item.isCustom && item.measurements) {
+        
+        // Check for measurements on custom items
+        if (item.measurements) {
             itemsHtml += `
                 <ul style="font-size: 0.9em; color: #555; list-style-type: none; padding-left: 10px;">
-                    <li>Bust: ${item.measurements.bust} cm</li>
-                    <li>Waist: ${item.measurements.waist} cm</li>
-                    <li>Hips: ${item.measurements.hips} cm</li>
-                    <li>Height: ${item.measurements.height} cm</li>
+                    <li>Bust: ${item.measurements.bust || 'N/A'} cm</li>
+                    <li>Waist: ${item.measurements.waist || 'N/A'} cm</li>
+                    <li>Hips: ${item.measurements.hips || 'N/A'} cm</li>
+                    <li>Height: ${item.measurements.height || 'N/A'} cm</li>
+                    <li>Type: ${item.measurements.type || 'N/A'}</li>
                 </ul>
             `;
         }
@@ -36,7 +41,7 @@ function generateReceiptHtml(name, address, cart, total, orderId) {
         <h1>Thank you for your order, ${name}!</h1>
         <p>Your Order ID is: <strong>#${orderId}</strong></p>
         <p>Your order will be shipped to:</p>
-        <p>${address.address}<br>${address.city}, ${address.postalCode}</p>
+        <p>${address.name}<br>${address.address}<br>${address.city}, ${address.postalCode}</p>
         <hr>
         <h2>Order Summary</h2>
         <ul>${itemsHtml}</ul>
@@ -48,37 +53,32 @@ function generateReceiptHtml(name, address, cart, total, orderId) {
 }
 
 // --- 1. IMAGE CONVERSION FUNCTION (V2 Storage Trigger) ---
+// This is your correct, working function
 exports.convertImageToWebP = onObjectFinalized({
     region: "africa-south1",
     memory: "512MiB", 
 }, async (event) => {
     const fileBucket = event.data.bucket;
-    const filePath = event.data.name; // e.g., "products/12345_my-image.jpg"
+    const filePath = event.data.name; 
     const contentType = event.data.contentType;
 
-    // Exit if not an image or if already WebP
     if (!contentType || !contentType.startsWith('image/') || contentType === 'image/webp') {
         console.log("Exiting: Not a convertible image.");
         return null;
     }
     
-    // Exit if not in the 'products' folder
     if (!filePath.startsWith('products/')) {
         console.log("Exiting: Not in products folder.");
         return null;
     }
 
-    // This is the unique ID the client created (e.g., "12345_my-image")
     const uniqueID = path.basename(filePath, path.extname(filePath));
-    
     const bucket = getStorage().bucket(fileBucket);
     const originalFile = bucket.file(filePath);
     
-    const webpFileName = uniqueID + '.webp'; // e.g., "12345_my-image.webp"
+    const webpFileName = uniqueID + '.webp';
     const tempWebpPath = path.join(os.tmpdir(), webpFileName);
-    const destinationPath = path.join(path.dirname(filePath), webpFileName); // e.g., "products/12345_my-image.webp"
-    
-    // We use a temporary path for the original download
+    const destinationPath = path.join(path.dirname(filePath), webpFileName);
     const tempFilePath = path.join(os.tmpdir(), path.basename(filePath));
     
     try {
@@ -88,21 +88,15 @@ exports.convertImageToWebP = onObjectFinalized({
         await sharp(tempFilePath).webp({ quality: 80 }).toFile(tempWebpPath);
         console.log("Image converted to WebP at:", tempWebpPath);
         
-        // Upload the new .webp file
         await bucket.upload(tempWebpPath, {
             destination: destinationPath,
             metadata: { contentType: 'image/webp' },
         });
         console.log("WebP image uploaded.");
 
-        // Get a reference to the file we just uploaded and make it public
         const newFile = bucket.file(destinationPath);
-        
-        // Get the final public URL
         const publicUrl = newFile.publicUrl();
 
-        // *** THIS IS THE NEW PART ***
-        // Write the final URL to our Firestore "mailbox"
         const jobRef = db.collection('image_jobs').doc(uniqueID);
         await jobRef.set({
             status: 'complete',
@@ -110,15 +104,12 @@ exports.convertImageToWebP = onObjectFinalized({
             timestamp: FieldValue.serverTimestamp()
         });
         console.log(`Job ${uniqueID} updated with final URL.`);
-        // *** END OF NEW PART ***
         
-        // Delete the ORIGINAL file (e.g., .jpg, .png)
         await originalFile.delete(); 
         console.log("Original image deleted.");
 
     } catch (error) {
         console.error('Failed to convert or upload WebP image:', error);
-        // On error, write a failure message to the job doc
         try {
              const jobRef = db.collection('image_jobs').doc(uniqueID);
              await jobRef.set({ status: 'error', error: error.message });
@@ -126,7 +117,6 @@ exports.convertImageToWebP = onObjectFinalized({
              console.error("Failed to write error to job doc:", dbError);
         }
     } finally {
-        // Clean up temp files
         if (fs.existsSync(tempFilePath)) fs.unlinkSync(tempFilePath);
         if (fs.existsSync(tempWebpPath)) fs.unlinkSync(tempWebpPath);
     }
@@ -134,56 +124,101 @@ exports.convertImageToWebP = onObjectFinalized({
 });
 
 
-// --- 2. ORDER PLACEMENT & EMAIL TRIGGER FUNCTION (V2 HTTPS Callable) ---
+// --- 2. ORDER PLACEMENT & EMAIL TRIGGER FUNCTION (NEW SECURE VERSION) ---
 exports.placeOrder = onCall({
     region: "africa-south1",
-    // Added comment to force re-deploy
+    memory: "512MiB",
 }, async (request) => {
-    // NOTE: This function relies on the Firebase Extension writing to the 'mail' collection.
   
+    // 1. Check Authentication
     if (!request.auth) {
         throw new HttpsError("unauthenticated", "Must be logged in to place an order.");
     }
-
-    const {userInfo, shippingAddress, cart} = request.data;
     const uid = request.auth.uid;
+    const userEmail = request.auth.token.email || request.data.shippingAddress.email; 
 
-    if (!userInfo || !shippingAddress || !cart || cart.length === 0) {
-        throw new HttpsError("invalid-argument", "Missing required order data.");
+    // 2. Validate Input
+    const { shippingAddress, cartUnits } = request.data;
+    if (!shippingAddress || !cartUnits || cartUnits.length === 0 || !shippingAddress.email) {
+        throw new HttpsError("invalid-argument", "Missing required order data (shipping, cart, or email).");
     }
 
     try {
+        const finalSecureCart = [];
         let subtotal = 0;
-        cart.forEach((item) => subtotal += item.price * item.quantity);
-        const shipping = 50.00;
+
+        // 3. SECURE PRICE FETCHING
+        for (const unit of cartUnits) {
+            if (!unit.id || !unit.collection || !unit.size) {
+                console.warn("Skipping invalid cart item:", unit.id);
+                continue;
+            }
+
+            const productRef = db.collection(unit.collection).doc(unit.id);
+            const doc = await productRef.get();
+
+            if (!doc.exists) {
+                throw new HttpsError("not-found", `Item ${unit.id} does not exist.`);
+            }
+
+            const productData = doc.data();
+            const realPrice = productData.price; // Get the price from the DATABASE
+
+            finalSecureCart.push({
+                id: unit.id,
+                name: productData.name,
+                image: productData.image_url,
+                price: realPrice, // Use the secure price
+                quantity: 1, 
+                size: unit.size,
+                measurements: unit.measurements || null
+            });
+
+            subtotal += realPrice; // Add to subtotal
+        }
+
+        if (finalSecureCart.length === 0) {
+             throw new HttpsError("invalid-argument", "Cart is empty or contains only invalid items.");
+        }
+
+        // 4. Calculate Final Total
+        const shipping = 50.00; // Hardcode shipping
         const totalAmount = subtotal + shipping;
 
+        // 5. Create the Order Document
         const orderData = {
-            customer_id: uid,
-            customer_email: userInfo.email,
+            userId: uid, 
+            customer: shippingAddress, 
             order_date: FieldValue.serverTimestamp(),
             total_amount: totalAmount,
             status: "Pending",
-            shipping_address: shippingAddress,
-            items: cart,
+            cart: finalSecureCart, // Save the NEW, SECURE cart
         };
+        
         const orderRef = await db.collection("orders").add(orderData);
         const orderId = orderRef.id;
 
-        // Trigger the Email Extension by writing to the 'mail' collection
-        const receiptHtml = generateReceiptHtml(userInfo.name, shippingAddress, cart, totalAmount, orderId);
+        // 6. Trigger the Confirmation Email
+        const receiptHtml = generateReceiptHtml(shippingAddress.name, shippingAddress, finalSecureCart, totalAmount, orderId);
         
         await db.collection("mail").add({
-            to: [userInfo.email],
+            to: [shippingAddress.email],
+            // bcc: ["admin@your-email.com"], // Optional
             message: {
-                subject: `Order Confirmation #${orderId.slice(0, 8)}`,
+                subject: `Carries Boutique Order Confirmation #${orderId.slice(0, 8)}`,
                 html: receiptHtml,
             },
         });
 
-        return {success: true, orderId: orderId};
+        // 7. Send Success Response to Client
+        return { success: true, orderId: orderId };
+
     } catch (error) {
         console.error("Error placing order:", error);
-        throw new HttpsError("internal", "An error occurred while placing your order.", error.message);
+        if (error instanceof HttpsError) {
+            throw error;
+        } else {
+            throw new HttpsError("internal", "An error occurred while placing your order.", error.message);
+        }
     }
 });
