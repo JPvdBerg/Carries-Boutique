@@ -18,7 +18,20 @@
     "firebase-functions": "^6.0.1"
   },
   "devDependencies": {
-    "firebase-functions-test": "^3.1.0"
+    "firebase-functions-test": "^3.1.0",
+    "tailwindcss": "^4.1.17"
   },
-  "private": true
+  "private": true,
+  "version": "1.0.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JPvdBerg/Carries-Boutique.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JPvdBerg/Carries-Boutique/issues"
+  },
+  "homepage": "https://github.com/JPvdBerg/Carries-Boutique#readme"
 }
