@@ -198,31 +198,124 @@ function initializeApp(db, user) {
 }
 
 // --- ORDER DASHBOARD LOGIC ---
-function loadOrders(db) {
-    const orderListEl = document.getElementById('order-list');
-    if (!orderListEl) return;
+// --- GLOBAL VAR TO HANDLE REALTIME UPDATES ---
+let currentOrderUnsubscribe = null;
 
-    db.collection('orders').orderBy('order_date', 'desc').onSnapshot(snapshot => {
+function initializeApp(db, user) {
+    const currentPage = document.body.id;
+
+    if (currentPage === 'dashboard-page') {
+        setupOrderDashboard(db); // New setup function
+    } else if (currentPage === 'add-product-page') {
+        setupAddProductForm(db);
+    } else if (currentPage === 'manage-products-page') { 
+        loadProductList(db);
+    }
+    
+    if (typeof feather !== 'undefined') feather.replace();
+}
+
+// --- NEW ORDER DASHBOARD LOGIC ---
+function setupOrderDashboard(db) {
+    const activeBtn = document.getElementById('view-active-btn');
+    const completedBtn = document.getElementById('view-completed-btn');
+
+    // 1. Load Active Orders by default
+    loadOrders(db, 'active');
+
+    // 2. Tab Click Listeners
+    activeBtn.addEventListener('click', () => {
+        toggleTabs(activeBtn, completedBtn);
+        loadOrders(db, 'active');
+    });
+
+    completedBtn.addEventListener('click', () => {
+        toggleTabs(completedBtn, activeBtn);
+        loadOrders(db, 'completed');
+    });
+}
+
+function toggleTabs(active, inactive) {
+    // Styling swap
+    active.className = "px-6 py-2 rounded-md text-sm font-medium bg-pink-50 text-pink-700 border border-pink-200 transition-all shadow-sm";
+    inactive.className = "px-6 py-2 rounded-md text-sm font-medium text-gray-500 hover:text-gray-900 transition-all";
+}
+
+function loadOrders(db, viewType) {
+    const container = document.getElementById('order-list-container');
+    
+    // Unsubscribe from previous listener to avoid memory leaks/double updates
+    if (currentOrderUnsubscribe) {
+        currentOrderUnsubscribe();
+    }
+
+    container.innerHTML = '<div class="p-10 text-center"><div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-pink-600"></div><p class="mt-2 text-gray-500">Loading...</p></div>';
+
+    let query = db.collection('orders');
+
+    if (viewType === 'active') {
+        // Get everything EXCEPT 'Completed'
+        // Note: Firestore requires an index for 'where' + 'orderBy'. 
+        // If this errors, check console for the index creation link.
+        query = query.where('status', 'in', ['Pending', 'Paid', 'Busy', 'Shipped']);
+    } else {
+        query = query.where('status', '==', 'Completed');
+    }
+
+    // Order by date descending (newest first)
+    currentOrderUnsubscribe = query.orderBy('order_date', 'desc').onSnapshot(snapshot => {
         if (snapshot.empty) {
-            orderListEl.innerHTML = '<p class="p-6 text-gray-500">No orders found.</p>';
+            container.innerHTML = `<div class="p-10 text-center text-gray-400"><i data-feather="inbox" class="w-12 h-12 mx-auto mb-2"></i><p>No ${viewType} orders found.</p></div>`;
+            feather.replace();
             return;
         }
 
-        orderListEl.innerHTML = ''; 
-        snapshot.forEach(doc => {
-            const order = doc.data();
-            const orderId = doc.id;
-            orderListEl.innerHTML += createOrderCard(orderId, order);
-        });
-
-        attachOrderListeners(db);
-        if (typeof feather !== 'undefined') feather.replace();
+        renderGroupedOrders(snapshot, container, db);
 
     }, error => {
-        console.error("Error loading orders: ", error);
-        orderListEl.innerHTML = '<p class="p-6 text-red-500">Error loading orders.</p>';
+        console.error("Error loading orders:", error);
+        if (error.code === 'failed-precondition') {
+             container.innerHTML = '<div class="p-6 text-red-500 bg-red-50 text-center">Missing Database Index. Open your browser console (F12) and click the link in the error message to create it.</div>';
+        } else {
+             container.innerHTML = `<p class="p-6 text-red-500 text-center">Error loading orders: ${error.message}</p>`;
+        }
     });
 }
+
+function renderGroupedOrders(snapshot, container, db) {
+    container.innerHTML = '';
+    let lastDateHeader = '';
+
+    snapshot.forEach(doc => {
+        const order = doc.data();
+        const orderId = doc.id;
+        
+        // --- DATE GROUPING LOGIC ---
+        // Convert timestamp to a readable string (e.g., "Tue, 18 Nov 2025")
+        let orderDateObj = order.order_date && order.order_date.toDate ? order.order_date.toDate() : new Date();
+        let dateString = orderDateObj.toLocaleDateString('en-ZA', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
+
+        // If this date is different from the last one we saw, print a Header
+        if (dateString !== lastDateHeader) {
+            container.innerHTML += `
+                <div class="bg-gray-50 px-6 py-2 border-b border-gray-200 border-t mt-0 first:mt-0 first:border-t-0">
+                    <h3 class="text-xs font-bold text-gray-500 uppercase tracking-wider">${dateString}</h3>
+                </div>
+            `;
+            lastDateHeader = dateString;
+        }
+
+        // Append the Order Card
+        container.innerHTML += createOrderCard(orderId, order);
+    });
+
+    // Re-attach status change listeners
+    attachOrderListeners(db);
+    feather.replace();
+}
+
+// (Keep your existing createOrderCard and attachOrderListeners functions)
+// Just ensure createOrderCard is putting the order HTML correctly.
 
 function createOrderCard(orderId, order) {
     const date = order.order_date && order.order_date.toDate ? order.order_date.toDate().toLocaleDateString('en-ZA') : 'Invalid Date';
