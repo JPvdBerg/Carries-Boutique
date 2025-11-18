@@ -8,7 +8,7 @@
     "start": "npm run shell",
     "deploy": "firebase deploy --only functions",
     "logs": "firebase functions:log",
-    "watch": "tailwindcss -i ./input.css -o ./style.css --watch",
+    "watch": "npx tailwindcss -i ./input.css -o ./style.css --watch",
     "build-css": "tailwindcss -i ./input.css -o ./style.css --minify"
   },
   "engines": {
