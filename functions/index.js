@@ -97,8 +97,6 @@ exports.convertImageToWebP = onObjectFinalized({
 
         // Get a reference to the file we just uploaded and make it public
         const newFile = bucket.file(destinationPath);
-        await newFile.makePublic();
-        console.log("Successfully made .webp file public.");
         
         // Get the final public URL
         const publicUrl = newFile.publicUrl();
