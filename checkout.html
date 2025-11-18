@@ -242,6 +242,8 @@
   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-functions-compat.js"></script>
+  
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyCkyMyRLCc98BifcSYbIgs3_v3u2qBvdpg", 
@@ -254,8 +256,8 @@
     };
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth(); 
-    const db = firebase.firestore();
-	const functions = firebase.functions();
+    const db = firebase.firestore(); 
+    const functions = firebase.functions(); 
   </script>
 
   <script src="app.js"></script>

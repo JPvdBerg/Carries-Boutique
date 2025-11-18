@@ -4,18 +4,15 @@ service cloud.firestore {
   match /databases/{database}/documents {
   
     // --- Helper Functions ---
-    // Checks if a user is authenticated
     function isSignedIn() {
       return request.auth != null;
     }
     
-    // Checks if a user is an Admin by looking them up in the 'admins' collection
     function isAdmin() {
       return isSignedIn() && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
     }
 
-    // --- Public Collections (Products) ---
-    // Anyone can read products, but only admins can create, update, or delete them.
+    // --- Public Collections ---
     match /products/{productId} {
       allow read: if true;
       allow write: if isAdmin();
@@ -26,44 +23,40 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
-    // --- User Data Collection ---
-    // Users can only read and write their own data (e.g., saved measurements).
-    // This rule allows a user to create their own doc and manage it.
+    // --- User Data ---
     match /users/{userId} {
       allow read, write: if isSignedIn() && request.auth.uid == userId;
     }
 
-    // --- Orders Collection ---
-    // 1. Any signed-in user (including guests) can create an order.
-    // 2. Only the user who created the order OR an admin can read it.
-    // 3. Only an admin can update the order (e.g., to change the 'status').
-    // 4. No one can delete an order from the client-side.
+    // --- Orders ---
     match /orders/{orderId} {
       allow create: if isSignedIn();
       allow read: if (isSignedIn() && request.auth.uid == resource.data.userId) || isAdmin();
       allow update: if isAdmin();
-      allow delete: if false; // Protect order history
-    }
-    
-    // --- Admin Collection ---
-    // This collection should be managed *only* from the Firebase Console, not by any client.
-    // Admins can read it to verify other admins (as used in the helper function).
-    match /admins/{adminId} {
-        allow read: if isAdmin();
-        allow write: if false; // Never allow client-side writes
+      allow delete: if false;
     }
 
-    // --- Email Trigger Collection ---
-    // This collection is for the "Trigger Email" Firebase Extension.
-    // We deny all client-side reads.
-    // We only allow authenticated users to *create* (which triggers the email).
+    // --- Admin Management ---
+    match /admins/{adminId} {
+        allow read: if isAdmin();
+        allow write: if false;
+    }
+
+    match /image_jobs/{jobId} {
+        allow read, delete: if isAdmin();
+        allow write: if false; 
+    }
+    
+    match /_config/sitemap {
+        allow read: if true;
+        allow write: if isAdmin();
+    }
+
     match /mail/{docId} {
       allow read, update, delete: if false;
       allow create: if isSignedIn(); 
     }
     
-    // --- Default Deny ---
-    // Explicitly deny all other access to any other collections.
     match /{document=**} {
       allow read, write: if false;
     }
