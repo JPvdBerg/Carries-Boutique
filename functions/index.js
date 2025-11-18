@@ -2,6 +2,7 @@
 const { onObjectFinalized } = require("firebase-functions/v2/storage");
 const { onCall, HttpsError, onRequest } = require("firebase-functions/v2/https");
 const { onSchedule } = require("firebase-functions/v2/scheduler");
+const { onDocumentUpdated } = require("firebase-functions/v2/firestore"); // 👈 Added this
 const { initializeApp } = require("firebase-admin/app");
 const { getFirestore, FieldValue } = require("firebase-admin/firestore");
 const { getStorage } = require("firebase-admin/storage");
@@ -13,7 +14,7 @@ const fs = require('fs');
 initializeApp();
 const db = getFirestore();
 
-// --- Helper function for Email Content ---
+// --- Helper 1: Receipt Email ---
 function generateReceiptHtml(name, address, cart, total, orderId) {
     let subtotal = 0;
     let itemsHtml = "";
@@ -51,7 +52,25 @@ function generateReceiptHtml(name, address, cart, total, orderId) {
     `;
 }
 
-// --- 1. IMAGE CONVERSION FUNCTION (V2 Storage Trigger) ---
+// --- Helper 2: Shipping Notification Email (NEW) ---
+function generateShippingHtml(name, orderId, status) {
+    const subject = status === 'Shipped' ? 'Your Order has Shipped!' : 'Your Order is Complete!';
+    const message = status === 'Shipped' 
+        ? 'Great news! Your order is on its way. It should arrive within 3-5 business days.' 
+        : 'Your order has been marked as completed. Thank you for shopping with us!';
+
+    return `
+        <h1>${subject}</h1>
+        <p>Hi ${name},</p>
+        <p>${message}</p>
+        <p><strong>Order ID:</strong> #${orderId}</p>
+        <hr>
+        <p>If you have any questions, simply reply to this email.</p>
+        <p>Warm regards,<br>Carries Boutique Team</p>
+    `;
+}
+
+// --- 1. IMAGE CONVERSION FUNCTION ---
 exports.convertImageToWebP = onObjectFinalized({
     region: "africa-south1",
     memory: "512MiB", 
@@ -60,15 +79,8 @@ exports.convertImageToWebP = onObjectFinalized({
     const filePath = event.data.name; 
     const contentType = event.data.contentType;
 
-    if (!contentType || !contentType.startsWith('image/') || contentType === 'image/webp') {
-        console.log("Exiting: Not a convertible image.");
-        return null;
-    }
-    
-    if (!filePath.startsWith('products/')) {
-        console.log("Exiting: Not in products folder.");
-        return null;
-    }
+    if (!contentType || !contentType.startsWith('image/') || contentType === 'image/webp') return null;
+    if (!filePath.startsWith('products/')) return null;
 
     const uniqueID = path.basename(filePath, path.extname(filePath));
     const bucket = getStorage().bucket(fileBucket);
@@ -81,7 +93,6 @@ exports.convertImageToWebP = onObjectFinalized({
     
     try {
         await originalFile.download({ destination: tempFilePath });
-
         await sharp(tempFilePath).webp({ quality: 80 }).toFile(tempWebpPath);
         
         await bucket.upload(tempWebpPath, {
@@ -106,9 +117,7 @@ exports.convertImageToWebP = onObjectFinalized({
         try {
              const jobRef = db.collection('image_jobs').doc(uniqueID);
              await jobRef.set({ status: 'error', error: error.message });
-        } catch (dbError) {
-             console.error("Failed to write error to job doc:", dbError);
-        }
+        } catch (dbError) { console.error(dbError); }
     } finally {
         if (fs.existsSync(tempFilePath)) fs.unlinkSync(tempFilePath);
         if (fs.existsSync(tempWebpPath)) fs.unlinkSync(tempWebpPath);
@@ -116,15 +125,13 @@ exports.convertImageToWebP = onObjectFinalized({
     return null;
 });
 
-// --- 2. ORDER PLACEMENT (Secure Transaction) ---
+// --- 2. ORDER PLACEMENT ---
 exports.placeOrder = onCall({
     region: "africa-south1",
     memory: "512MiB",
 }, async (request) => {
   
-    if (!request.auth) {
-        throw new HttpsError("unauthenticated", "Must be logged in.");
-    }
+    if (!request.auth) throw new HttpsError("unauthenticated", "Must be logged in.");
     const uid = request.auth.uid;
     const { shippingAddress, cartUnits } = request.data;
 
@@ -143,13 +150,9 @@ exports.placeOrder = onCall({
             for (const id of uniqueIds) {
                 const isCustom = cartUnits.find(u => u.id === id).size === 'Custom';
                 const collection = isCustom ? 'custom_styles' : 'products';
-                
                 const ref = db.collection(collection).doc(id);
                 const doc = await transaction.get(ref);
-                
-                if (!doc.exists) {
-                    throw new HttpsError("not-found", `Product ${id} no longer exists.`);
-                }
+                if (!doc.exists) throw new HttpsError("not-found", `Product ${id} missing.`);
                 productDocs.push({ id, ref, data: doc.data(), collection });
             }
 
@@ -160,13 +163,8 @@ exports.placeOrder = onCall({
                 if (product.collection === 'products') {
                     const variants = productData.variants || [];
                     const variantIndex = variants.findIndex(v => v.size === unit.size);
-
-                    if (variantIndex === -1) {
-                        throw new HttpsError("invalid-argument", `Size ${unit.size} is invalid.`);
-                    }
-
-                    if (variants[variantIndex].stock < 1) {
-                        throw new HttpsError("failed-precondition", `Sorry, ${productData.name} (${unit.size}) is out of stock.`);
+                    if (variantIndex === -1 || variants[variantIndex].stock < 1) {
+                        throw new HttpsError("failed-precondition", `Stock error: ${productData.name} (${unit.size})`);
                     }
                     variants[variantIndex].stock -= 1;
                 }
@@ -218,15 +216,15 @@ exports.placeOrder = onCall({
         return { success: true, orderId: orderId };
 
     } catch (error) {
-        console.error("Order Transaction Failed:", error);
+        console.error("Order Failed:", error);
         if (error instanceof HttpsError) throw error;
         throw new HttpsError("internal", "Order failed.", error.message);
     }
 });
 
-// --- 3. SITEMAP GENERATOR (Scheduled) ---
+// --- 3. SITEMAP GENERATOR ---
 exports.generateSitemap = onSchedule("every 24 hours", async (event) => {
-    console.log("Starting sitemap generation...");
+    console.log("Generating sitemap...");
     const baseUrl = "https://carries-boutique.web.app";
     let xml = '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
 
@@ -247,18 +245,14 @@ exports.generateSitemap = onSchedule("every 24 hours", async (event) => {
         });
 
         xml += '</urlset>';
-
-        await db.collection('_config').doc('sitemap').set({
-            xml: xml,
-            updated: FieldValue.serverTimestamp()
-        });
+        await db.collection('_config').doc('sitemap').set({ xml: xml, updated: FieldValue.serverTimestamp() });
         console.log("Sitemap generated.");
     } catch (error) {
-        console.error("Error generating sitemap:", error);
+        console.error("Sitemap Error:", error);
     }
 });
 
-// --- 4. SITEMAP SERVER (HTTPS) ---
+// --- 4. SITEMAP SERVER ---
 exports.serveSitemap = onRequest({ region: "us-central1" }, async (request, response) => {
     try {
         const sitemapDoc = await db.collection('_config').doc('sitemap').get();
@@ -269,7 +263,37 @@ exports.serveSitemap = onRequest({ region: "us-central1" }, async (request, resp
         response.set('Content-Type', 'application/xml');
         response.send(sitemapDoc.data().xml);
     } catch (error) {
-        console.error("Error serving sitemap:", error);
         response.status(500).send("Error serving sitemap.");
     }
+});
+
+// --- 5. ORDER STATUS LISTENER (NEW) ---
+exports.onOrderUpdate = onDocumentUpdated({
+    region: "africa-south1",
+    document: "orders/{orderId}"
+}, async (event) => {
+    const oldData = event.data.before.data();
+    const newData = event.data.after.data();
+    const orderId = event.params.orderId;
+
+    // Only trigger if status Changed
+    if (oldData.status === newData.status) return null;
+
+    const newStatus = newData.status;
+    
+    // Send email if Shipped or Completed
+    if (['Shipped', 'Completed'].includes(newStatus)) {
+        console.log(`Order ${orderId} -> ${newStatus}. Sending email.`);
+        
+        const emailHtml = generateShippingHtml(newData.customer.name, orderId, newStatus);
+        
+        await db.collection("mail").add({
+            to: [newData.customer.email],
+            message: {
+                subject: `Update on Order #${orderId.slice(0, 8)}: ${newStatus}`,
+                html: emailHtml,
+            },
+        });
+    }
+    return null;
 });
