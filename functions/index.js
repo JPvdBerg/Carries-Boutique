@@ -53,7 +53,7 @@ exports.convertImageToWebP = onObjectFinalized({
     memory: "512MiB", 
 }, async (event) => {
     const fileBucket = event.data.bucket;
-    const filePath = event.data.name;
+    const filePath = event.data.name; // e.g., "products/12345_my-image.jpg"
     const contentType = event.data.contentType;
 
     // Exit if not an image or if already WebP
@@ -61,15 +61,25 @@ exports.convertImageToWebP = onObjectFinalized({
         console.log("Exiting: Not a convertible image.");
         return null;
     }
+    
+    // Exit if not in the 'products' folder
+    if (!filePath.startsWith('products/')) {
+        console.log("Exiting: Not in products folder.");
+        return null;
+    }
 
+    // This is the unique ID the client created (e.g., "12345_my-image")
+    const uniqueID = path.basename(filePath, path.extname(filePath));
+    
     const bucket = getStorage().bucket(fileBucket);
     const originalFile = bucket.file(filePath);
-    const fileName = path.basename(filePath);
-    const tempFilePath = path.join(os.tmpdir(), fileName);
     
-    const webpFileName = fileName.replace(/\.[^/.]+$/, "") + '.webp';
+    const webpFileName = uniqueID + '.webp'; // e.g., "12345_my-image.webp"
     const tempWebpPath = path.join(os.tmpdir(), webpFileName);
-    const destinationPath = path.join(path.dirname(filePath), webpFileName);
+    const destinationPath = path.join(path.dirname(filePath), webpFileName); // e.g., "products/12345_my-image.webp"
+    
+    // We use a temporary path for the original download
+    const tempFilePath = path.join(os.tmpdir(), path.basename(filePath));
     
     try {
         await originalFile.download({ destination: tempFilePath });
@@ -78,26 +88,47 @@ exports.convertImageToWebP = onObjectFinalized({
         await sharp(tempFilePath).webp({ quality: 80 }).toFile(tempWebpPath);
         console.log("Image converted to WebP at:", tempWebpPath);
         
-        // Upload the new .webp file (it will be private by default)
+        // Upload the new .webp file
         await bucket.upload(tempWebpPath, {
             destination: destinationPath,
             metadata: { contentType: 'image/webp' },
         });
         console.log("WebP image uploaded.");
 
-        // *** THIS IS THE NEW FIX ***
         // Get a reference to the file we just uploaded and make it public
         const newFile = bucket.file(destinationPath);
         await newFile.makePublic();
         console.log("Successfully made .webp file public.");
-        // *** END OF FIX ***
         
+        // Get the final public URL
+        const publicUrl = newFile.publicUrl();
+
+        // *** THIS IS THE NEW PART ***
+        // Write the final URL to our Firestore "mailbox"
+        const jobRef = db.collection('image_jobs').doc(uniqueID);
+        await jobRef.set({
+            status: 'complete',
+            publicUrl: publicUrl,
+            timestamp: FieldValue.serverTimestamp()
+        });
+        console.log(`Job ${uniqueID} updated with final URL.`);
+        // *** END OF NEW PART ***
+        
+        // Delete the ORIGINAL file (e.g., .jpg, .png)
         await originalFile.delete(); 
         console.log("Original image deleted.");
 
     } catch (error) {
         console.error('Failed to convert or upload WebP image:', error);
+        // On error, write a failure message to the job doc
+        try {
+             const jobRef = db.collection('image_jobs').doc(uniqueID);
+             await jobRef.set({ status: 'error', error: error.message });
+        } catch (dbError) {
+             console.error("Failed to write error to job doc:", dbError);
+        }
     } finally {
+        // Clean up temp files
         if (fs.existsSync(tempFilePath)) fs.unlinkSync(tempFilePath);
         if (fs.existsSync(tempWebpPath)) fs.unlinkSync(tempWebpPath);
     }

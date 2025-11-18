@@ -1,10 +1,9 @@
 // --- AUTHENTICATION & SECURITY GUARD ---
 document.addEventListener('DOMContentLoaded', () => {
     const auth = firebase.auth();
-    const db = firebase.firestore();
-
     const currentPage = document.body.id;
-    
+	const db = firebase.firestore();     
+
     // --- IMAGE UPLOAD & PREVIEW LOGIC ---
     const fileInput = document.getElementById('file-upload');
     const progressBarContainer = document.getElementById('upload-progress-container');
@@ -25,10 +24,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 previewContainer.classList.remove('hidden');
             }
 
-            // --- NEW: Generate a unique name without the file extension ---
+            // --- Generate a unique name ---
+            // We use the original filename (minus extension) and add timestamp
+            // This 'uniqueID' will be used for the Firestore job document
             const baseName = file.name.split('.').slice(0, -1).join('.');
-            const uniqueID = Date.now() + '_' + baseName;
-            const storageRef = firebase.storage().ref('products/' + uniqueID);
+            const uniqueID = Date.now() + '_' + baseName.replace(/[^a-zA-Z0-9]/g, '_');
+            const fileExtension = file.name.split('.').pop();
+            const uniqueFileName = `${uniqueID}.${fileExtension}`; // e.g., "12345_my-image.jpg"
+            
+            // The storage path will be, e.g., "products/12345_my-image.jpg"
+            const storageRef = firebase.storage().ref('products/' + uniqueFileName);
             
             const uploadTask = storageRef.put(file);
 
@@ -36,38 +41,75 @@ document.addEventListener('DOMContentLoaded', () => {
             const submitBtn = document.getElementById('submit-product-btn');
             if (submitBtn) {
                 submitBtn.disabled = true;
-                submitBtn.textContent = 'Uploading...';
+                submitBtn.textContent = 'Uploading 0%';
             }
             if (progressBarContainer) progressBarContainer.classList.remove('hidden');
+            if (progressBar) {
+                 progressBar.style.width = '0%';
+                 progressBar.classList.remove('bg-green-500');
+            }
+
+            // A variable to hold our Firestore listener
+            let unsubscribe = null;
 
             uploadTask.on('state_changed', 
                 (snapshot) => {
+                    // Update progress bar
                     const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
                     if (progressBar) progressBar.style.width = progress + '%';
+                    if (submitBtn) submitBtn.textContent = `Uploading ${Math.round(progress)}%`;
                 }, 
                 (error) => {
+                    // Handle Upload Error
                     console.error("Upload failed:", error);
                     alert("Upload failed: " + error.message);
                     if (submitBtn) submitBtn.disabled = false;
+                    if (unsubscribe) unsubscribe(); // Stop listening
                 }, 
-                // --- SUCCESS: Save the new .webp URL ---
+                // --- UPLOAD SUCCESS: Now we listen for the conversion ---
                 () => {
-                    // 1. Construct the FINAL path, assuming Cloud Function succeeded
-                    const finalWebpPath = 'products/' + uniqueID + '.webp';
-                    
-                    // 2. Construct the full Download URL
-                    const bucketName = uploadTask.snapshot.ref.bucket;
-                    const encodedPath = encodeURIComponent(finalWebpPath);
-                    const finalURL = `https://firebasestorage.googleapis.com/v0/b/${bucketName}/o/${encodedPath}?alt=media`;
-
-                    if (urlInput) urlInput.value = finalURL;
-                    if (submitBtn) {
-                        const params = new URLSearchParams(window.location.search);
-                        const isEdit = params.get('id') && params.get('collection');
-                        submitBtn.textContent = isEdit ? 'Save Changes' : 'Add Product';
-                        submitBtn.disabled = false;
-                    }
+                    console.log("Upload complete. Now listening for image processing job...");
                     if (progressBar) progressBar.classList.add('bg-green-500');
+                    if (submitBtn) submitBtn.textContent = 'Processing image...';
+
+                    // Listen to the "mailbox" doc using the same uniqueID
+                    const jobRef = db.collection('image_jobs').doc(uniqueID);
+                    
+                    unsubscribe = jobRef.onSnapshot((doc) => {
+                        if (doc.exists) {
+                            const data = doc.data();
+                            if (data.status === 'complete') {
+                                console.log("Job complete! Got public URL:", data.publicUrl);
+                                
+                                // SUCCESS! Set the URL and re-enable the form
+                                if (urlInput) urlInput.value = data.publicUrl;
+                                if (submitBtn) {
+                                    const params = new URLSearchParams(window.location.search);
+                                    const isEdit = params.get('id') && params.get('collection');
+                                    submitBtn.textContent = isEdit ? 'Save Changes' : 'Add Product';
+                                    submitBtn.disabled = false;
+                                }
+                                
+                                // Clean up
+                                unsubscribe(); // Stop listening
+                                jobRef.delete(); // Delete the job doc
+
+                            } else if (data.status === 'error') {
+                                // The Cloud Function failed
+                                console.error("Image conversion failed:", data.error);
+                                alert("Error converting image: " + data.error);
+                                if (submitBtn) submitBtn.disabled = false;
+                                
+                                // Clean up
+                                unsubscribe();
+                                jobRef.delete();
+                            }
+                        }
+                    }, (error) => {
+                        console.error("Error listening to job doc:", error);
+                        alert("An error occurred while waiting for image processing.");
+                        if (submitBtn) submitBtn.disabled = false;
+                    });
                 }
             );
         });
