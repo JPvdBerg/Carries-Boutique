@@ -15,26 +15,24 @@ const fs = require('fs');
 initializeApp();
 const db = getFirestore();
 
-// --- Helper function for Email Content (UPDATED) ---
+// --- Helper function for Email Content ---
 function generateReceiptHtml(name, address, cart, total, orderId) {
     let subtotal = 0;
     let itemsHtml = "";
 
-    // This cart is now the SECURE cart, so we can trust its prices
     cart.forEach((item) => {
         const itemTotal = item.price * item.quantity;
         subtotal += itemTotal;
         itemsHtml += `<li>${item.name} (Qty: ${item.quantity}) - R${itemTotal.toFixed(2)}</li>`;
         
-        // Check for measurements on custom items
         if (item.measurements) {
             itemsHtml += `
                 <ul style="font-size: 0.9em; color: #555; list-style-type: none; padding-left: 10px;">
-                    <li>Bust: ${item.measurements.bust || 'N/A'} cm</li>
-                    <li>Waist: ${item.measurements.waist || 'N/A'} cm</li>
-                    <li>Hips: ${item.measurements.hips || 'N/A'} cm</li>
-                    <li>Height: ${item.measurements.height || 'N/A'} cm</li>
-                    <li>Type: ${item.measurements.type || 'N/A'}</li>
+                    <li>Size: ${item.size}</li>
+                    ${item.measurements.type === 'specific' ? `
+                    <li>Bust: ${item.measurements.bust} cm</li>
+                    <li>Waist: ${item.measurements.waist} cm</li>
+                    <li>Hips: ${item.measurements.hips} cm</li>` : ''}
                 </ul>
             `;
         }
@@ -126,104 +124,133 @@ exports.convertImageToWebP = onObjectFinalized({
 });
 
 
-// --- 2. ORDER PLACEMENT & EMAIL TRIGGER FUNCTION (NEW SECURE VERSION) ---
+// --- 2. ORDER PLACEMENT WITH INVENTORY CHECK (Secure Transaction) ---
 exports.placeOrder = onCall({
     region: "africa-south1",
     memory: "512MiB",
 }, async (request) => {
   
-    // 1. Check Authentication
     if (!request.auth) {
         throw new HttpsError("unauthenticated", "Must be logged in to place an order.");
     }
     const uid = request.auth.uid;
-    const userEmail = request.auth.token.email || request.data.shippingAddress.email; 
-
-    // 2. Validate Input
     const { shippingAddress, cartUnits } = request.data;
-    if (!shippingAddress || !cartUnits || cartUnits.length === 0 || !shippingAddress.email) {
-        throw new HttpsError("invalid-argument", "Missing required order data (shipping, cart, or email).");
+
+    if (!shippingAddress || !cartUnits || cartUnits.length === 0) {
+        throw new HttpsError("invalid-argument", "Missing required order data.");
     }
 
+    const db = getFirestore();
+
     try {
-        const finalSecureCart = [];
-        let subtotal = 0;
+        // We return the result of the transaction
+        const result = await db.runTransaction(async (transaction) => {
+            const finalSecureCart = [];
+            let subtotal = 0;
+            
+            // 1. Group units by Product ID to minimize database reads
+            // This allows us to handle "Buy 2 of same item" correctly
+            const uniqueIds = [...new Set(cartUnits.map(u => u.id))];
+            const productDocs = [];
 
-        // 3. SECURE PRICE FETCHING
-        for (const unit of cartUnits) {
-            if (!unit.id || !unit.collection || !unit.size) {
-                console.warn("Skipping invalid cart item:", unit.id);
-                continue;
+            // Read all necessary products in the transaction
+            for (const id of uniqueIds) {
+                // We have to check both collections because we don't know which one it's in yet
+                // (Optimized: In a real app, client should send collection name. 
+                // Here we infer: if size is 'Custom', it's custom_styles)
+                const isCustom = cartUnits.find(u => u.id === id).size === 'Custom';
+                const collection = isCustom ? 'custom_styles' : 'products';
+                
+                const ref = db.collection(collection).doc(id);
+                const doc = await transaction.get(ref);
+                
+                if (!doc.exists) {
+                    throw new HttpsError("not-found", `Product ${id} no longer exists.`);
+                }
+                productDocs.push({ id, ref, data: doc.data(), collection });
             }
 
-            const productRef = db.collection(unit.collection).doc(unit.id);
-            const doc = await productRef.get();
+            // 2. Process Cart Units
+            for (const unit of cartUnits) {
+                const product = productDocs.find(p => p.id === unit.id);
+                const productData = product.data;
 
-            if (!doc.exists) {
-                throw new HttpsError("not-found", `Item ${unit.id} does not exist.`);
+                // --- INVENTORY CHECK (Retail Only) ---
+                if (product.collection === 'products') {
+                    const variants = productData.variants || [];
+                    const variantIndex = variants.findIndex(v => v.size === unit.size);
+
+                    if (variantIndex === -1) {
+                        throw new HttpsError("invalid-argument", `Size ${unit.size} is invalid for ${productData.name}.`);
+                    }
+
+                    // Check Stock
+                    if (variants[variantIndex].stock < 1) {
+                        throw new HttpsError("failed-precondition", `Sorry, ${productData.name} (Size: ${unit.size}) is out of stock.`);
+                    }
+
+                    // Decrement Stock (in memory for now)
+                    variants[variantIndex].stock -= 1;
+                }
+
+                // Add to final cart
+                finalSecureCart.push({
+                    id: unit.id,
+                    name: productData.name,
+                    image: productData.image_url,
+                    price: productData.price,
+                    quantity: 1,
+                    size: unit.size,
+                    measurements: unit.measurements || null
+                });
+                subtotal += productData.price;
             }
 
-            const productData = doc.data();
-            const realPrice = productData.price; // Get the price from the DATABASE
-
-            finalSecureCart.push({
-                id: unit.id,
-                name: productData.name,
-                image: productData.image_url,
-                price: realPrice, // Use the secure price
-                quantity: 1, 
-                size: unit.size,
-                measurements: unit.measurements || null
+            // 3. Write Updates to DB
+            
+            // A. Update Stock Levels
+            productDocs.forEach(product => {
+                if (product.collection === 'products') {
+                    transaction.update(product.ref, { variants: product.data.variants });
+                }
             });
 
-            subtotal += realPrice; // Add to subtotal
-        }
+            // B. Create Order
+            const totalAmount = subtotal + 50; // + Shipping
+            const orderRef = db.collection("orders").doc(); // Generate ID
+            
+            transaction.set(orderRef, {
+                userId: uid, 
+                customer: shippingAddress, 
+                order_date: FieldValue.serverTimestamp(),
+                total_amount: totalAmount,
+                status: "Pending",
+                cart: finalSecureCart,
+            });
 
-        if (finalSecureCart.length === 0) {
-             throw new HttpsError("invalid-argument", "Cart is empty or contains only invalid items.");
-        }
+            return { orderId: orderRef.id, finalSecureCart, totalAmount };
+        });
 
-        // 4. Calculate Final Total
-        const shipping = 50.00; // Hardcode shipping
-        const totalAmount = subtotal + shipping;
-
-        // 5. Create the Order Document
-        const orderData = {
-            userId: uid, 
-            customer: shippingAddress, 
-            order_date: FieldValue.serverTimestamp(),
-            total_amount: totalAmount,
-            status: "Pending",
-            cart: finalSecureCart, // Save the NEW, SECURE cart
-        };
-        
-        const orderRef = await db.collection("orders").add(orderData);
-        const orderId = orderRef.id;
-
-        // 6. Trigger the Confirmation Email
+        // 4. Send Email (After transaction succeeds)
+        const { orderId, finalSecureCart, totalAmount } = result;
         const receiptHtml = generateReceiptHtml(shippingAddress.name, shippingAddress, finalSecureCart, totalAmount, orderId);
         
         await db.collection("mail").add({
             to: [shippingAddress.email],
-            // bcc: ["admin@your-email.com"], // Optional
             message: {
                 subject: `Carries Boutique Order Confirmation #${orderId.slice(0, 8)}`,
                 html: receiptHtml,
             },
         });
 
-        // 7. Send Success Response to Client
         return { success: true, orderId: orderId };
 
     } catch (error) {
-        console.error("Error placing order:", error);
-        if (error instanceof HttpsError) {
-            throw error;
-        } else {
-            throw new HttpsError("internal", "An error occurred while placing your order.", error.message);
-        }
+        console.error("Order Transaction Failed:", error);
+        if (error instanceof HttpsError) throw error;
+        throw new HttpsError("internal", "Order failed.", error.message);
     }
-}); // <-- THIS IS THE CORRECT ENDING for placeOrder
+});- THIS IS THE CORRECT ENDING for placeOrder
 
 
 // --- 3. SITEMAP GENERATION FUNCTION (Scheduled) ---
