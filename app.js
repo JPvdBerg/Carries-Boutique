@@ -797,7 +797,8 @@ document.addEventListener('DOMContentLoaded', () => {
             // We are no longer writing to Firestore from the client.
             try {
                 console.log("Calling 'placeOrder' Cloud Function...");
-                const placeOrderFunction = firebase.functions().httpsCallable('placeOrder');
+                // Force the connection to South Africa
+const placeOrderFunction = firebase.app().functions('africa-south1').httpsCallable('placeOrder');
                 
                 const result = await placeOrderFunction({
                     shippingAddress: shippingAddress,
