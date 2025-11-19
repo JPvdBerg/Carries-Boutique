@@ -349,7 +349,7 @@ function createOrderCard(orderId, order) {
         `;
     }).join('');
 
-    const statusOptions = ['Pending', 'Busy', 'Complete'].map(s => 
+    const statusOptions = ['Pending', 'Busy', 'Completed'].map(s => 
         `<option value="${s}" ${order.status === s ? 'selected' : ''}>${s}</option>`
     ).join('');
 
