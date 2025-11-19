@@ -257,7 +257,7 @@
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth(); 
     const db = firebase.firestore(); 
-    const functions = firebase.functions(); 
+    const functions = firebase.app().functions('africa-south1'); 
   </script>
 
   <script src="app.js"></script>
