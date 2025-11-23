@@ -98,26 +98,24 @@
             <h1 class="text-4xl font-serif font-bold text-gray-900">Checkout</h1>
         </div>
       
-        <div class="stepper-container bg-white rounded-3xl shadow-xl border border-gray-200 overflow-hidden relative">
-          
-          <div class="stepper-header px-8 py-8 border-b border-gray-100 flex items-center justify-between relative">
-            <div class="step-indicator active" data-step="1">
-              <div class="circle">1</div>
-              <span class="label absolute -bottom-6 text-xs font-medium text-gray-500 w-20 text-center -ml-2">Shipping</span>
-            </div>
-            <div class="step-line" data-line="1"></div>
-            
-            <div class="step-indicator" data-step="2">
-              <div class="circle">2</div>
-              <span class="label absolute -bottom-6 text-xs font-medium text-gray-500 w-20 text-center -ml-2">Measurements</span>
-            </div>
-            <div class="step-line" data-line="2"></div>
+        <div class="stepper-header px-4 md:px-8 py-8 border-b border-gray-100 flex items-center justify-between relative">
+    <div class="step-indicator active" data-step="1">
+      <div class="circle">1</div>
+      <span class="label absolute -bottom-6 text-xs font-medium text-gray-500 w-20 text-center -ml-2 hidden md:block">Shipping</span>
+    </div>
+    <div class="step-line" data-line="1"></div>
+    
+    <div class="step-indicator" data-step="2">
+      <div class="circle">2</div>
+      <span class="label absolute -bottom-6 text-xs font-medium text-gray-500 w-20 text-center -ml-2 hidden md:block">Measurements</span>
+    </div>
+    <div class="step-line" data-line="2"></div>
 
-            <div class="step-indicator" data-step="3">
-              <div class="circle">3</div>
-              <span class="label absolute -bottom-6 text-xs font-medium text-gray-500 w-20 text-center -ml-2">Payment</span>
-            </div>
-          </div>
+    <div class="step-indicator" data-step="3">
+      <div class="circle">3</div>
+      <span class="label absolute -bottom-6 text-xs font-medium text-gray-500 w-20 text-center -ml-2 hidden md:block">Payment</span>
+    </div>
+</div>
 
           <form id="checkout-form" class="relative overflow-hidden" style="min-height: 400px;">
             

@@ -1472,95 +1472,65 @@ const placeOrderFunction = firebase.app().functions('africa-south1').httpsCallab
 
     // ... (This is inside the main DOMContentLoaded block)
 
-    // --- CARD NAV ANIMATION LOGIC ---
-    // REMOVED: document.addEventListener('DOMContentLoaded', () => {  <-- DELETE THIS LINE
-    
+// --- LIGHTWEIGHT CARD NAV LOGIC (No GSAP) ---
     const navContainer = document.querySelector('.card-nav');
     const hamburger = document.querySelector('.hamburger-menu');
-    const cards = document.querySelectorAll('.nav-card');
+    const navContent = document.querySelector('.card-nav-content');
     let isExpanded = false;
-    let tl = null; // GSAP Timeline
 
-    if (navContainer && hamburger && typeof gsap !== 'undefined') {
-        
-        // Helper: Calculate expansion height
-        const calculateHeight = () => {
-            const isMobile = window.matchMedia('(max-width: 768px)').matches;
-            const baseHeight = 60; // Top bar height
-            const padding = 16;
-            
-            if (isMobile) {
-                // On mobile: height = top bar + all cards + gaps
-                let contentHeight = 0;
-                cards.forEach(card => contentHeight += card.scrollHeight + 8); 
-                return baseHeight + contentHeight + padding + 20; // Extra buffer
-            } else {
-                // On desktop: Fixed height
-                return 280; 
-            }
-        };
-
-        // Create Animation Timeline
-        const createTimeline = () => {
-            if (tl) tl.kill();
-            
-            tl = gsap.timeline({ paused: true });
-
-            // 1. Expand Container
-            tl.to(navContainer, {
-                height: calculateHeight(),
-                duration: 0.5,
-                ease: "power3.out"
-            });
-
-            // 2. Show Content
-            tl.set('.card-nav-content', { 
-    autoAlpha: 1, 
-    visibility: 'visible', 
-    pointerEvents: 'all' // <--- Add this to force buttons to be clickable
-}, 0);
-
-            // 3. Stagger Cards In
-            tl.to(cards, {
-                y: 0,
-                opacity: 1,
-                duration: 0.4,
-                stagger: 0.1,
-                ease: "power2.out"
-            }, "-=0.3");
-        };
-
-        // Initialize
-        createTimeline();
-
-        // Toggle Click Event
+    if (navContainer && hamburger && navContent) {
         hamburger.addEventListener('click', () => {
-            if (!isExpanded) {
+            isExpanded = !isExpanded;
+            
+            if (isExpanded) {
                 hamburger.classList.add('open');
-                tl.play();
-                isExpanded = true;
+                // Calculate height dynamically
+                const isMobile = window.matchMedia('(max-width: 768px)').matches;
+                const baseHeight = 60; // Header height
+                
+                // Show content for height calculation
+                navContent.style.visibility = 'visible';
+                navContent.style.opacity = '1';
+                navContent.style.pointerEvents = 'all';
+
+                if (isMobile) {
+                    // Mobile: Auto height based on content
+                    const contentHeight = Array.from(navContent.children)
+                        .reduce((total, card) => total + card.scrollHeight + 16, 0); 
+                    navContainer.style.height = (baseHeight + contentHeight + 20) + 'px';
+                } else {
+                    // Desktop: Fixed expanded height
+                    navContainer.style.height = '280px';
+                }
+                
+                // Animate cards in
+                const cards = document.querySelectorAll('.nav-card');
+                cards.forEach((card, index) => {
+                    setTimeout(() => {
+                        card.style.opacity = '1';
+                        card.style.transform = 'translateY(0)';
+                    }, index * 100); // Stagger effect
+                });
+
             } else {
                 hamburger.classList.remove('open');
-                tl.reverse();
-                isExpanded = false;
+                navContainer.style.height = '60px'; // Collapse
+                
+                // Hide content after transition
+                setTimeout(() => {
+                    navContent.style.visibility = 'hidden';
+                    navContent.style.opacity = '0';
+                    navContent.style.pointerEvents = 'none';
+                    
+                    // Reset cards for next time
+                    const cards = document.querySelectorAll('.nav-card');
+                    cards.forEach(card => {
+                        card.style.opacity = '0';
+                        card.style.transform = 'translateY(20px)';
+                    });
+                }, 300);
             }
         });
-
-        // Handle Resize
-        // Handle Resize (Debounced)
-        let resizeTimer;
-        window.addEventListener('resize', () => {
-            clearTimeout(resizeTimer);
-            resizeTimer = setTimeout(() => {
-                if (isExpanded) {
-                    gsap.set(navContainer, { height: calculateHeight() });
-                }
-                createTimeline();
-                if (isExpanded) tl.progress(1);
-            }, 250); // Runs only once every 250ms
-        });
-    } else {
-        console.warn("Card Nav: Elements missing or GSAP not loaded.");
     }
     
     // --- Active Link Highlighter ---
