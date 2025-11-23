@@ -1071,19 +1071,11 @@ const placeOrderFunction = firebase.app().functions('africa-south1').httpsCallab
                 }
 
                 html += `
-                <div class="product-card bg-white rounded-lg overflow-hidden shadow-md transition-all duration-300">
-                  <a href="${productUrl}" class="relative block">
-                    <img class="w-full h-80 object-cover" src="${product.image_url}" alt="${product.name}">
-                  </a>
-                  <div class="p-4">
-                    <h3 class="text-lg font-medium text-gray-900"><a href="${productUrl}" class="hover:underline">${product.name}</a></h3>
-                    <p class="mt-1 text-sm text-gray-500">${product.category || product.collection_name || 'New Collection'}</p>
-                    <div class="mt-4 flex justify-between items-center">
-                      <span class="text-lg font-bold text-gray-900">R${product.price.toFixed(2)}</span>
-                      ${buttonHtml}
-                    </div>
-                  </div>
-                </div>
+<div class="product-card bg-white rounded-lg overflow-hidden shadow-md transition-all duration-300">
+  <a href="${productUrl}" class="relative block">
+    <img class="w-full h-80 object-cover" src="${product.image_url}" alt="${product.name}" loading="lazy">
+  </a>
+  <div class="p-4">
                 `;
             });
 

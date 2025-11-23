@@ -177,3 +177,16 @@
     top: 1em;
   }
 }
+
+/* Lightweight Menu Transitions */
+.card-nav {
+    transition: height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-nav-content {
+    transition: opacity 0.3s ease, visibility 0.3s;
+}
+
+.nav-card {
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
