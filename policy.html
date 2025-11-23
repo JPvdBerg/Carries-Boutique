@@ -13,8 +13,8 @@
 </head>
 <body class="bg-gray-50 text-gray-800">
 
-  <div class="card-nav-container">
-  <nav class="card-nav">
+  <div class="card-nav-container relative z-50">
+    <nav class="card-nav">
       <div class="card-nav-top">
         <div class="hamburger-menu" role="button" tabindex="0" aria-label="Toggle menu">
           <div class="hamburger-line"></div>
@@ -61,7 +61,6 @@
                
                <div id="user-info" class="hidden flex flex-col gap-2">
                   <a href="account.html" class="nav-card-link"><i data-feather="settings"></i> My Account</a>
-                  
                   <a href="admin.html" id="admin-link" class="hidden nav-card-link text-pink-400"><i data-feather="shield"></i> Admin</a>
                   <button id="logout-btn" class="nav-card-link text-red-400 text-left"><i data-feather="log-out"></i> Logout</button>
                </div>
@@ -86,9 +85,9 @@
 
       </div>
     </nav>
-</div>
+  </div>
 
-<div style="height: 100px;"></div>
+  <div style="height: 100px;"></div>
 
   <main class="max-w-4xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
     <h1 class="text-4xl font-serif font-bold text-gray-900 text-center mb-12">Store Policies</h1>
@@ -177,7 +176,32 @@
     </div>
   </footer>
 
-  <script>feather.replace();</script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCkyMyRLCc98BifcSYbIgs3_v3u2qBvdpg",
+      authDomain: "carries-boutique.firebaseapp.com",
+      projectId: "carries-boutique",
+      storageBucket: "carries-boutique.firebasestorage.app",
+      messagingSenderId: "512525813635",
+      appId: "1:512525813635:web:afe3d28c5bd2db68ae58b6",
+      measurementId: "G-2Q2QY4HJ9Y" 
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth(); 
+    const db = firebase.firestore(); 
+  </script>
+  <script src="app.js"></script>
+  
+  <div id="toast-container" class="fixed bottom-5 right-5 z-50 hidden transform transition-all duration-300 translate-y-10 opacity-0">
+    <div class="bg-gray-900 text-white px-6 py-3 rounded-lg shadow-lg flex items-center space-x-3">
+        <i data-feather="check-circle" class="text-green-400"></i>
+        <span id="toast-message" class="font-medium">Item added to cart!</span>
+    </div>
+  </div>
+
   <div id="cookie-banner" class="fixed bottom-0 left-0 right-0 bg-gray-900 text-white p-4 z-50 hidden shadow-lg border-t border-gray-700">
     <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between">
         <div class="text-sm mb-4 md:mb-0 md:mr-8">
@@ -188,26 +212,24 @@
             <button id="cookie-accept" class="bg-pink-600 hover:bg-pink-700 text-white text-sm font-medium py-2 px-6 rounded-full transition">Accept</button>
         </div>
     </div>
-</div>
+  </div>
 
-<script>
+  <script>
     // Cookie Banner Logic
     document.addEventListener("DOMContentLoaded", () => {
         const banner = document.getElementById('cookie-banner');
         const acceptBtn = document.getElementById('cookie-accept');
         const declineBtn = document.getElementById('cookie-decline');
 
-        // Check if user has already made a choice
         if (!localStorage.getItem('cookieConsent')) {
             setTimeout(() => {
-                banner.classList.remove('hidden'); // Show after small delay
+                banner.classList.remove('hidden'); 
             }, 1000);
         }
 
         acceptBtn.addEventListener('click', () => {
             localStorage.setItem('cookieConsent', 'accepted');
             banner.classList.add('hidden');
-            // Optional: Load Analytics script here if you want strict compliance
         });
 
         declineBtn.addEventListener('click', () => {
@@ -215,6 +237,6 @@
             banner.classList.add('hidden');
         });
     });
-</script>
+  </script>
 </body>
 </html>
