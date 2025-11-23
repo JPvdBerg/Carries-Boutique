@@ -198,3 +198,14 @@ body {
     opacity: 0;
     position: absolute;
 }
+
+/* Flying Image Animation Class */
+.flying-img {
+    position: fixed;
+    z-index: 9999;
+    border-radius: 100%;
+    pointer-events: none; /* Let clicks pass through */
+    opacity: 0.9;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    transition: all 0.8s cubic-bezier(0.2, 1, 0.2, 1); /* Smooth curve */
+}

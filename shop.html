@@ -9,6 +9,7 @@
   <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
   <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
   
 <link href="style.css" rel="stylesheet">
   <style>
@@ -24,86 +25,81 @@
   </style>
 </head>
 <body id="shop-page">
-  <nav class="bg-white shadow-sm sticky top-0 z-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex justify-between h-16">
-        <div class="flex items-center">
-          <a href="index.html" class="flex-shrink-0 flex items-center">
-            <img class="h-8 w-auto" src="https://i.imgur.com/KNRtw3t.png" alt="Carries Boutique">
-            <span class="ml-2 text-xl font-semibold text-gray-900">Carries Boutique</span>
-          </a>
-        </div>
-         <div class="hidden md:ml-6 md:flex md:items-center md:space-x-8">
-          <a href="index.html" class="nav-link text-gray-500 hover:text-gray-900 px-3 py-2 text-sm font-medium">Home</a> 
-          <a href="shop.html" class="nav-link text-gray-500 hover:text-gray-900 px-3 py-2 text-sm font-medium">Shop (Retail)</a>
-          <a href="collections.html" class="nav-link text-gray-500 hover:text-gray-900 px-3 py-2 text-sm font-medium">Custom Styles</a>
-
-          <a href="cart.html" class="relative ml-4 text-gray-500 hover:text-gray-900 p-2 rounded-full hover:bg-gray-100">
-            <i data-feather="shopping-cart"></i>
-            <span class="cart-badge hidden absolute -top-1 -right-1 bg-pink-600 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">0</span>
-          </a>
-
-          <div id="auth-container" class="ml-4 flex items-center space-x-2">
-              <button id="google-login-btn" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-full text-gray-700 bg-white hover:bg-gray-50">
-                  <svg class="w-4 h-4 mr-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512"><path fill="currentColor" d="M488 261.8C488 403.3 381.5 512 244 512 109.8 512 0 402.2 0 258S109.8 4 244 4a237.2 237.2 0 01166.3 64.3l-64.4 64.4a150 150 0 00-101.9-38.3c-83.3 0-151.7 67.5-151.7 150.9s68.4 150.9 151.7 150.9c90.8 0 134.4-60.5 139.5-93.7H244v-77.9h236.1c2.4 12.8 3.9 26.5 3.9 41.2z"/></svg>
-                  Login with Google
-              </button>
-              <div id="user-info" class="hidden flex items-center space-x-6">
-    <a href="admin.html" id="admin-link" class="hidden text-sm font-bold text-pink-600 hover:text-pink-800 transition-colors">Admin</a>
-    
-    <a href="account.html" class="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">My Account</a>
-    
-    <div class="flex items-center space-x-2 bg-gray-100 rounded-full px-3 py-1">
-        <i data-feather="user" class="w-3 h-3 text-gray-500"></i>
-        <span id="user-display-name" class="text-sm font-semibold text-gray-700"></span>
-    </div>
-
-    <button id="logout-btn" class="text-sm font-medium text-gray-400 hover:text-red-500 transition-colors">Logout</button>
-</div>
-          </div>
-          <a href="https://wa.me/27828735697" target="_blank" class="ml-6 whatsapp-btn inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full text-white">
-            <i data-feather="message-circle" class="mr-2"></i> WhatsApp
-          </a>
-        </div>
-         <div class="-mr-2 flex items-center md:hidden">
-          <a href="cart.html" class="relative mr-2 text-gray-500 hover:text-gray-900 p-2 rounded-full hover:bg-gray-100">
-            <i data-feather="shopping-cart"></i>
-            <span class="cart-badge hidden absolute -top-1 -right-1 bg-pink-600 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">0</span>
-          </a>
-          <button type="button" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-pink-500" aria-controls="mobile-menu" aria-expanded="false">
-            <i data-feather="menu"></i>
-          </button>
-        </div>
+  <div class="card-nav-container">
+  <nav class="card-nav">
+    <div class="card-nav-top">
+      <div class="hamburger-menu" role="button" tabindex="0" aria-label="Toggle menu">
+        <div class="hamburger-line"></div>
+        <div class="hamburger-line"></div>
       </div>
-    </div>
 
-    <div class="hidden md:hidden" id="mobile-menu">
-      <div class="pt-2 pb-3 space-y-1">
-        <a href="index.html" class="border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">Home</a>
-        <a href="shop.html" class="border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">Shop (Retail)</a>
-        <a href="collections.html" class="border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">Custom Styles</a>
-        <a href="https://wa.me/27828735697" target="_blank" class="mt-2 mx-4 whatsapp-btn inline-flex items-center justify-center px-4 py-2 border border-transparent text-base font-medium rounded-full text-white">
-          <i data-feather="message-circle" class="mr-2"></i> WhatsApp
+      <div class="logo-container">
+        <a href="index.html">
+          <img src="https://i.imgur.com/KNRtw3t.png" alt="Carries Boutique" class="logo">
         </a>
-        
-        <div class="pt-4 pb-3 border-t border-gray-200">
-            <div id="mobile-auth-container" class="px-2 space-y-2">
-                <button id="google-login-btn-mobile" class="w-full flex items-center justify-center px-4 py-2 border border-gray-300 text-base font-medium rounded-full text-gray-700 bg-white hover:bg-gray-50">
-                    <svg class="w-5 h-5 mr-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512"><path fill="currentColor" d="M488 261.8C488 403.3 381.5 512 244 512 109.8 512 0 402.2 0 258S109.8 4 244 4a237.2 237.2 0 01166.3 64.3l-64.4 64.4a150 150 0 00-101.9-38.3c-83.3 0-151.7 67.5-151.7 150.9s68.4 150.9 151.7 150.9c90.8 0 134.4-60.5 139.5-93.7H244v-77.9h236.1c2.4 12.8 3.9 26.5 3.9 41.2z"/></svg>
-                    Login with Google
-                </button>
-                <div id="user-info-mobile" class="space-y-2 hidden">
-                    <a href="admin.html" id="admin-link-mobile" class="hidden block w-full text-left px-4 py-2 border border-pink-500 text-base font-medium rounded-full text-pink-600 bg-pink-50 hover:bg-pink-100">Admin Dashboard</a>
-                    <a href="account.html" class="block w-full text-left px-4 py-2 border border-gray-300 text-base font-medium rounded-full text-gray-700 bg-white hover:bg-gray-50">My Account</a>
-                    <button id="logout-btn-mobile" class="w-full flex items-center justify-center px-4 py-2 border border-transparent text-base font-medium rounded-full text-white bg-pink-600 hover:bg-pink-700">
-                        Logout
-                    </button>
-                </div>
-            </div>
+      </div>
+
+      <a href="cart.html" class="card-nav-cta-button relative">
+        <span class="mr-2">Cart</span>
+        <i data-feather="shopping-cart" class="w-4 h-4"></i>
+        <span class="cart-badge hidden absolute -top-1 -right-1 bg-pink-600 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">0</span>
+      </a>
+    </div>
+
+    <div class="card-nav-content">
+      
+      <div class="nav-card" style="background-color: #0D0716; color: #fff;">
+        <div class="nav-card-label">Collections</div>
+        <div class="nav-card-links">
+          <a class="nav-card-link" href="shop.html">
+            <i data-feather="arrow-up-right"></i> Shop Retail
+          </a>
+          <a class="nav-card-link" href="collections.html">
+            <i data-feather="arrow-up-right"></i> Custom Styles
+          </a>
         </div>
       </div>
+
+      <div class="nav-card" style="background-color: #170D27; color: #fff;">
+        <div class="nav-card-label">Account</div>
+        <div class="nav-card-links">
+          <a class="nav-card-link" href="cart.html">
+            <i data-feather="shopping-cart"></i> View Cart
+          </a>
+          
+          <div id="auth-container" class="nav-card-link-container">
+             <button id="google-login-btn" class="nav-card-link text-left w-full">
+                <i data-feather="log-in"></i> Login with Google
+             </button>
+             
+             <div id="user-info" class="hidden flex-col gap-2">
+                <a href="account.html" class="nav-card-link"><i data-feather="user"></i> My Account</a>
+                <button id="logout-btn" class="nav-card-link text-red-400"><i data-feather="log-out"></i> Logout</button>
+             </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="nav-card" style="background-color: #271E37; color: #fff;">
+        <div class="nav-card-label">Contact</div>
+        <div class="nav-card-links">
+          <a class="nav-card-link" href="https://wa.me/27828735697" target="_blank">
+            <i data-feather="message-circle"></i> WhatsApp
+          </a>
+          <a class="nav-card-link" href="faq.html">
+             <i data-feather="help-circle"></i> FAQ
+          </a>
+          <a class="nav-card-link" href="policy.html">
+             <i data-feather="file-text"></i> Policies
+          </a>
+        </div>
+      </div>
+
     </div>
   </nav>
+</div>
+
+<div style="height: 100px;"></div>
 
   <section id="products" class="py-16 bg-gray-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
