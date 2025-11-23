@@ -329,11 +329,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const renderCartPage = () => {
         const cartItemsContainer = document.getElementById('cart-items-container');
         const cartSummaryContainer = document.getElementById('cart-summary-container');
-        if (!cartItemsContainer) return; // Not on the cart page
+        if (!cartItemsContainer) return; 
 
         const cart = getCart();
-        cartItemsContainer.innerHTML = '';
-
+        
         if (cart.length === 0) {
             cartItemsContainer.innerHTML = '<div class="text-center py-10"><div class="bg-gray-50 rounded-full h-20 w-20 flex items-center justify-center mx-auto mb-4"><i data-feather="shopping-cart" class="text-gray-400 w-10 h-10"></i></div><p class="text-gray-500 mb-4">Your cart is empty.</p><a href="shop.html" class="inline-block bg-pink-600 text-white px-6 py-2 rounded-full hover:bg-pink-700 transition">Start Shopping</a></div>';
             if (cartSummaryContainer) cartSummaryContainer.classList.add('hidden');
@@ -342,6 +341,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (cartSummaryContainer) cartSummaryContainer.classList.remove('hidden');
         let subtotal = 0;
+        let fullHtml = ''; // Accumulate HTML here
 
         cart.forEach(item => {
             subtotal += item.price * item.quantity;
@@ -349,13 +349,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const uniqueItemId = item.cartItemId || item.id; 
             const itemSize = item.size || 'undefined'; 
 
-            // --- NEW MOBILE-FRIENDLY LAYOUT ---
-            const itemHtml = `
+            fullHtml += `
               <div class="py-6 border-b border-gray-100 flex gap-4 animate-fade-in">
                 <img src="${item.image}" alt="${item.name}" class="w-24 h-32 object-cover rounded-md shadow-sm flex-shrink-0">
                 
                 <div class="flex-1 flex flex-col justify-between">
-                    
                     <div class="flex justify-between items-start">
                         <div>
                             <h3 class="font-serif font-bold text-gray-900 text-lg leading-tight">${item.name}</h3>
@@ -385,8 +383,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
               </div>
             `;
-            cartItemsContainer.innerHTML += itemHtml;
         });
+
+        cartItemsContainer.innerHTML = fullHtml; // Update DOM once
 
         const shipping = 50.00;
         const total = subtotal + shipping;
@@ -1290,6 +1289,7 @@ const placeOrderFunction = firebase.app().functions('africa-south1').httpsCallab
     }
 
     // --- LOAD HOMEPAGE CAROUSEL (Retail + Custom) ---
+    // --- LOAD HOMEPAGE CAROUSEL (OPTIMIZED) ---
     async function loadHomepageCarousel() {
         const container = document.getElementById('featured-carousel');
         if (!container) return;
@@ -1320,31 +1320,28 @@ const placeOrderFunction = firebase.app().functions('africa-south1').httpsCallab
                 return;
             }
 
-            container.innerHTML = ''; // Clear skeleton loader
+            // 4. BUILD BIG STRING (The Fix)
+            let fullHtml = ''; 
 
-            // 5. Render
             allItems.forEach(product => {
                 const productUrl = `product.html?collection=${product.collection}&id=${product.id}`;
                 const safeName = product.name.replace(/'/g, "\\'");
                 
-                // Determine button action based on type
                 let actionButton = '';
                 if (product.collection === 'products') {
-                    // Retail: Add to Cart
                     actionButton = `
                     <button onclick="addToCart('${product.id}', '${safeName}', ${product.price}, '${product.image_url}', 'M')" 
                             class="p-2 bg-pink-100 text-pink-600 rounded-full hover:bg-pink-200 transition shadow-sm" title="Add to Cart">
                         <i data-feather="shopping-bag" class="w-4 h-4"></i>
                     </button>`;
                 } else {
-                    // Custom: View Details
                     actionButton = `
                     <a href="${productUrl}" class="p-2 bg-gray-100 text-gray-600 rounded-full hover:bg-gray-200 transition shadow-sm" title="View Details">
                         <i data-feather="eye" class="w-4 h-4"></i>
                     </a>`;
                 }
 
-                const html = `
+                fullHtml += `
                 <div class="min-w-72 w-72 snap-center bg-white rounded-xl shadow-md overflow-hidden flex-shrink-0 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 border border-gray-100">
                     <a href="${productUrl}" class="block h-64 overflow-hidden relative group">
                         <img src="${product.image_url}" alt="${product.name}" loading="lazy" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
@@ -1359,10 +1356,11 @@ const placeOrderFunction = firebase.app().functions('africa-south1').httpsCallab
                     </div>
                 </div>
                 `;
-                container.innerHTML += html;
             });
 
-            // Re-init icons
+            // 5. UPDATE DOM ONCE
+            container.innerHTML = fullHtml;
+
             if (typeof feather !== 'undefined') feather.replace();
 
         } catch (e) {
@@ -1571,12 +1569,17 @@ const placeOrderFunction = firebase.app().functions('africa-south1').httpsCallab
         });
 
         // Handle Resize
+        // Handle Resize (Debounced)
+        let resizeTimer;
         window.addEventListener('resize', () => {
-            if (isExpanded) {
-                gsap.set(navContainer, { height: calculateHeight() });
-            }
-            createTimeline();
-            if (isExpanded) tl.progress(1);
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(() => {
+                if (isExpanded) {
+                    gsap.set(navContainer, { height: calculateHeight() });
+                }
+                createTimeline();
+                if (isExpanded) tl.progress(1);
+            }, 250); // Runs only once every 250ms
         });
     } else {
         console.warn("Card Nav: Elements missing or GSAP not loaded.");
