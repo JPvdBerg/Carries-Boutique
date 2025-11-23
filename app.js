@@ -196,28 +196,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 
-    // --- Mobile Menu Toggle ---
-    const mobileMenuButton = document.querySelector('[aria-controls="mobile-menu"]');
-    const mobileMenu = document.getElementById('mobile-menu');
-
-    if (mobileMenuButton && mobileMenu) {
-        mobileMenuButton.addEventListener('click', function() {
-            const expanded = this.getAttribute('aria-expanded') === 'true';
-            this.setAttribute('aria-expanded', !expanded);
-            mobileMenu.classList.toggle('hidden');
-
-            const icon = this.querySelector('i');
-            if (icon && typeof feather !== 'undefined') {
-                 if (expanded) {
-                    icon.setAttribute('data-feather', 'menu');
-                } else {
-                    icon.setAttribute('data-feather', 'x');
-                }
-                feather.replace();
-            }
-        });
-    }
-
     // --- Smooth Scrolling ---
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
@@ -1585,6 +1563,20 @@ const placeOrderFunction = firebase.app().functions('africa-south1').httpsCallab
         console.warn("Card Nav: Elements missing or GSAP not loaded.");
     }
     
-    // REMOVED: }); <-- DELETE THIS CLOSING BRACKET
+    // --- Active Link Highlighter ---
+const currentPath = window.location.pathname.split('/').pop() || 'index.html';
+document.querySelectorAll('.nav-card-link').forEach(link => {
+    // Get the href of the link (e.g., "shop.html")
+    const linkPath = link.getAttribute('href');
+
+    // If the link matches the current page, make it pink and bold
+    if (linkPath === currentPath) {
+        link.classList.add('text-pink-600', 'font-bold');
+
+        // Optional: Add an icon or indicator if you want
+        const icon = link.querySelector('i');
+        if(icon) icon.classList.add('text-pink-600');
+    }
+});
 }); // This is the closing bracket for the MAIN (outer) DOMContentLoaded listener
     
