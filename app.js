@@ -1134,7 +1134,7 @@ const placeOrderFunction = firebase.app().functions('africa-south1').httpsCallab
                 const html = `
                 <div class="product-card bg-white rounded-lg overflow-hidden shadow-md transition-all duration-300">
                   <a href="${productUrl}" class="relative block">
-                    <img class="w-full h-64 object-cover" src="${product.image_url}" alt="${product.name}">
+                    <img class="w-full h-64 object-cover" src="${product.image_url}" alt="${product.name}" loading="lazy">
                   </a>
                   <div class="p-4">
                     <h3 class="text-lg font-medium text-gray-900 truncate"><a href="${productUrl}">${product.name}</a></h3>
