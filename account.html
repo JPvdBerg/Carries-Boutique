@@ -6,6 +6,7 @@
   <title>My Account | Carries Boutique</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
   <link rel="icon" type="image/png" href="https://firebasestorage.googleapis.com/v0/b/carries-boutique.firebasestorage.app/o/Carries.webp?alt=media&token=e3e8e9eb-8db4-4eb0-bd7d-84ca34b60ba8">
+  
   <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
   <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
@@ -65,7 +66,6 @@
                <button id="google-login-btn" class="nav-card-link w-full text-left">
                   <i data-feather="log-in"></i> Login with Google
                </button>
-               
                <div id="user-info" class="hidden flex flex-col gap-2">
                   <a href="account.html" class="nav-card-link"><i data-feather="settings"></i> My Account</a>
                   <a href="admin.html" id="admin-link" class="hidden nav-card-link text-pink-400"><i data-feather="shield"></i> Admin</a>
@@ -159,7 +159,6 @@
   <footer class="bg-gray-900 text-white py-12">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-        
         <div>
             <a href="index.html" class="flex items-center">
                 <img class="h-8 w-auto" src="https://firebasestorage.googleapis.com/v0/b/carries-boutique.firebasestorage.app/o/Carries.webp?alt=media&token=e3e8e9eb-8db4-4eb0-bd7d-84ca34b60ba8" alt="Carries Boutique">
@@ -167,7 +166,6 @@
             </a>
             <p class="mt-4 text-gray-400">Premium fashion boutique offering handcrafted clothing with timeless elegance.</p>
         </div>
-
         <div>
             <h3 class="text-lg font-medium mb-4">Shop</h3>
             <ul class="space-y-2">
@@ -176,17 +174,15 @@
                 <li><a href="shop.html" class="text-gray-400 hover:text-white transition">Sale Items</a></li>
             </ul>
         </div>
-
         <div>
             <h3 class="text-lg font-medium mb-4">Information</h3>
             <ul class="space-y-2">
                 <li><a href="index.html#about" class="text-gray-400 hover:text-white transition">About Us</a></li>
                 <li><a href="policy.html#shipping" class="text-gray-400 hover:text-white transition">Shipping Policy</a></li>
                 <li><a href="policy.html#returns" class="text-gray-400 hover:text-white transition">Returns & Exchanges</a></li>
-                <li><a href="faq.html" class="text-gray-400 hover:text-white transition">FAQ</a></li>
+				<li><a href="faq.html" class="text-gray-400 hover:text-white transition">FAQ</a></li>
             </ul>
         </div>
-
         <div>
             <h3 class="text-lg font-medium mb-4">Stay Connected</h3>
             <p class="text-gray-400 mb-4">Follow us for the latest updates and styles.</p>
@@ -194,9 +190,7 @@
                 <i data-feather="facebook" class="mr-2"></i> Visit our Facebook Page
             </a>
         </div>
-
       </div>
-      
       <div class="mt-12 pt-8 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center">
           <p class="text-gray-400 text-sm">&copy; 2023 Carries Boutique. All rights reserved.</p>
           <div class="mt-4 md:mt-0 flex space-x-6">
@@ -213,7 +207,7 @@
   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
   <script>
     const firebaseConfig = {
-      apiKey: "AIzaSyCkyMyRLCc98BifcSYbIgs3_v3u2qBvdpg", 
+      apiKey: "AIzaSyCkyMyRLCc98BifcSYbIgs3_v3u2qBvdpg", // Replace with your actual API Key if needed
       authDomain: "carries-boutique.firebaseapp.com",
       projectId: "carries-boutique",
       storageBucket: "carries-boutique.firebasestorage.app",
@@ -239,16 +233,14 @@
   </div>
 
   <script>
-    // Cookie Banner Logic
     document.addEventListener("DOMContentLoaded", () => {
         const banner = document.getElementById('cookie-banner');
         const acceptBtn = document.getElementById('cookie-accept');
         const declineBtn = document.getElementById('cookie-decline');
 
-        // Check if user has already made a choice
         if (!localStorage.getItem('cookieConsent')) {
             setTimeout(() => {
-                banner.classList.remove('hidden'); // Show after small delay
+                banner.classList.remove('hidden'); 
             }, 1000);
         }
 
