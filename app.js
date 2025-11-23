@@ -1493,92 +1493,86 @@ const placeOrderFunction = firebase.app().functions('africa-south1').httpsCallab
             }
         }
     }
-	
-	// --- NEW CARD NAV LOGIC ---
-document.addEventListener('DOMContentLoaded', () => {
-    const navContainer = document.querySelector('.card-nav');
-    const hamburger = document.querySelector('.hamburger-menu');
-    const cards = document.querySelectorAll('.nav-card');
-    let isExpanded = false;
-    let tl = null; // GSAP Timeline
 
-    if (!navContainer || !hamburger) return;
-
-    // Helper: Calculate expansion height
-    const calculateHeight = () => {
-        const isMobile = window.matchMedia('(max-width: 768px)').matches;
-        const baseHeight = 60; // Top bar height
-        const padding = 16;
-        
-        if (isMobile) {
-            // On mobile, height is top bar + sum of all cards + gaps
-            let contentHeight = 0;
-            cards.forEach(card => contentHeight += card.scrollHeight + 8); // 8px gap
-            return baseHeight + contentHeight + padding;
-        } else {
-            // On desktop, height is fixed or content based (e.g., 300px)
-            return 280; 
-        }
-    };
-
-    // Create/Reset Timeline
-    const createTimeline = () => {
-        if (tl) tl.kill();
-        
-        tl = gsap.timeline({ paused: true });
-
-        // 1. Expand Container Height
-        tl.to(navContainer, {
-            height: calculateHeight(),
-            duration: 0.5,
-            ease: "power3.out"
-        });
-
-        // 2. Make content visible immediately when expanding starts
-        tl.set('.card-nav-content', { autoAlpha: 1 }, 0);
-
-        // 3. Stagger Cards In
-        tl.to(cards, {
-            y: 0,
-            opacity: 1,
-            duration: 0.4,
-            stagger: 0.1,
-            ease: "power2.out"
-        }, "-=0.3");
-    };
-
-    // Initialize
-    createTimeline();
-
-    // Toggle Handler
-    hamburger.addEventListener('click', () => {
-        if (!isExpanded) {
-            // Open
-            hamburger.classList.add('open');
-            tl.play();
-            isExpanded = true;
-        } else {
-            // Close
-            hamburger.classList.remove('open');
-            tl.reverse();
-            isExpanded = false;
-        }
-    });
-
-    // Handle Resize (Recalculate heights)
-    window.addEventListener('resize', () => {
-        if (isExpanded) {
-            // If open, adjust height immediately
-            gsap.set(navContainer, { height: calculateHeight() });
-        }
-        // Re-create timeline with new calculations
-        createTimeline();
-        // If open, ensure the new timeline is at the end state
-        if (isExpanded) tl.progress(1);
-    });
+    // --- CARD NAV ANIMATION LOGIC ---
+    document.addEventListener('DOMContentLoaded', () => {
+        const navContainer = document.querySelector('.card-nav');
+        const hamburger = document.querySelector('.hamburger-menu');
+        const cards = document.querySelectorAll('.nav-card');
+        let isExpanded = false;
+        let tl = null; // GSAP Timeline
     
-    // Refresh Feather Icons inside the new nav
-    if (typeof feather !== 'undefined') feather.replace();
-});
-	
+        if (navContainer && hamburger && typeof gsap !== 'undefined') {
+            
+            // Helper: Calculate expansion height
+            const calculateHeight = () => {
+                const isMobile = window.matchMedia('(max-width: 768px)').matches;
+                const baseHeight = 60; // Top bar height
+                const padding = 16;
+                
+                if (isMobile) {
+                    // On mobile: height = top bar + all cards + gaps
+                    let contentHeight = 0;
+                    cards.forEach(card => contentHeight += card.scrollHeight + 8); 
+                    return baseHeight + contentHeight + padding + 20; // Extra buffer
+                } else {
+                    // On desktop: Fixed height
+                    return 280; 
+                }
+            };
+    
+            // Create Animation Timeline
+            const createTimeline = () => {
+                if (tl) tl.kill();
+                
+                tl = gsap.timeline({ paused: true });
+    
+                // 1. Expand Container
+                tl.to(navContainer, {
+                    height: calculateHeight(),
+                    duration: 0.5,
+                    ease: "power3.out"
+                });
+    
+                // 2. Show Content
+                tl.set('.card-nav-content', { autoAlpha: 1, visibility: 'visible' }, 0);
+    
+                // 3. Stagger Cards In
+                tl.to(cards, {
+                    y: 0,
+                    opacity: 1,
+                    duration: 0.4,
+                    stagger: 0.1,
+                    ease: "power2.out"
+                }, "-=0.3");
+            };
+    
+            // Initialize
+            createTimeline();
+    
+            // Toggle Click Event
+            hamburger.addEventListener('click', () => {
+                if (!isExpanded) {
+                    hamburger.classList.add('open');
+                    tl.play();
+                    isExpanded = true;
+                } else {
+                    hamburger.classList.remove('open');
+                    tl.reverse();
+                    isExpanded = false;
+                }
+            });
+    
+            // Handle Resize
+            window.addEventListener('resize', () => {
+                if (isExpanded) {
+                    gsap.set(navContainer, { height: calculateHeight() });
+                }
+                createTimeline();
+                if (isExpanded) tl.progress(1);
+            });
+        } else {
+            console.warn("Card Nav: Elements missing or GSAP not loaded.");
+        }
+    });
 });
