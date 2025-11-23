@@ -1538,7 +1538,11 @@ const placeOrderFunction = firebase.app().functions('africa-south1').httpsCallab
             });
 
             // 2. Show Content
-            tl.set('.card-nav-content', { autoAlpha: 1, visibility: 'visible' }, 0);
+            tl.set('.card-nav-content', { 
+    autoAlpha: 1, 
+    visibility: 'visible', 
+    pointerEvents: 'all' // <--- Add this to force buttons to be clickable
+}, 0);
 
             // 3. Stagger Cards In
             tl.to(cards, {
