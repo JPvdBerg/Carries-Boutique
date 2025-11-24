@@ -4,47 +4,29 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Loading Product... | Carries Boutique</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="icon" type="image/png" href="https://firebasestorage.googleapis.com/v0/b/carries-boutique.firebasestorage.app/o/Carries.webp?alt=media&token=e3e8e9eb-8db4-4eb0-bd7d-84ca34b60ba8">
   <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
   <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
-  
-  
-<link href="style.css" rel="stylesheet">
+  <link href="style.css" rel="stylesheet">
   <style>
-    /* ... (Your existing styles) ... */
+    /* Essential overrides */
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Inter', sans-serif; color: #333; background-color: #faf9f7; overflow-x: hidden; }
-    .hero-gradient { background: linear-gradient(135deg, #ff6f91, #ff9671, #ffc75f); background-size: 200% 200%; animation: gradientShift 10s ease infinite; }
-    @keyframes gradientShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
-    .nav-link { position: relative; }
-    .nav-link::after { content: ''; position: absolute; width: 0; height: 2px; bottom: -2px; left: 0; background-color: #b93e65; transition: width 0.3s ease; }
-    .nav-link:hover::after { width: 100%; }
+    body { font-family: 'Inter', sans-serif; color: #111; background-color: #faf9f7; overflow-x: hidden; }
     .product-card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.1); }
-    .whatsapp-btn { background: linear-gradient(135deg, #25D366, #1ebe5a); transition: all 0.3s ease; }
-    .whatsapp-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(37, 211, 102, 0.3); }
-    .collection-card { transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-    .collection-card:hover { transform: scale(1.03); }
-    .testimonial-card { background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,255,255,0.7)); backdrop-filter: blur(10px); }
-    .footer-link:hover { color: #b93e65; }
-    .blob { position: absolute; border-radius: 50%; filter: blur(100px); opacity: 0.15; z-index: 0; }
-    .blob-1 { width: 400px; height: 400px; background: #ff6f91; top: -100px; left: -150px; }
-    .blob-2 { width: 500px; height: 500px; background: #ff9671; bottom: -150px; right: -200px; }
-    .blob-3 { width: 300px; height: 300px; background: #ffc75f; top: 150px; right: -100px; }
-    @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-15px); } 100% { transform: translateY(0px); } }
-    .floating { animation: float 6s ease-in-out infinite; }
-    .scroll-down { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); color: white; font-size: 1.5rem; animation: bounce 2s infinite; cursor: pointer; }
-    @keyframes bounce { 0%, 20%, 50%, 80%, 100% {transform: translateY(0);} 40% {transform: translateY(-20px);} 60% {transform: translateY(-10px);} }
   </style>
 </head>
 <body id="product-detail-page">
   <div class="card-nav-container">
   <nav class="card-nav">
       <div class="card-nav-top">
-        <div class="hamburger-menu" role="button" tabindex="0" aria-label="Toggle menu">
-          <div class="hamburger-line"></div>
-          <div class="hamburger-line"></div>
+         <div class="flex items-center cursor-pointer" onclick="document.querySelector('.hamburger-menu').click()">
+            <div class="hamburger-menu" role="button" tabindex="0" aria-label="Toggle menu">
+              <div class="hamburger-line"></div>
+              <div class="hamburger-line"></div>
+            </div>
+            <span class="font-bold text-sm uppercase tracking-wider ml-2 hidden sm:block">Menu</span>
         </div>
 
         <div class="logo-container">
@@ -54,29 +36,21 @@
         </div>
 
         <a href="cart.html" class="card-nav-cta-button relative">
-          <span class="mr-2">Cart</span>
+          <span class="mr-2 uppercase font-bold text-sm">Cart</span>
           <i data-feather="shopping-cart" class="w-4 h-4"></i>
           <span class="cart-badge hidden absolute -top-1 -right-1 bg-pink-600 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">0</span>
         </a>
       </div>
 
       <div class="card-nav-content">
-        
         <div class="nav-card" style="background-color: #0D0716; color: #fff;">
           <div class="nav-card-label">Collections</div>
           <div class="nav-card-links">
-            <a class="nav-card-link" href="index.html">
-              <i data-feather="home"></i> Home
-            </a>
-            <a class="nav-card-link" href="shop.html">
-              <i data-feather="arrow-up-right"></i> Shop Retail
-            </a>
-            <a class="nav-card-link" href="collections.html">
-              <i data-feather="arrow-up-right"></i> Custom Styles
-            </a>
+            <a class="nav-card-link" href="index.html"><i data-feather="home"></i> Home</a>
+            <a class="nav-card-link" href="shop.html"><i data-feather="arrow-up-right"></i> Shop Retail</a>
+            <a class="nav-card-link" href="collections.html"><i data-feather="arrow-up-right"></i> Custom Styles</a>
           </div>
         </div>
-
         <div class="nav-card" style="background-color: #170D27; color: #fff;">
           <div class="nav-card-label">Account</div>
           <div class="nav-card-links">
@@ -84,32 +58,22 @@
                <button id="google-login-btn" class="nav-card-link w-full text-left">
                   <i data-feather="log-in"></i> Login with Google
                </button>
-               
                <div id="user-info" class="hidden flex flex-col gap-2">
                   <a href="account.html" class="nav-card-link"><i data-feather="settings"></i> My Account</a>
-                  
                   <a href="admin.html" id="admin-link" class="hidden nav-card-link text-pink-400"><i data-feather="shield"></i> Admin</a>
                   <button id="logout-btn" class="nav-card-link text-red-400 text-left"><i data-feather="log-out"></i> Logout</button>
                </div>
             </div>
           </div>
         </div>
-
         <div class="nav-card" style="background-color: #271E37; color: #fff;">
           <div class="nav-card-label">Contact</div>
           <div class="nav-card-links">
-            <a class="nav-card-link" href="https://wa.me/27828735697" target="_blank">
-              <i data-feather="message-circle"></i> WhatsApp
-            </a>
-            <a class="nav-card-link" href="faq.html">
-               <i data-feather="help-circle"></i> FAQ
-            </a>
-            <a class="nav-card-link" href="policy.html">
-               <i data-feather="file-text"></i> Policies
-            </a>
+            <a class="nav-card-link" href="https://wa.me/27828735697" target="_blank"><i data-feather="message-circle"></i> WhatsApp</a>
+            <a class="nav-card-link" href="faq.html"><i data-feather="help-circle"></i> FAQ</a>
+            <a class="nav-card-link" href="policy.html"><i data-feather="file-text"></i> Policies</a>
           </div>
         </div>
-
       </div>
     </nav>
 </div>
@@ -121,35 +85,35 @@
       <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
         <div data-aos="fade-right">
           <img src="" alt="Loading product image..." id="product-image" class="w-full h-auto object-cover rounded-lg shadow-lg mb-4">
-          </div>
+        </div>
 
         <div data-aos="fade-left">
           <nav aria-label="Breadcrumb" class="mb-2">
-            <ol class="flex items-center space-x-1 text-sm text-gray-500">
-              <li><a href="index.html" class="hover:text-gray-700">Home</a></li>
+            <ol class="flex items-center space-x-1 text-base text-gray-700 font-medium">
+              <li><a href="index.html" class="hover:text-black underline">Home</a></li>
               <li><span class="mx-1">/</span></li>
-              <li><a href="shop.html" class="hover:text-gray-700">Shop</a></li>
+              <li><a href="shop.html" class="hover:text-black underline">Shop</a></li>
                <li><span class="mx-1">/</span></li>
-               <li class="font-medium text-gray-700" id="product-breadcrumb">...</li>
+               <li class="font-bold text-gray-900" id="product-breadcrumb">...</li>
             </ol>
           </nav>
           
-          <h1 class="text-3xl md:text-4xl font-serif font-bold text-gray-900 mt-1" id="product-name">Loading...</h1>
-          <p class="text-2xl md:text-3xl font-medium text-gray-900 mt-4" id="product-price"></p>
+          <h1 class="text-4xl md:text-5xl font-serif font-bold text-gray-900 mt-2" id="product-name">Loading...</h1>
+          <p class="text-4xl font-bold text-pink-700 mt-6" id="product-price"></p>
 
-          <div class="mt-6" id="size-selector-container" style="display: none;">
-            <h3 class="text-lg font-medium text-gray-900 mb-2">Select Size</h3>
-            <div class="flex space-x-2" id="size-buttons">
+          <div class="mt-8" id="size-selector-container" style="display: none;">
+            <h3 class="text-xl font-bold text-gray-900 mb-3">Select Size</h3>
+            <div class="flex space-x-3" id="size-buttons">
               </div>
           </div>
 
-          <div class="mt-8">
-            <button id="product-add-to-cart-btn" class="w-full px-8 py-3 border border-transparent text-base font-medium rounded-full text-white bg-pink-600 hover:bg-pink-700 flex items-center justify-center">
-              <i data-feather="shopping-cart" class="mr-2"></i> Add to Cart
+          <div class="mt-10">
+            <button id="product-add-to-cart-btn" class="w-full px-8 py-4 border border-transparent text-xl font-bold rounded-full text-white bg-pink-600 hover:bg-pink-700 flex items-center justify-center shadow-lg transition-transform transform hover:-translate-y-1">
+              <i data-feather="shopping-cart" class="mr-3 w-6 h-6"></i> Add to Cart
             </button>
           </div>
 
-          <div class="mt-8 prose prose-sm max-w-none text-gray-600" id="product-description-details">
+          <div class="mt-10 prose prose-lg max-w-none text-gray-800 leading-relaxed" id="product-description-details">
             </div>
 
         </div>
@@ -165,58 +129,41 @@
         </h2>
       </div>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        </div>
+         </div>
     </div>
   </section>
 
   <footer class="bg-gray-900 text-white py-12">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-        
         <div>
             <a href="index.html" class="flex items-center">
                 <img class="h-8 w-auto" src="https://firebasestorage.googleapis.com/v0/b/carries-boutique.firebasestorage.app/o/Carries.webp?alt=media&token=e3e8e9eb-8db4-4eb0-bd7d-84ca34b60ba8" alt="Carries Boutique">
                 <span class="ml-2 text-xl font-semibold">Carries Boutique</span>
             </a>
-            <p class="mt-4 text-gray-400">Premium fashion boutique offering handcrafted clothing with timeless elegance.</p>
+            <p class="mt-4 text-gray-300">Premium fashion boutique offering handcrafted clothing with timeless elegance.</p>
         </div>
-
         <div>
-            <h3 class="text-lg font-medium mb-4">Shop</h3>
+            <h3 class="text-lg font-bold mb-4">Shop</h3>
             <ul class="space-y-2">
-                <li><a href="shop.html" class="text-gray-400 hover:text-white transition">New Arrivals</a></li>
-                <li><a href="shop.html" class="text-gray-400 hover:text-white transition">Best Sellers</a></li>
-                <li><a href="shop.html" class="text-gray-400 hover:text-white transition">Sale Items</a></li>
+                <li><a href="shop.html" class="text-gray-300 hover:text-white transition">New Arrivals</a></li>
+                <li><a href="shop.html" class="text-gray-300 hover:text-white transition">Best Sellers</a></li>
             </ul>
         </div>
-
         <div>
-            <h3 class="text-lg font-medium mb-4">Information</h3>
+            <h3 class="text-lg font-bold mb-4">Information</h3>
             <ul class="space-y-2">
-                <li><a href="index.html#about" class="text-gray-400 hover:text-white transition">About Us</a></li>
-                <li><a href="policy.html#shipping" class="text-gray-400 hover:text-white transition">Shipping Policy</a></li>
-                <li><a href="policy.html#returns" class="text-gray-400 hover:text-white transition">Returns & Exchanges</a></li>
-				<li><a href="faq.html" class="text-gray-400 hover:text-white transition">FAQ</a></li>
+                <li><a href="index.html#about" class="text-gray-300 hover:text-white transition">About Us</a></li>
+                <li><a href="policy.html" class="text-gray-300 hover:text-white transition">Policies</a></li>
             </ul>
         </div>
-
         <div>
-            <h3 class="text-lg font-medium mb-4">Stay Connected</h3>
-            <p class="text-gray-400 mb-4">Follow us for the latest updates and styles.</p>
-            <a href="https://www.facebook.com/p/Carries-100063057530393/" target="_blank" class="inline-flex items-center text-pink-400 hover:text-pink-300 font-medium transition">
-                <i data-feather="facebook" class="mr-2"></i> Visit our Facebook Page
-            </a>
+            <h3 class="text-lg font-bold mb-4">Stay Connected</h3>
+            <a href="https://www.facebook.com/p/Carries-100063057530393/" target="_blank" class="text-pink-400 font-bold">Visit Facebook</a>
         </div>
-
       </div>
-      
-      <div class="mt-12 pt-8 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center">
+      <div class="mt-12 pt-8 border-t border-gray-800">
           <p class="text-gray-400 text-sm">&copy; 2023 Carries Boutique. All rights reserved.</p>
-          <div class="mt-4 md:mt-0 flex space-x-6">
-              <span class="text-gray-600"><i data-feather="credit-card"></i></span>
-              <span class="text-gray-600"><i data-feather="lock"></i></span>
-              <span class="text-gray-600"><i data-feather="shield"></i></span>
-          </div>
       </div>
     </div>
   </footer>
@@ -225,22 +172,18 @@
   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
   <script>
-    // Your web app's Firebase configuration
     const firebaseConfig = {
-      apiKey: "AIzaSyCkyMyRLCc98BifcSYbIgs3_v3u2qBvdpg", // Use your actual key
+      apiKey: "AIzaSyCkyMyRLCc98BifcSYbIgs3_v3u2qBvdpg", 
       authDomain: "carries-boutique.firebaseapp.com",
       projectId: "carries-boutique",
       storageBucket: "carries-boutique.firebasestorage.app",
       messagingSenderId: "512525813635",
       appId: "1:512525813635:web:afe3d28c5bd2db68ae58b6",
-      measurementId: "G-2Q2QY4HJ9Y" // Optional
+      measurementId: "G-2Q2QY4HJ9Y" 
     };
-
-    // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth(); 
-    const db = firebase.firestore(); // <-- Initialize Firestore
-
+    const db = firebase.firestore(); 
   </script>
 <div id="toast-container" class="fixed bottom-5 right-5 z-50 hidden transform transition-all duration-300 translate-y-10 opacity-0">
     <div class="bg-gray-900 text-white px-6 py-3 rounded-lg shadow-lg flex items-center space-x-3">
@@ -249,43 +192,5 @@
     </div>
   </div>
   <script src="app.js"></script>
-  <div id="cookie-banner" class="fixed bottom-0 left-0 right-0 bg-gray-900 text-white p-4 z-50 hidden shadow-lg border-t border-gray-700">
-    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between">
-        <div class="text-sm mb-4 md:mb-0 md:mr-8">
-            <p>We use cookies to personalise content and analyse our traffic. By using our website, you agree to our use of cookies in accordance with our <a href="policy.html" class="underline text-pink-400 hover:text-pink-300">Privacy Policy</a>.</p>
-        </div>
-        <div class="flex space-x-4">
-            <button id="cookie-decline" class="text-sm text-gray-400 hover:text-white px-4 py-2">Decline</button>
-            <button id="cookie-accept" class="bg-pink-600 hover:bg-pink-700 text-white text-sm font-medium py-2 px-6 rounded-full transition">Accept</button>
-        </div>
-    </div>
-</div>
-
-<script>
-    // Cookie Banner Logic
-    document.addEventListener("DOMContentLoaded", () => {
-        const banner = document.getElementById('cookie-banner');
-        const acceptBtn = document.getElementById('cookie-accept');
-        const declineBtn = document.getElementById('cookie-decline');
-
-        // Check if user has already made a choice
-        if (!localStorage.getItem('cookieConsent')) {
-            setTimeout(() => {
-                banner.classList.remove('hidden'); // Show after small delay
-            }, 1000);
-        }
-
-        acceptBtn.addEventListener('click', () => {
-            localStorage.setItem('cookieConsent', 'accepted');
-            banner.classList.add('hidden');
-            // Optional: Load Analytics script here if you want strict compliance
-        });
-
-        declineBtn.addEventListener('click', () => {
-            localStorage.setItem('cookieConsent', 'declined');
-            banner.classList.add('hidden');
-        });
-    });
-</script>
 </body>
 </html>

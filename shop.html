@@ -4,25 +4,22 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Shop All | Carries Boutique</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="icon" type="image/png" href="https://firebasestorage.googleapis.com/v0/b/carries-boutique.firebasestorage.app/o/Carries.webp?alt=media&token=e3e8e9eb-8db4-4eb0-bd7d-84ca34b60ba8">
   <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
   <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
-  
-  
-  
-<link href="style.css" rel="stylesheet">
+  <link href="style.css" rel="stylesheet">
   <style>
-    /* ... (Your existing styles) ... */
+    /* Essential overrides */
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Inter', sans-serif; color: #333; background-color: #faf9f7; overflow-x: hidden; }
+    body { font-family: 'Inter', sans-serif; color: #111; background-color: #faf9f7; overflow-x: hidden; }
     .product-card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.1); }
     .whatsapp-btn { background: linear-gradient(135deg, #25D366, #1ebe5a); transition: all 0.3s ease; }
     .whatsapp-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(37, 211, 102, 0.3); }
-    .nav-link { position: relative; }
-    .nav-link::after { content: ''; position: absolute; width: 0; height: 2px; bottom: -2px; left: 0; background-color: #b93e65; transition: width 0.3s ease; }
-    .nav-link:hover::after { width: 100%; }
+    /* High contrast link underline */
+    .nav-link { text-decoration: underline; text-underline-offset: 4px; }
+    .nav-link:hover { color: #b93e65; }
   </style>
 </head>
 <body id="shop-page">
@@ -30,9 +27,12 @@
   <div class="card-nav-container">
     <nav class="card-nav">
       <div class="card-nav-top">
-        <div class="hamburger-menu" role="button" tabindex="0" aria-label="Toggle menu">
-          <div class="hamburger-line"></div>
-          <div class="hamburger-line"></div>
+        <div class="flex items-center cursor-pointer" onclick="document.querySelector('.hamburger-menu').click()">
+            <div class="hamburger-menu" role="button" tabindex="0" aria-label="Toggle menu">
+              <div class="hamburger-line"></div>
+              <div class="hamburger-line"></div>
+            </div>
+            <span class="font-bold text-sm uppercase tracking-wider ml-2 hidden sm:block">Menu</span>
         </div>
 
         <div class="logo-container">
@@ -42,26 +42,19 @@
         </div>
 
         <a href="cart.html" class="card-nav-cta-button relative">
-          <span class="mr-2">Cart</span>
+          <span class="mr-2 uppercase font-bold text-sm">Cart</span>
           <i data-feather="shopping-cart" class="w-4 h-4"></i>
           <span class="cart-badge hidden absolute -top-1 -right-1 bg-pink-600 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">0</span>
         </a>
       </div>
 
       <div class="card-nav-content">
-        
         <div class="nav-card" style="background-color: #0D0716; color: #fff;">
           <div class="nav-card-label">Collections</div>
           <div class="nav-card-links">
-            <a class="nav-card-link" href="index.html">
-              <i data-feather="home"></i> Home
-            </a>
-            <a class="nav-card-link" href="shop.html">
-              <i data-feather="arrow-up-right"></i> Shop Retail
-            </a>
-            <a class="nav-card-link" href="collections.html">
-              <i data-feather="arrow-up-right"></i> Custom Styles
-            </a>
+            <a class="nav-card-link" href="index.html"><i data-feather="home"></i> Home</a>
+            <a class="nav-card-link" href="shop.html"><i data-feather="arrow-up-right"></i> Shop Retail</a>
+            <a class="nav-card-link" href="collections.html"><i data-feather="arrow-up-right"></i> Custom Styles</a>
           </div>
         </div>
 
@@ -72,10 +65,8 @@
                <button id="google-login-btn" class="nav-card-link w-full text-left">
                   <i data-feather="log-in"></i> Login with Google
                </button>
-               
                <div id="user-info" class="hidden flex flex-col gap-2">
                   <a href="account.html" class="nav-card-link"><i data-feather="settings"></i> My Account</a>
-                  
                   <a href="admin.html" id="admin-link" class="hidden nav-card-link text-pink-400"><i data-feather="shield"></i> Admin</a>
                   <button id="logout-btn" class="nav-card-link text-red-400 text-left"><i data-feather="log-out"></i> Logout</button>
                </div>
@@ -86,29 +77,24 @@
         <div class="nav-card" style="background-color: #271E37; color: #fff;">
           <div class="nav-card-label">Contact</div>
           <div class="nav-card-links">
-            <a class="nav-card-link" href="https://wa.me/27828735697" target="_blank">
-              <i data-feather="message-circle"></i> WhatsApp
-            </a>
-            <a class="nav-card-link" href="faq.html">
-               <i data-feather="help-circle"></i> FAQ
-            </a>
-            <a class="nav-card-link" href="policy.html">
-               <i data-feather="file-text"></i> Policies
-            </a>
+            <a class="nav-card-link" href="https://wa.me/27828735697" target="_blank"><i data-feather="message-circle"></i> WhatsApp</a>
+            <a class="nav-card-link" href="faq.html"><i data-feather="help-circle"></i> FAQ</a>
+            <a class="nav-card-link" href="policy.html"><i data-feather="file-text"></i> Policies</a>
           </div>
         </div>
-
       </div>
     </nav>
   </div>
+
   <div style="height: 100px;"></div>
+  
   <section id="products" class="py-16 bg-gray-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="text-center mb-16" data-aos="fade-up">
-        <h2 class="text-3xl font-serif font-bold text-gray-900 sm:text-4xl">
+        <h2 class="text-4xl font-serif font-bold text-gray-900 sm:text-5xl">
           Shop Our Retail Collection
         </h2>
-        <p class="mt-4 max-w-2xl text-xl text-gray-500 mx-auto">
+        <p class="mt-4 max-w-2xl text-2xl text-gray-800 mx-auto font-medium">
           Handpicked items in standard sizes (S, M, L).
         </p>
       </div>
@@ -122,51 +108,40 @@
   <footer class="bg-gray-900 text-white py-12">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-        
         <div>
             <a href="index.html" class="flex items-center">
                 <img class="h-8 w-auto" src="https://firebasestorage.googleapis.com/v0/b/carries-boutique.firebasestorage.app/o/Carries.webp?alt=media&token=e3e8e9eb-8db4-4eb0-bd7d-84ca34b60ba8" alt="Carries Boutique">
                 <span class="ml-2 text-xl font-semibold">Carries Boutique</span>
             </a>
-            <p class="mt-4 text-gray-400">Premium fashion boutique offering handcrafted clothing with timeless elegance.</p>
+            <p class="mt-4 text-gray-300 text-lg">Premium fashion boutique offering handcrafted clothing with timeless elegance.</p>
         </div>
-
         <div>
-            <h3 class="text-lg font-medium mb-4">Shop</h3>
-            <ul class="space-y-2">
-                <li><a href="shop.html" class="text-gray-400 hover:text-white transition">New Arrivals</a></li>
-                <li><a href="shop.html" class="text-gray-400 hover:text-white transition">Best Sellers</a></li>
-                <li><a href="shop.html" class="text-gray-400 hover:text-white transition">Sale Items</a></li>
+            <h3 class="text-xl font-bold mb-4 text-white">Shop</h3>
+            <ul class="space-y-3 text-lg">
+                <li><a href="shop.html" class="text-gray-300 hover:text-white transition underline">New Arrivals</a></li>
+                <li><a href="shop.html" class="text-gray-300 hover:text-white transition underline">Best Sellers</a></li>
+                <li><a href="shop.html" class="text-gray-300 hover:text-white transition underline">Sale Items</a></li>
             </ul>
         </div>
-
         <div>
-            <h3 class="text-lg font-medium mb-4">Information</h3>
-            <ul class="space-y-2">
-                <li><a href="index.html#about" class="text-gray-400 hover:text-white transition">About Us</a></li>
-                <li><a href="policy.html#shipping" class="text-gray-400 hover:text-white transition">Shipping Policy</a></li>
-                <li><a href="policy.html#returns" class="text-gray-400 hover:text-white transition">Returns & Exchanges</a></li>
-				<li><a href="faq.html" class="text-gray-400 hover:text-white transition">FAQ</a></li>
+            <h3 class="text-xl font-bold mb-4 text-white">Information</h3>
+            <ul class="space-y-3 text-lg">
+                <li><a href="index.html#about" class="text-gray-300 hover:text-white transition underline">About Us</a></li>
+                <li><a href="policy.html#shipping" class="text-gray-300 hover:text-white transition underline">Shipping Policy</a></li>
+                <li><a href="policy.html#returns" class="text-gray-300 hover:text-white transition underline">Returns & Exchanges</a></li>
+                <li><a href="faq.html" class="text-gray-300 hover:text-white transition underline">FAQ</a></li>
             </ul>
         </div>
-
         <div>
-            <h3 class="text-lg font-medium mb-4">Stay Connected</h3>
-            <p class="text-gray-400 mb-4">Follow us for the latest updates and styles.</p>
-            <a href="https://www.facebook.com/p/Carries-100063057530393/" target="_blank" class="inline-flex items-center text-pink-400 hover:text-pink-300 font-medium transition">
+            <h3 class="text-xl font-bold mb-4 text-white">Stay Connected</h3>
+            <p class="text-gray-300 mb-4 text-lg">Follow us for the latest updates and styles.</p>
+            <a href="https://www.facebook.com/p/Carries-100063057530393/" target="_blank" class="inline-flex items-center text-pink-400 hover:text-pink-300 font-bold transition text-lg">
                 <i data-feather="facebook" class="mr-2"></i> Visit our Facebook Page
             </a>
         </div>
-
       </div>
-      
       <div class="mt-12 pt-8 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center">
           <p class="text-gray-400 text-sm">&copy; 2023 Carries Boutique. All rights reserved.</p>
-          <div class="mt-4 md:mt-0 flex space-x-6">
-              <span class="text-gray-600"><i data-feather="credit-card"></i></span>
-              <span class="text-gray-600"><i data-feather="lock"></i></span>
-              <span class="text-gray-600"><i data-feather="shield"></i></span>
-          </div>
       </div>
     </div>
   </footer>
@@ -175,17 +150,15 @@
   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
   <script>
-    // Your web app's Firebase configuration
     const firebaseConfig = {
-      apiKey: "AIzaSyCkyMyRLCc98BifcSYbIgs3_v3u2qBvdpg", // Use your actual key
+      apiKey: "AIzaSyCkyMyRLCc98BifcSYbIgs3_v3u2qBvdpg", 
       authDomain: "carries-boutique.firebaseapp.com",
       projectId: "carries-boutique",
       storageBucket: "carries-boutique.firebasestorage.app",
       messagingSenderId: "512525813635",
       appId: "1:512525813635:web:afe3d28c5bd2db68ae58b6",
-      measurementId: "G-2Q2QY4HJ9Y" // Optional
+      measurementId: "G-2Q2QY4HJ9Y"
     };
-    // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth(); 
     const db = firebase.firestore(); 
@@ -197,43 +170,5 @@
     </div>
   </div>
   <script src="app.js"></script>
-  <div id="cookie-banner" class="fixed bottom-0 left-0 right-0 bg-gray-900 text-white p-4 z-50 hidden shadow-lg border-t border-gray-700">
-    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between">
-        <div class="text-sm mb-4 md:mb-0 md:mr-8">
-            <p>We use cookies to personalise content and analyse our traffic. By using our website, you agree to our use of cookies in accordance with our <a href="policy.html" class="underline text-pink-400 hover:text-pink-300">Privacy Policy</a>.</p>
-        </div>
-        <div class="flex space-x-4">
-            <button id="cookie-decline" class="text-sm text-gray-400 hover:text-white px-4 py-2">Decline</button>
-            <button id="cookie-accept" class="bg-pink-600 hover:bg-pink-700 text-white text-sm font-medium py-2 px-6 rounded-full transition">Accept</button>
-        </div>
-    </div>
-</div>
-
-<script>
-    // Cookie Banner Logic
-    document.addEventListener("DOMContentLoaded", () => {
-        const banner = document.getElementById('cookie-banner');
-        const acceptBtn = document.getElementById('cookie-accept');
-        const declineBtn = document.getElementById('cookie-decline');
-
-        // Check if user has already made a choice
-        if (!localStorage.getItem('cookieConsent')) {
-            setTimeout(() => {
-                banner.classList.remove('hidden'); // Show after small delay
-            }, 1000);
-        }
-
-        acceptBtn.addEventListener('click', () => {
-            localStorage.setItem('cookieConsent', 'accepted');
-            banner.classList.add('hidden');
-            // Optional: Load Analytics script here if you want strict compliance
-        });
-
-        declineBtn.addEventListener('click', () => {
-            localStorage.setItem('cookieConsent', 'declined');
-            banner.classList.add('hidden');
-        });
-    });
-</script>
-</body>
+  </body>
 </html>
